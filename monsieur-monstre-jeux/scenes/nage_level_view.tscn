@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bfbny43birx8b"]
 
-[ext_resource type="Script" uid="uid://c5fqa1ax7aw5v" path="res://scenes/world.gd" id="1_n5pg7"]
+[ext_resource type="Script" uid="uid://c5fqa1ax7aw5v" path="res://scripts/world.gd" id="1_n5pg7"]
 [ext_resource type="PackedScene" uid="uid://duj8xj1kbg5w8" path="res://scenes/cuisine_level.tscn" id="1_yqrkj"]
 
 [node name="Node" type="Node" unique_id=1193111562]

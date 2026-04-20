@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://3f1odqe353cn"]
 
-[ext_resource type="Script" uid="uid://bg3waskesp805" path="res://scripts/nage_p2mvt.gd" id="1_at8dn"]
 [ext_resource type="Texture2D" uid="uid://bbxo30ypwsfeu" path="res://sprites/icon.svg" id="2_3ccfh"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_c4gc8"]
@@ -10,7 +9,6 @@ size = Vector2(46.931034, 43.103447)
 
 [node name="P2" type="Node2D" unique_id=2103489380]
 scale = Vector2(0.8000001, 0.8000001)
-script = ExtResource("1_at8dn")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2103890599]
 scale = Vector2(1.013, 1)
