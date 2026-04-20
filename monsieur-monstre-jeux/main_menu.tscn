@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cidju8rhy8dk3"]
 
 [ext_resource type="Texture2D" uid="uid://b4nw6vhuemvny" path="res://01073865290819.5d61d475f0072.jpg" id="1_7vrkn"]
+[ext_resource type="Script" uid="uid://clmix0xoc7be3" path="res://main_menu.gd" id="1_fu7sn"]
 [ext_resource type="FontFile" uid="uid://diday46ilbvun" path="res://GrapeSoda.ttf" id="2_fu7sn"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jix8l"]
@@ -41,6 +42,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_fu7sn")
 
 [node name="Panel" type="Panel" parent="." unique_id=818173261]
 layout_mode = 1
@@ -66,7 +68,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 30
 
-[node name="Button" type="Button" parent="VBoxContainer" unique_id=850535473]
+[node name="StartButton" type="Button" parent="VBoxContainer" unique_id=850535473]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 30
@@ -75,7 +77,7 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
 text = "Start game"
 
-[node name="Button2" type="Button" parent="VBoxContainer" unique_id=451103927]
+[node name="CreditsButton" type="Button" parent="VBoxContainer" unique_id=451103927]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 30
@@ -84,7 +86,7 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
 text = "Credits"
 
-[node name="Button3" type="Button" parent="VBoxContainer" unique_id=1062407358]
+[node name="ExitButton" type="Button" parent="VBoxContainer" unique_id=1062407358]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 30
@@ -112,3 +114,7 @@ theme_override_fonts/font = ExtResource("2_fu7sn")
 theme_override_font_sizes/font_size = 106
 text = "Organia"
 horizontal_alignment = 1
+
+[connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="VBoxContainer/CreditsButton" to="." method="_on_credits_pressed"]
+[connection signal="pressed" from="VBoxContainer/ExitButton" to="." method="_on_exit_pressed"]
