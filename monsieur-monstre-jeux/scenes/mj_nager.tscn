@@ -1,9 +1,0 @@
-[gd_scene format=3 uid="uid://bfbny43birx8b"]
-
-[ext_resource type="PackedScene" uid="uid://becnsoal6i1ry" path="res://scenes/nager_player_controls.tscn" id="1_pn5q7"]
-
-[node name="MJ-Nager" type="Node2D" unique_id=899773334]
-
-[node name="Node2D" parent="." unique_id=2103489380 instance=ExtResource("1_pn5q7")]
-
-[node name="Camera2D" type="Camera2D" parent="." unique_id=1890238214]

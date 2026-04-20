@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://bfbny43birx8b"]
+
+[ext_resource type="Script" uid="uid://c5fqa1ax7aw5v" path="res://scenes/world.gd" id="1_n5pg7"]
+[ext_resource type="PackedScene" uid="uid://duj8xj1kbg5w8" path="res://scenes/ nage_level.tscn" id="1_yqrkj"]
+
+[node name="Node" type="Node" unique_id=1193111562]
+script = ExtResource("1_n5pg7")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=7050653]
+offset_right = 644.0
+offset_bottom = 360.0
+
+[node name="P1_view_container" type="SubViewportContainer" parent="HBoxContainer" unique_id=1413356432]
+layout_mode = 2
+
+[node name="P1_view" type="SubViewport" parent="HBoxContainer/P1_view_container" unique_id=1044291201]
+handle_input_locally = false
+size = Vector2i(320, 360)
+render_target_update_mode = 4
+
+[node name="Level" parent="HBoxContainer/P1_view_container/P1_view" unique_id=2062969420 instance=ExtResource("1_yqrkj")]
+
+[node name="P1Cam" type="Camera2D" parent="HBoxContainer/P1_view_container/P1_view" unique_id=1998250280]
+
+[node name="P2_view_container" type="SubViewportContainer" parent="HBoxContainer" unique_id=1012394501]
+layout_mode = 2
+
+[node name="P2_view" type="SubViewport" parent="HBoxContainer/P2_view_container" unique_id=1107658062]
+handle_input_locally = false
+size = Vector2i(320, 360)
+render_target_update_mode = 4
+
+[node name="P2Cam" type="Camera2D" parent="HBoxContainer/P2_view_container/P2_view" unique_id=38584722]
