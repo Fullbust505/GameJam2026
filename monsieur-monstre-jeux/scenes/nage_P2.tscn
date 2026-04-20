@@ -19,7 +19,6 @@ texture = ExtResource("2_ng1ri")
 [node name="RigidBody2D" type="RigidBody2D" parent="." unique_id=1093869996]
 mass = 70.0
 physics_material_override = SubResource("PhysicsMaterial_c4gc8")
-gravity_scale = 0.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D" unique_id=922787149]
 scale = Vector2(2.5, 2.5)
