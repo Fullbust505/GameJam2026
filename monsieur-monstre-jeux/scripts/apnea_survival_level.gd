@@ -8,8 +8,8 @@ const OrganConst = preload("res://scripts/core/organ_constants.gd")
 const PlayerData = preload("res://scripts/core/player_data.gd")
 
 # Minigame state
-enum GameState { WAITING, COUNTDOWN, PLAYING, FINISHED }
-var game_state: GameState = GameState.WAITING
+enum GameState { PREGAME, WAITING, COUNTDOWN, PLAYING, FINISHED }
+var game_state: GameState = GameState.PREGAME
 
 # Players
 @onready var p1: Node2D = $P1
@@ -28,6 +28,16 @@ var game_state: GameState = GameState.WAITING
 @onready var p1_status: Label = $CanvasLayer/HUD/P1Status
 @onready var p2_status: Label = $CanvasLayer/HUD/P2Status
 @onready var surface_line: Line2D = $SurfaceLine
+
+# Pre-game popup references
+@onready var pregame_panel: Panel = $CanvasLayer/PregamePanel
+@onready var pregame_title: Label = $CanvasLayer/PregamePanel/Title
+@onready var pregame_goal: Label = $CanvasLayer/PregamePanel/Goal
+@onready var pregame_p1_controls: Label = $CanvasLayer/PregamePanel/P1Controls
+@onready var pregame_p2_controls: Label = $CanvasLayer/PregamePanel/P2Controls
+@onready var pregame_prompt: Label = $CanvasLayer/PregamePanel/Prompt
+var pregame_timer: float = 5.0
+var pregame_auto_dismiss: bool = true
 
 # Level boundaries
 @export var surface_y: float = 80.0
@@ -85,7 +95,35 @@ func _ready() -> void:
 	_setup_ui()
 	_initialize_players()
 	_setup_level()
-	game_state = GameState.WAITING
+	_show_pregame_popup()
+	game_state = GameState.PREGAME
+
+func _show_pregame_popup() -> void:
+	# Configure pre-game popup content
+	if pregame_panel:
+		pregame_panel.visible = true
+	
+	if pregame_title:
+		pregame_title.text = "APNEA SURVIVAL"
+	
+	if pregame_goal:
+		pregame_goal.text = "Stay underwater as long as possible!\nCatch bubbles to breathe. Don't surface!"
+	
+	if pregame_p1_controls:
+		pregame_p1_controls.text = "[Left Stick = Move] [A Button = Catch Bubble]"
+	
+	if pregame_p2_controls:
+		pregame_p2_controls.text = "[Left Stick = Move] [A Button = Catch Bubble]"
+	
+	if pregame_prompt:
+		pregame_prompt.text = "Press A to Start"
+	
+	pregame_timer = 5.0
+	pregame_auto_dismiss = true
+	
+	# Hide game elements until pregame dismissed
+	if countdown_label:
+		countdown_label.visible = false
 
 func _setup_ui() -> void:
 	if countdown_label:
@@ -93,7 +131,7 @@ func _setup_ui() -> void:
 		countdown_label.visible = false
 	
 	if status_label:
-		status_label.text = "PRESS SPACE TO START"
+		status_label.text = ""
 		status_label.self_modulate = Color(1, 1, 1, 1)
 	
 	if surface_line:
@@ -102,6 +140,10 @@ func _setup_ui() -> void:
 		for p in points:
 			surface_line.add_point(p)
 		surface_line.default_color = Color(0.3, 0.6, 1.0, 0.5)
+	
+	# Setup pregame panel style
+	if pregame_panel:
+		pregame_panel.self_modulate = Color(1, 1, 1, 0.95)
 
 func _initialize_players() -> void:
 	var pd = get_node("/root/PlayerData")
@@ -145,6 +187,8 @@ func _start_countdown() -> void:
 
 func _process(delta: float) -> void:
 	match game_state:
+		GameState.PREGAME:
+			_update_pregame(delta)
 		GameState.WAITING:
 			_update_waiting_state()
 		GameState.COUNTDOWN:
@@ -154,9 +198,40 @@ func _process(delta: float) -> void:
 		GameState.FINISHED:
 			pass
 
+func _update_pregame(delta: float) -> void:
+	# Check for A button press on either gamepad to dismiss
+	var p1_a_pressed = Input.is_joy_button_pressed(0, JOY_BUTTON_A)
+	var p2_a_pressed = Input.is_joy_button_pressed(1, JOY_BUTTON_A)
+	
+	if p1_a_pressed or p2_a_pressed:
+		_dismiss_pregame_popup()
+		return
+	
+	# Auto-dismiss timer
+	if pregame_auto_dismiss:
+		pregame_timer -= delta
+		if pregame_timer <= 0:
+			_dismiss_pregame_popup()
+	else:
+		# Blink the prompt
+		if pregame_prompt:
+			var blink = sin(pregame_timer * 4.0) > 0
+			pregame_prompt.self_modulate = Color(1, 1, 0.5, 1.0 if blink else 0.5)
+			pregame_timer += delta  # Use as blink timer
+
+func _dismiss_pregame_popup() -> void:
+	if pregame_panel:
+		pregame_panel.visible = false
+	
+	game_state = GameState.WAITING
+	status_label.text = "Press A to Start"
+
 func _update_waiting_state() -> void:
-	var space_pressed = Input.is_action_just_pressed("ui_accept") or Input.is_key_pressed(KEY_SPACE)
-	if space_pressed:
+	# Use gamepad A button to start (either player)
+	var p1_a_pressed = Input.is_joy_button_pressed(0, JOY_BUTTON_A)
+	var p2_a_pressed = Input.is_joy_button_pressed(1, JOY_BUTTON_A)
+	
+	if p1_a_pressed or p2_a_pressed:
 		_start_countdown()
 
 func _update_countdown(delta: float) -> void:
@@ -425,7 +500,9 @@ func get_stake() -> Dictionary:
 
 func start_game_with_stake(player_index: int, organ_wagered: String, multiplier: float = 1.0) -> void:
 	set_stake(player_index, organ_wagered, multiplier)
-	_start_countdown()
+	_show_pregame_popup()
+	game_state = GameState.PREGAME
 
 func force_start() -> void:
-	_start_countdown()
+	_show_pregame_popup()
+	game_state = GameState.PREGAME

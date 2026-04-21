@@ -2,13 +2,14 @@ extends Node2D
 
 ## Swimming minigame level controller.
 ## Manages players, UI, game state, and win/lose conditions.
+## ONLY gamepad input - L1/R1 bumpers for swimming
 
 const OrganConst = preload("res://scripts/core/organ_constants.gd")
 const PlayerData = preload("res://scripts/core/player_data.gd")
 
 # Minigame state
-enum GameState { WAITING, COUNTDOWN, PLAYING, FINISHED }
-var game_state: GameState = GameState.WAITING
+enum GameState { PREGAME, WAITING, COUNTDOWN, PLAYING, FINISHED }
+var game_state: GameState = GameState.PREGAME
 
 # Players
 @onready var p1: Node2D = $P1
@@ -23,6 +24,15 @@ var game_state: GameState = GameState.WAITING
 @onready var p2_buttons: Label = $CanvasLayer/P2Panel/P2Buttons
 @onready var p1_feedback: Label = $CanvasLayer/P1Panel/P1Feedback
 @onready var p2_feedback: Label = $CanvasLayer/P2Panel/P2Feedback
+
+# Pre-game popup references
+@onready var pregame_panel: Panel = $CanvasLayer/PregamePanel
+@onready var pregame_title: Label = $CanvasLayer/PregamePanel/Title
+@onready var pregame_goal: Label = $CanvasLayer/PregamePanel/Goal
+@onready var pregame_p1_controls: Label = $CanvasLayer/PregamePanel/P1Controls
+@onready var pregame_p2_controls: Label = $CanvasLayer/PregamePanel/P2Controls
+@onready var pregame_prompt: Label = $CanvasLayer/PregamePanel/Prompt
+var pregame_timer: float = 5.0
 
 # Animation helper
 var _animations: Node = null
@@ -72,9 +82,30 @@ func _ready() -> void:
 	_setup_ui_references()
 	_initialize_players()
 	_setup_level_visuals()
-	game_state = GameState.WAITING
-	status_label.text = "Press SPACE to start"
-	countdown_label.visible = false
+	_show_pregame_popup()
+	game_state = GameState.PREGAME
+
+func _show_pregame_popup() -> void:
+	# Configure pre-game popup content
+	if pregame_panel:
+		pregame_panel.visible = true
+	
+	if pregame_title:
+		pregame_title.text = "SWIMMING CHALLENGE"
+	
+	if pregame_goal:
+		pregame_goal.text = "Race to the finish line!\nAlternate L1/R1 to swim up."
+	
+	if pregame_p1_controls:
+		pregame_p1_controls.text = "[L1/R1 = Swim Up (alternate for speed)]"
+	
+	if pregame_p2_controls:
+		pregame_p2_controls.text = "[L1/R1 = Swim Up (alternate for speed)]"
+	
+	if pregame_prompt:
+		pregame_prompt.text = "Press A to Start"
+	
+	pregame_timer = 5.0
 
 func _setup_ui_references() -> void:
 	if control_panel:
@@ -83,9 +114,10 @@ func _setup_ui_references() -> void:
 	if countdown_label:
 		countdown_label.add_theme_font_size_override("font_size", 72)
 		countdown_label.self_modulate = Color(1, 1, 1, 1)
+		countdown_label.visible = false
 	
 	if status_label:
-		status_label.text = "PRESS SPACE TO START"
+		status_label.text = ""
 		status_label.self_modulate = Color(1, 1, 1, 1)
 		status_label.add_theme_color_override("font_color", Color(0, 1, 0.5, 1))
 
@@ -135,7 +167,7 @@ func _start_countdown() -> void:
 	p2_finished = false
 
 # ============================================
-# BUMPER-ONLY INPUT SYSTEM
+# GAMEPAD INPUT ONLY - L1/R1 BUMPERS
 # P1: Gamepad 0 L1/R1 | P2: Gamepad 1 L1/R1
 # ============================================
 
@@ -157,6 +189,8 @@ func is_p2_button_b_pressed() -> bool:
 
 func _process(delta: float) -> void:
 	match game_state:
+		GameState.PREGAME:
+			_update_pregame(delta)
 		GameState.WAITING:
 			_update_waiting_state()
 		GameState.COUNTDOWN:
@@ -166,9 +200,38 @@ func _process(delta: float) -> void:
 		GameState.FINISHED:
 			pass
 
+func _update_pregame(delta: float) -> void:
+	# Check for A button press on either gamepad to dismiss
+	var p1_a_pressed = Input.is_joy_button_pressed(0, JOY_BUTTON_A)
+	var p2_a_pressed = Input.is_joy_button_pressed(1, JOY_BUTTON_A)
+	
+	if p1_a_pressed or p2_a_pressed:
+		_dismiss_pregame_popup()
+		return
+	
+	# Auto-dismiss timer
+	pregame_timer -= delta
+	if pregame_timer <= 0:
+		_dismiss_pregame_popup()
+	
+	# Blink the prompt
+	if pregame_prompt:
+		var blink = sin(pregame_timer * 4.0) > 0
+		pregame_prompt.self_modulate = Color(1, 1, 0.5, 1.0 if blink else 0.5)
+
+func _dismiss_pregame_popup() -> void:
+	if pregame_panel:
+		pregame_panel.visible = false
+	
+	game_state = GameState.WAITING
+	status_label.text = "Press A to Start"
+
 func _update_waiting_state() -> void:
-	var space_pressed = Input.is_action_just_pressed("ui_accept") or Input.is_key_pressed(KEY_SPACE)
-	if space_pressed:
+	# Use gamepad A button to start (either player)
+	var p1_a_pressed = Input.is_joy_button_pressed(0, JOY_BUTTON_A)
+	var p2_a_pressed = Input.is_joy_button_pressed(1, JOY_BUTTON_A)
+	
+	if p1_a_pressed or p2_a_pressed:
 		_start_countdown()
 
 func _update_countdown(delta: float) -> void:
@@ -352,7 +415,7 @@ func get_stake() -> Dictionary:
 ## Start game with stake information
 func start_game_with_stake(player_index: int, organ_wagered: String, multiplier: float = 1.0) -> void:
 	set_stake(player_index, organ_wagered, multiplier)
-	_start_countdown()
+	_show_pregame_popup()
 
 func force_start() -> void:
-	_start_countdown()
+	_show_pregame_popup()

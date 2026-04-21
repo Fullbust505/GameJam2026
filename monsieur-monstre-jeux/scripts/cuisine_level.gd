@@ -2,10 +2,11 @@ extends Node2D
 
 ## Cuisine/Cutting minigame level controller.
 ## Handles knife-based minigame for kidney/liver/pancreas challenges.
+## ONLY gamepad input - D-Pad for position, A button to cut
 
 # Minigame state
-enum GameState { WAITING, COUNTDOWN, PLAYING, FINISHED }
-var game_state: GameState = GameState.WAITING
+enum GameState { PREGAME, WAITING, COUNTDOWN, PLAYING, FINISHED }
+var game_state: GameState = GameState.PREGAME
 
 # Players (using same P1/P2 scenes as swimming)
 @onready var p1: Node2D = $P1
@@ -15,6 +16,15 @@ var game_state: GameState = GameState.WAITING
 @onready var status_label: Label = $CanvasLayer/ControlPanel/Status if has_node("CanvasLayer/ControlPanel/Status") else null
 @onready var timer_label: Label = $CanvasLayer/ControlPanel/Timer if has_node("CanvasLayer/ControlPanel/Timer") else null
 @onready var countdown_label: Label = $CanvasLayer/CountdownLabel if has_node("CanvasLayer/CountdownLabel") else null
+
+# Pre-game popup references
+@onready var pregame_panel: Panel = $CanvasLayer/PregamePanel if has_node("CanvasLayer/PregamePanel") else null
+@onready var pregame_title: Label = $CanvasLayer/PregamePanel/Title if has_node("CanvasLayer/PregamePanel/Title") else null
+@onready var pregame_goal: Label = $CanvasLayer/PregamePanel/Goal if has_node("CanvasLayer/PregamePanel/Goal") else null
+@onready var pregame_p1_controls: Label = $CanvasLayer/PregamePanel/P1Controls if has_node("CanvasLayer/PregamePanel/P1Controls") else null
+@onready var pregame_p2_controls: Label = $CanvasLayer/PregamePanel/P2Controls if has_node("CanvasLayer/PregamePanel/P2Controls") else null
+@onready var pregame_prompt: Label = $CanvasLayer/PregamePanel/Prompt if has_node("CanvasLayer/PregamePanel/Prompt") else null
+var pregame_timer: float = 5.0
 
 # Game timer
 var game_timer: float = 0.0
@@ -48,14 +58,40 @@ signal minigame_result(player_index: int, success: bool, winner_id: int)
 func _ready() -> void:
 	# Get animations helper
 	_animations = get_node_or_null("/root/Animations")
-	game_state = GameState.WAITING
+	game_state = GameState.PREGAME
 	if countdown_label:
 		countdown_label.visible = false
 	if status_label:
-		status_label.text = "Press SPACE to start"
+		status_label.text = ""
+	
+	_show_pregame_popup()
+
+func _show_pregame_popup() -> void:
+	# Configure pre-game popup content
+	if pregame_panel:
+		pregame_panel.visible = true
+	
+	if pregame_title:
+		pregame_title.text = "CUTTING CHALLENGE"
+	
+	if pregame_goal:
+		pregame_goal.text = "Cut the ingredient!\nMatch the displayed pattern."
+	
+	if pregame_p1_controls:
+		pregame_p1_controls.text = "[D-Pad = Position] [A Button = Cut]"
+	
+	if pregame_p2_controls:
+		pregame_p2_controls.text = "[D-Pad = Position] [A Button = Cut]"
+	
+	if pregame_prompt:
+		pregame_prompt.text = "Press A to Start"
+	
+	pregame_timer = 5.0
 
 func _process(delta: float) -> void:
 	match game_state:
+		GameState.PREGAME:
+			_update_pregame(delta)
 		GameState.WAITING:
 			_update_waiting_state()
 		GameState.COUNTDOWN:
@@ -65,9 +101,39 @@ func _process(delta: float) -> void:
 		GameState.FINISHED:
 			pass
 
+func _update_pregame(delta: float) -> void:
+	# Check for A button press on either gamepad to dismiss
+	var p1_a_pressed = Input.is_joy_button_pressed(0, JOY_BUTTON_A)
+	var p2_a_pressed = Input.is_joy_button_pressed(1, JOY_BUTTON_A)
+	
+	if p1_a_pressed or p2_a_pressed:
+		_dismiss_pregame_popup()
+		return
+	
+	# Auto-dismiss timer
+	pregame_timer -= delta
+	if pregame_timer <= 0:
+		_dismiss_pregame_popup()
+	
+	# Blink the prompt
+	if pregame_prompt:
+		var blink = sin(pregame_timer * 4.0) > 0
+		pregame_prompt.self_modulate = Color(1, 1, 0.5, 1.0 if blink else 0.5)
+
+func _dismiss_pregame_popup() -> void:
+	if pregame_panel:
+		pregame_panel.visible = false
+	
+	game_state = GameState.WAITING
+	if status_label:
+		status_label.text = "Press A to Start"
+
 func _update_waiting_state() -> void:
-	var space_pressed = Input.is_action_just_pressed("ui_accept") or Input.is_key_pressed(KEY_SPACE)
-	if space_pressed:
+	# Use gamepad A button to start (either player)
+	var p1_a_pressed = Input.is_joy_button_pressed(0, JOY_BUTTON_A)
+	var p2_a_pressed = Input.is_joy_button_pressed(1, JOY_BUTTON_A)
+	
+	if p1_a_pressed or p2_a_pressed:
 		_start_countdown()
 
 func _update_countdown(delta: float) -> void:
@@ -80,6 +146,8 @@ func _update_countdown(delta: float) -> void:
 			countdown_label.text = str(seconds_left)
 		else:
 			countdown_label.text = "CUT!"
+			if _animations:
+				_animations.challenge_start_effect()
 			_start_game()
 
 func _start_countdown() -> void:
@@ -107,25 +175,37 @@ func _update_gameplay(delta: float) -> void:
 		if time_left <= 10.0 and _animations:
 			_animations.timer_urgent(timer_label)
 	
-	# Track cutting scores (simplified - actual implementation would track cuts)
+	# Track cutting scores - GAMEPAD ONLY
 	_update_cutting_scores()
 	
 	if game_timer >= duration:
 		_end_game(_determine_winner())
 
 func _update_cutting_scores() -> void:
-	# Simplified scoring - actual implementation would detect cuts
-	# P1 uses keyboard arrows or gamepad 0
-	if Input.is_action_pressed("ui_left") or Input.is_joy_button_pressed(0, JOY_BUTTON_LEFT_SHOULDER):
-		p1_score += 1
-	if Input.is_action_pressed("ui_right") or Input.is_joy_button_pressed(0, JOY_BUTTON_RIGHT_SHOULDER):
-		p1_score += 1
+	# P1 uses D-pad up/down on gamepad 0 (move) and A button to cut
+	var p1_dpad_up = Input.is_joy_button_pressed(0, JOY_BUTTON_DPAD_UP)
+	var p1_dpad_down = Input.is_joy_button_pressed(0, JOY_BUTTON_DPAD_DOWN)
+	var p1_a_pressed = Input.is_joy_button_pressed(0, JOY_BUTTON_A)
 	
-	# P2 uses gamepad 1
-	if Input.is_joy_button_pressed(1, JOY_BUTTON_LEFT_SHOULDER):
+	if p1_dpad_up:
+		p1_score += 1
+	if p1_dpad_down:
+		p1_score += 1
+	# A button for cutting action
+	if p1_a_pressed:
+		p1_score += 2
+	
+	# P2 uses D-pad up/down on gamepad 1 and A button to cut
+	var p2_dpad_up = Input.is_joy_button_pressed(1, JOY_BUTTON_DPAD_UP)
+	var p2_dpad_down = Input.is_joy_button_pressed(1, JOY_BUTTON_DPAD_DOWN)
+	var p2_a_pressed = Input.is_joy_button_pressed(1, JOY_BUTTON_A)
+	
+	if p2_dpad_up:
 		p2_score += 1
-	if Input.is_joy_button_pressed(1, JOY_BUTTON_RIGHT_SHOULDER):
+	if p2_dpad_down:
 		p2_score += 1
+	if p2_a_pressed:
+		p2_score += 2
 
 func _determine_winner() -> int:
 	# Return 0-based: 0 = tie, 1 = player 1 (p1 index 0), 2 = player 2 (p2 index 1)
@@ -165,7 +245,7 @@ func _end_game(winner_id: int) -> void:
 	minigame_ended.emit(winner_id)
 
 func force_start() -> void:
-	_start_countdown()
+	_show_pregame_popup()
 
 ## Set stake information for this minigame session
 func set_stake(player_index: int, organ_wagered: String, multiplier: float = 1.0) -> void:
@@ -182,7 +262,7 @@ func get_stake() -> Dictionary:
 ## Start game with stake information
 func start_game_with_stake(player_index: int, organ_wagered: String, multiplier: float = 1.0) -> void:
 	set_stake(player_index, organ_wagered, multiplier)
-	_start_countdown()
+	_show_pregame_popup()
 
 ## Add score to player (called by cut detection)
 func add_score(player_id: int, points: int) -> void:

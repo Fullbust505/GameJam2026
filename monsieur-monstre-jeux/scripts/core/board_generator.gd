@@ -15,7 +15,8 @@ enum TileType {
 	BONUS,
 	PENALTY,
 	EVENT,
-	START
+	START,
+	END
 }
 
 class Tile:
@@ -46,6 +47,8 @@ class Tile:
 				return "EVENT"
 			TileType.START:
 				return "START"
+			TileType.END:
+				return "END"
 		return "UNKNOWN"
 
 # Tile distribution weights (higher = more common)
@@ -60,6 +63,7 @@ const TILE_WEIGHTS := {
 }
 
 var current_board: Array = []
+var current_map: int = 0
 
 func _ready() -> void:
 	pass
@@ -85,6 +89,65 @@ func generate_board(size: int = 0) -> Array:
 	
 	emit_signal("board_generated", current_board)
 	return current_board
+
+# Generate a linear board (START -> middle tiles -> END)
+func generate_linear_board(size: int = 0) -> Array:
+	current_map += 1
+	if size < MIN_BOARD_SIZE or size > MAX_BOARD_SIZE:
+		size = randi() % (MAX_BOARD_SIZE - MIN_BOARD_SIZE + 1) + MIN_BOARD_SIZE
+
+	current_board.clear()
+
+	# Always start with START tile at position 0
+	current_board.append(Tile.new(TileType.START, 0))
+
+	# Generate middle tiles (positions 1 to size-2)
+	for i in range(1, size - 1):
+		var tile_type_int: int = _select_random_tile_type(i, size)
+		var properties: Dictionary = _generate_tile_properties(tile_type_int)
+		current_board.append(Tile.new(tile_type_int, i, properties))
+
+	# Always end with END tile at final position
+	current_board.append(Tile.new(TileType.END, size - 1))
+
+	# Ensure fair distribution by adjusting (excluding START and END)
+	_adjust_distribution_linear()
+
+	emit_signal("board_generated", current_board)
+	return current_board
+
+# Ensure fair tile distribution for linear board
+func _adjust_distribution_linear() -> void:
+	var counts: Dictionary = {}
+	for tile in current_board:
+		var t: int = tile.tile_type
+		if t != TileType.START and t != TileType.END:
+			counts[t] = counts.get(t, 0) + 1
+
+	# Check for missing tile types
+	var required_types: Array = [
+		TileType.SHOP,
+		TileType.CHALLENGE,
+		TileType.BONUS,
+		TileType.PENALTY
+	]
+
+	for req_type in required_types:
+		if not counts.has(req_type) or counts[req_type] < 2:
+			_add_tile_of_type_linear(req_type)
+
+# Helper to add tile of specific type in linear board
+func _add_tile_of_type_linear(tile_type: int) -> void:
+	if current_board.is_empty():
+		return
+
+	# Find a random position between START (0) and END (last)
+	var max_pos = current_board.size() - 1
+	if max_pos <= 1:
+		return
+	var pos: int = randi() % (max_pos - 1) + 1  # Don't replace START or END
+	var props: Dictionary = _generate_tile_properties(tile_type)
+	current_board[pos] = Tile.new(tile_type, pos, props)
 
 # Select random tile type based on weights
 func _select_random_tile_type(position: int, total_size: int) -> int:

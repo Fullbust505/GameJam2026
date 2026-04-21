@@ -268,9 +268,11 @@ func start_game(num_players: int = 2, board_size: int = 25) -> void:
 	if game_state and game_state.has_method("setup_game"):
 		game_state.setup_game(num_players, board_size)
 	
-	# Generate board
+	# Generate board (linear maze with START and END)
 	var tiles = []
-	if board_generator and board_generator.has_method("generate_board"):
+	if board_generator and board_generator.has_method("generate_linear_board"):
+		tiles = board_generator.generate_linear_board(board_size)
+	elif board_generator and board_generator.has_method("generate_board"):
 		tiles = board_generator.generate_board(board_size)
 	
 	# Setup board display if available
@@ -281,6 +283,8 @@ func start_game(num_players: int = 2, board_size: int = 25) -> void:
 			player_positions.append(0)  # All players start at position 0
 		# Board_display.setup() handles tree timing internally via is_inside_tree checks
 		board_display.setup(tiles, player_positions)
+		if board_display.has_method("setup_cameras"):
+			board_display.setup_cameras()
 	elif board_display:
 		print("Game: board_display.setup() NOT called - board_display exists but no setup method")
 	else:
@@ -355,10 +359,14 @@ func _execute_player_move(spaces: int) -> void:
 	var board_size = 25
 	if game_state.has_method("get_board_size"):
 		board_size = game_state.get_board_size()
-	var new_position = (player.position + spaces) % board_size
-	
-	# Update game state
-	game_state.move_player(spaces)
+
+	# For linear board, cap position at last tile (END)
+	var new_position = player.position + spaces
+	if new_position >= board_size:
+		new_position = board_size - 1  # Stop at END tile, don't wrap
+
+	# Update game state using linear movement (no wrapping)
+	game_state.move_player_linear(spaces)
 	
 	# Animate movement if board display available
 	if board_display and board_display.has_method("update_player_position"):
@@ -387,9 +395,9 @@ func _execute_tile_effect(tile_position: int) -> void:
 	
 	var tile_type_str = tile_event_executor.get_tile_type_string(tile.tile_type)
 	print("Game: Player landed on ", tile_type_str, " tile at position ", tile_position)
-	
+
 	_update_status("Landed on " + tile_type_str + " tile!")
-	
+
 	# Check for END tile - map progression
 	if tile_type_str == "END":
 		_on_reached_end_tile()
@@ -516,16 +524,60 @@ func _end_turn() -> void:
 	
 	# Move to next player
 	game_state.next_player()
-	
+
 	# Check if game should end
-	var max_turns = game_state.MAX_TURNS
-	if game_state.current_turn >= max_turns:
+	if game_state.check_game_end_conditions():
 		_end_game()
 		return
-	
+
 	# Setup next turn
 	_update_status("Player " + str(game_state.current_player_index + 1) + "'s turn - Roll the dice!")
 	_set_phase(GamePhase.ROLL_DICE)
+
+## Handle player reaching END tile - generate new map
+func _on_reached_end_tile() -> void:
+	print("Game: _on_reached_end_tile called")
+	game_state.on_reached_end_tile()
+
+	var maps_completed = game_state.get_maps_completed()
+	var current_map = game_state.get_current_map()
+
+	_update_status("Map " + str(current_map) + " Complete! " + str(maps_completed) + "/" + str(game_state.MAX_MAPS) + " maps done!")
+
+	# Check if all maps completed
+	if maps_completed >= game_state.MAX_MAPS:
+		print("Game: All maps completed! Game over!")
+		_end_game()
+		return
+
+	# Generate new linear board
+	var new_tiles = []
+	var current_board_size = 25
+	if game_state.has_method("get_board_size"):
+		current_board_size = game_state.get_board_size()
+	if board_generator and board_generator.has_method("generate_linear_board"):
+		new_tiles = board_generator.generate_linear_board(current_board_size)
+		print("Game: Generated new linear board with ", new_tiles.size(), " tiles")
+
+	# Reset player positions to START (position 0)
+	for i in range(game_state.players.size()):
+		game_state.players[i].position = 0
+		if board_display:
+			board_display.update_player_position(i, 0)
+
+	# Setup new board display
+	if board_display and board_display.has_method("setup"):
+		var player_positions = []
+		for i in range(game_state.players.size()):
+			player_positions.append(0)
+		board_display.setup(new_tiles, player_positions)
+		if board_display.has_method("setup_cameras"):
+			board_display.setup_cameras()
+
+	# Brief pause then continue
+	await get_tree().create_timer(2.0).timeout
+	_update_status("Map " + str(current_map + 1) + " - Player " + str(game_state.current_player_index + 1) + "'s turn!")
+	_end_turn()
 	
 	# Enable roll button
 	if roll_button:

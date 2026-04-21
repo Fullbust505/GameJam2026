@@ -1,0 +1,202 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/drinking_level.gd" id="1_drinking_level"]
+[ext_resource type="Script" path="res://scripts/drinking_player.gd" id="2_drinking_player"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pregame"]
+bg_color = Color(0.15, 0.05, 0.02, 0.95)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1.0, 0.5, 0.2, 1.0)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="DrinkingLevel" type="Node2D"]
+script = ExtResource("1_drinking_level")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2, 0.1, 0.05, 1)
+
+[node name="P1" type="Node2D" parent="."]
+position = Vector2(200, 300)
+script = ExtResource("2_drinking_player")
+player_id = "p1"
+player_index = 0
+
+[node name="P2" type="Node2D" parent="."]
+position = Vector2(600, 300)
+script = ExtResource("2_drinking_player")
+player_id = "p2"
+player_index = 1
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="P1Label" type="Label" parent="HUD"]
+offset_left = 50.0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 80.0
+text = "Player 1"
+
+[node name="P1AlcoholBar" type="ProgressBar" parent="HUD"]
+offset_left = 50.0
+offset_top = 85.0
+offset_right = 250.0
+offset_bottom = 105.0
+max_value = 100.0
+show_percentage = false
+
+[node name="P1Status" type="Label" parent="HUD"]
+offset_left = 50.0
+offset_top = 110.0
+offset_right = 250.0
+offset_bottom = 140.0
+text = ""
+
+[node name="P2Label" type="Label" parent="HUD"]
+offset_left = 550.0
+offset_top = 50.0
+offset_right = 650.0
+offset_bottom = 80.0
+text = "Player 2"
+
+[node name="P2AlcoholBar" type="ProgressBar" parent="HUD"]
+offset_left = 550.0
+offset_top = 85.0
+offset_right = 750.0
+offset_bottom = 105.0
+max_value = 100.0
+show_percentage = false
+
+[node name="P2Status" type="Label" parent="HUD"]
+offset_left = 550.0
+offset_top = 110.0
+offset_right = 750.0
+offset_bottom = 140.0
+text = ""
+
+[node name="TimerLabel" type="Label" parent="HUD"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -50.0
+offset_top = 20.0
+offset_right = 50.0
+offset_bottom = 60.0
+grow_horizontal = 2
+text = "60"
+horizontal_alignment = 1
+
+[node name="InstructionsLabel" type="Label" parent="HUD"]
+anchors_preset = 7
+anchor_left = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 250.0
+offset_top = 400.0
+offset_right = 550.0
+offset_bottom = 450.0
+grow_horizontal = 1
+grow_vertical = 1
+text = "Press ACTION rapidly to drink!
+P1: A button (gamepad 0)
+P2: A button (gamepad 1)"
+horizontal_alignment = 1
+
+[node name="CountdownLabel" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -50.0
+offset_top = 250.0
+offset_right = 50.0
+offset_bottom = 350.0
+grow_horizontal = 2
+text = "3"
+horizontal_alignment = 1
+visible = false
+
+[node name="PregamePanel" type="Panel" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -180.0
+offset_right = 200.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pregame")
+
+[node name="Title" type="Label" parent="PregamePanel"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 20.0
+offset_right = 180.0
+offset_bottom = 60.0
+grow_horizontal = 2
+text = "DRINKING CONTEST"
+horizontal_alignment = 1
+
+[node name="Goal" type="Label" parent="PregamePanel"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 70.0
+offset_right = 180.0
+offset_bottom = 110.0
+grow_horizontal = 2
+text = "Drink the most without falling into a coma!
+Your liver affects alcohol tolerance."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="P1Controls" type="Label" parent="PregamePanel"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 130.0
+offset_right = 180.0
+offset_bottom = 155.0
+grow_horizontal = 2
+text = "[A Button = Drink (mash fast!)]"
+horizontal_alignment = 1
+
+[node name="P2Controls" type="Label" parent="PregamePanel"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 165.0
+offset_right = 180.0
+offset_bottom = 190.0
+grow_horizontal = 2
+text = "[A Button = Drink (mash fast!)]"
+horizontal_alignment = 1
+
+[node name="Prompt" type="Label" parent="PregamePanel"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 210.0
+offset_right = 180.0
+offset_bottom = 240.0
+grow_horizontal = 2
+text = "Press A to Start"
+horizontal_alignment = 1

@@ -1,6 +1,6 @@
 extends Node
 ## MinigameConnection - Bridge between ChallengeManager/TileEvents and actual minigame scenes
-## Handles organ-to-minigame mapping, stake management, and result reporting to GameState
+## Handles pool-based minigame selection, stake management, and result reporting to GameState
 
 # Reference to GameState for organ transfers
 var _game_state: Node = null
@@ -11,31 +11,58 @@ var _challenge_manager: Node = null
 # Current challenge context
 var _current_challenge: Dictionary = {}
 
-# Minigame scene paths mapped by organ type
-# HEART → apnea (breath holding challenge)
-# LUNGS → swimming (swimming challenge)
-# KIDNEYS → cutting (cuisine/cutting challenge)
-const MINIGAME_SCENES: Dictionary = {
-	"HEART": "res://scenes/apnee_level.tscn",
-	"LUNGS": "res://scenes/nage_level.tscn",
-	"KIDNEYS": "res://scenes/cuisine_level.tscn",
-	# Fallback mappings for related organs
-	"PANCREAS": "res://scenes/cuisine_level.tscn",
-	"LIVER": "res://scenes/cuisine_level.tscn",
-	"EYES": "res://scenes/apnee_level.tscn",
-	"ARMS": "res://scenes/nage_level.tscn",
-	"LEGS": "res://scenes/nage_level.tscn",
-	"BRAIN": "res://scenes/apnea_survival_level.tscn"
-}
+# Pool-based minigame selection system
+# Pool of minigames that randomly depletes and restocks
+var _minigame_pool: Array = []
+var _all_available_minigames: Array = []
+
+## MINIGAME POOL - List of all available minigames (6 total)
+## These are randomly selected, independent of organ type
+const MINIGAME_SCENES: Array = [
+	"res://scenes/cuisine_level.tscn",       # Cutting minigame
+	"res://scenes/nage_level.tscn",          # Swimming minigame
+	"res://scenes/apnea_survival_level.tscn", # Underwater survival minigame
+	"res://scenes/cut_P1.tscn",              # Player 1 cutting minigame
+	"res://scenes/cut_P2.tscn",              # Player 2 cutting minigame
+	"res://scenes/nage_P1.tscn",             # Player 1 swimming minigame (placeholder)
+	"res://scenes/drinking_level.tscn"     # Drinking minigame
+]
 
 # Signals for UI feedback
 signal minigame_started(player_index: int, organ_type: String, minigame_scene: String)
 signal minigame_ended(player_index: int, success: bool, result_data: Dictionary)
 signal challenge_result(player_index: int, success: bool, organ_wagered: String, reward_data: Dictionary)
 signal no_organs_to_wager(player_index: int)
+# Signal emitted when winner needs to choose organ to steal
+signal organ_selection_required(winner_id: int, loser_id: int, available_organs: Array)
 
 func _ready() -> void:
-	pass
+	_initialize_minigame_pool()
+
+## Initialize the minigame pool with all available minigames
+func _initialize_minigame_pool() -> void:
+	_all_available_minigames = MINIGAME_SCENES.duplicate()
+	_restock_pool()
+
+## Get a random minigame from the pool
+## If pool is empty, restock it first
+func _get_random_minigame() -> String:
+	if _minigame_pool.is_empty():
+		_restock_pool()
+	return _minigame_pool.pop_front()
+
+## Restock the pool by shuffling all available minigames
+func _restock_pool() -> void:
+	_minigame_pool = _all_available_minigames.duplicate()
+	_minigame_pool.shuffle()
+
+## Get current pool status (for debugging/UI)
+func get_pool_status() -> Dictionary:
+	return {
+		"pool_size": _minigame_pool.size(),
+		"all_available": _all_available_minigames.size(),
+		"pool": _minigame_pool.duplicate()
+	}
 
 ## Initialize with game state and challenge manager references
 func setup(game_state: Node, challenge_manager: Node = null) -> void:
@@ -66,10 +93,10 @@ func start_minigame(player_index: int, organ_type: String, stake_multiplier: flo
 		emit_signal("no_organs_to_wager", player_index)
 		return false
 	
-	# Get the minigame scene for this organ type
-	var minigame_scene: String = _get_minigame_scene(organ_type)
+	# Get a random minigame from the pool (independent of organ type)
+	var minigame_scene: String = _get_random_minigame()
 	if minigame_scene.is_empty():
-		push_error("MinigameConnection: No minigame scene found for organ: " + organ_type)
+		push_error("MinigameConnection: Minigame pool is empty!")
 		return false
 	
 	_current_challenge["minigame_scene"] = minigame_scene
@@ -79,20 +106,6 @@ func start_minigame(player_index: int, organ_type: String, stake_multiplier: flo
 	
 	# Load and instance the minigame scene
 	return _load_and_start_minigame(minigame_scene)
-
-## Get minigame scene path for organ type
-func _get_minigame_scene(organ_type: String) -> String:
-	# Try exact match first
-	if MINIGAME_SCENES.has(organ_type):
-		return MINIGAME_SCENES[organ_type]
-	
-	# Try case-insensitive match
-	for key in MINIGAME_SCENES.keys():
-		if key.to_upper() == organ_type.to_upper():
-			return MINIGAME_SCENES[key]
-	
-	# Default fallback to apnea for unknown organs
-	return MINIGAME_SCENES.get("HEART", "")
 
 ## Load and start the minigame scene
 func _load_and_start_minigame(scene_path: String) -> bool:
@@ -167,7 +180,7 @@ func _on_minigame_minigame_ended(winner_id: int) -> void:
 func _on_minigame_finished() -> void:
 	_process_minigame_result(null)
 
-## Process the minigame result and transfer organs accordingly
+## Process the minigame result and initiate organ stealing
 func _process_minigame_result(result) -> void:
 	if _current_challenge.is_empty():
 		return
@@ -177,45 +190,57 @@ func _process_minigame_result(result) -> void:
 	var stake_multiplier: float = _current_challenge.get("stake_multiplier", 1.0)
 	var organ_type_int: int = _get_organ_type_int(organ_type)
 	
-	# Determine success based on result
-	var success: bool = _determine_winner(result, player_index)
+	# Determine winner
+	var winner_id: int = _determine_winner_id(result, player_index)
+	var loser_id: int = _get_loser_id(winner_id, player_index)
+	var is_tie: bool = (winner_id == 0)
 	
 	# Clean up minigame instance
 	_cleanup_minigame()
 	
 	# Calculate rewards/penalties
+	var success: bool = (winner_id == player_index + 1)
 	var reward_data: Dictionary = _calculate_reward(success, organ_type_int, stake_multiplier)
 	
 	# Emit result signals
 	emit_signal("minigame_ended", player_index, success, reward_data)
 	
-	# If minigame is finished, we should wait for explicit completion callback
-	# This is called via on_minigame_completed
+	# Store challenge result for organ selection phase
+	_current_challenge["winner_id"] = winner_id
+	_current_challenge["loser_id"] = loser_id
+	_current_challenge["is_tie"] = is_tie
+	_current_challenge["result_data"] = reward_data
 
-## Determine winner from minigame result
-func _determine_winner(result, player_index: int) -> bool:
-	# Handle different result types
+## Determine winner ID from minigame result
+func _determine_winner_id(result, player_index: int) -> int:
 	if result == null:
-		return false  # Tie/no winner = loss for challenger
-
+		return 0  # Tie/no winner
+	
 	if result is bool:
-		# Boolean result: true = player_index wins, false = opponent wins
-		return result
+		return (player_index + 1) if result else 0
 	elif result is int:
-		# winner_id: 0 = tie, 1 = player 1 wins, 2 = player 2 wins
-		if result == 0:
-			return false  # Tie = loss for challenger
-		# Player index is 0-based, winner_id is 1-based
-		return (result - 1) == player_index
+		return result
 	elif result is String:
-		# winner string like "p1", "p2", "tie"
 		if result.to_lower() == "tie":
-			return false
-		# Extract player number from string
+			return 0
 		var player_num: int = result.trim_prefix("p").to_int() if result.begins_with("p") else result.to_int()
-		return player_num == (player_index + 1)
+		return player_num
+	
+	return 0
 
-	return false
+## Get loser ID based on winner
+func _get_loser_id(winner_id: int, challenger_index: int) -> int:
+	if winner_id == 0:
+		return -1  # Tie - no loser
+	
+	# In 2-player game, if winner is player 1, loser is player 2 and vice versa
+	var challenger_id: int = challenger_index + 1
+	if winner_id == challenger_id:
+		# Winner is the challenger - loser is the opponent (player 2 if challenger is 1, player 1 if challenger is 2)
+		return 2 if challenger_id == 1 else 1
+	else:
+		# Winner is the opponent - loser is the challenger
+		return challenger_id
 
 ## Calculate reward based on win/loss
 func _calculate_reward(success: bool, organ_type_int: int, stake_multiplier: float) -> Dictionary:
@@ -225,24 +250,94 @@ func _calculate_reward(success: bool, organ_type_int: int, stake_multiplier: flo
 	}
 	
 	if success:
-		# Win: Transfer organ from pool/bank (or opponent if applicable)
-		# Base reward is 1 organ, multiplied by stake
 		var bonus_organs: int = int(stake_multiplier)
 		reward_data["bonus_organs"] = bonus_organs
 		reward_data["points"] = 10 * stake_multiplier
 		reward_data["message"] = "Challenge Won! +" + str(bonus_organs) + " organ(s)"
 	else:
-		# Loss: Lose the wagered organ
 		reward_data["penalty_type"] = "organ"
 		reward_data["penalty_value"] = organ_type_int
 		reward_data["message"] = "Challenge Lost! Lost wagered organ"
 	
 	return reward_data
 
-## Called when minigame completion is confirmed
+## Called when minigame completion is confirmed - handles organ transfer
+## winner_id: The winning player's ID (1 or 2), 0 for tie
+## loser_id: The losing player's ID (1 or 2), -1 for tie
+func on_minigame_completed(winner_id: int, loser_id: int) -> Dictionary:
+	if not _game_state:
+		return {"success": false, "message": "No GameState reference"}
+	
+	var result_data: Dictionary = {"success": false, "winner_id": winner_id, "loser_id": loser_id}
+	
+	# Handle tie case
+	if winner_id == 0:
+		result_data["message"] = "Challenge Tied! Organs stay with current owners"
+		result_data["organ_stayed"] = true
+		_current_challenge.clear()
+		return result_data
+	
+	# Winner chooses organ to steal from loser
+	var winner_index: int = winner_id - 1
+	var loser_index: int = loser_id - 1
+	
+	# Get organs available for stealing from loser
+	var available_organs: Array = _game_state.get_available_organs_for_stealing(loser_index)
+	
+	if available_organs.is_empty():
+		# Loser has no stealable organs - winner auto-wins
+		result_data["message"] = "Loser has no organs! Winner takes organ from bank"
+		result_data["auto_win"] = true
+		var organ_wagered: String = _current_challenge.get("organ_type", "")
+		var organ_type_int: int = _get_organ_type_int(organ_wagered)
+		_game_state.transfer_organ(-1, winner_index, organ_type_int)
+	else:
+		# Emit signal to request organ selection from winner
+		emit_signal("organ_selection_required", winner_id, loser_id, available_organs)
+		result_data["message"] = "Winner must choose organ to steal"
+		result_data["waiting_for_selection"] = true
+	
+	_current_challenge["pending_winner_choice"] = true
+	return result_data
+
+## Called when winner selects organ to steal
+## winner_id: The winning player's ID (1 or 2)
+## loser_id: The losing player's ID (1 or 2)
+## organ_type_int: The organ type to steal
+func on_organ_selected(winner_id: int, loser_id: int, organ_type_int: int) -> Dictionary:
+	if not _game_state:
+		return {"success": false, "message": "No GameState reference"}
+	
+	var winner_index: int = winner_id - 1
+	var loser_index: int = loser_id - 1
+	
+	# Transfer organ from loser to winner
+	var success: bool = _game_state.transfer_organ(loser_index, winner_index, organ_type_int)
+	
+	var organ_name: String = _get_organ_type_string(organ_type_int)
+	var result_data: Dictionary = {
+		"success": success,
+		"organ_stolen": organ_name,
+		"winner_id": winner_id,
+		"loser_id": loser_id
+	}
+	
+	if success:
+		result_data["message"] = "Winner stole " + organ_name + "!"
+		emit_signal("challenge_result", winner_index, true, organ_name, result_data)
+	else:
+		result_data["message"] = "Failed to steal " + organ_name
+		emit_signal("challenge_result", winner_index, false, organ_name, result_data)
+	
+	# Clear current challenge
+	_current_challenge.clear()
+	
+	return result_data
+
+## Called when minigame completion is confirmed (legacy support)
 ## success: Whether the player won the minigame
 ## organ_wagered: The organ type string that was wagered
-func on_minigame_completed(player_index: int, success: bool, organ_wagered: String) -> Dictionary:
+func on_minigame_completed_legacy(player_index: int, success: bool, organ_wagered: String) -> Dictionary:
 	if not _game_state:
 		return {"success": false, "message": "No GameState reference"}
 	
@@ -250,12 +345,11 @@ func on_minigame_completed(player_index: int, success: bool, organ_wagered: Stri
 	var result_data: Dictionary = {"success": success, "organ_wagered": organ_wagered}
 	
 	if success:
-		# Player won - award organ from bank/pool (no transfer needed since it's a challenge win)
-		# The player wagered and won, so they keep their organ plus get another
+		# Player won - award organ from bank/pool
 		var stake_multiplier: float = _current_challenge.get("stake_multiplier", 1.0) if not _current_challenge.is_empty() else 1.0
 		var bonus_count: int = int(max(1, stake_multiplier))
 		
-		# Transfer organ from "bank" (player_index = -1 means bank/none)
+		# Transfer organ from "bank"
 		_game_state.transfer_organ(-1, player_index, organ_type_int)
 		
 		# Award bonus organs based on multiplier
@@ -270,10 +364,7 @@ func on_minigame_completed(player_index: int, success: bool, organ_wagered: Stri
 		result_data["message"] = "Lost " + organ_wagered + "!"
 		result_data["organ_transferred"] = true
 	
-	# Emit challenge result signal
 	emit_signal("challenge_result", player_index, success, organ_wagered, result_data)
-	
-	# Clear current challenge
 	_current_challenge.clear()
 	
 	return result_data
@@ -281,7 +372,7 @@ func on_minigame_completed(player_index: int, success: bool, organ_wagered: Stri
 ## Handle tie/draw case - organ stays with current owner
 func on_minigame_tied(player_index: int, organ_wagered: String) -> Dictionary:
 	var result_data: Dictionary = {
-		"success": false,  # Tied game - no winner
+		"success": false,
 		"message": "Challenge Tied! " + organ_wagered + " stays with current owner",
 		"organ_stayed": true
 	}
@@ -293,10 +384,8 @@ func on_minigame_tied(player_index: int, organ_wagered: String) -> Dictionary:
 
 ## Handle case where defender has no organs to wager
 func handle_no_defender_organs(challenger_index: int, organ_type: String) -> Dictionary:
-	# If defender can't wager, challenger automatically wins
 	var organ_type_int: int = _get_organ_type_int(organ_type)
 	
-	# Award organ to challenger from bank
 	if _game_state:
 		_game_state.transfer_organ(-1, challenger_index, organ_type_int)
 	
@@ -318,11 +407,9 @@ func _cleanup_minigame() -> void:
 
 ## Convert organ type string to integer
 func _get_organ_type_int(organ_type: String) -> int:
-	# Try GameState OrganType enum first
 	if _game_state and _game_state.has_method("get_organ_type_by_name"):
 		return _game_state.get_organ_type_by_name(organ_type)
 	
-	# Manual mapping based on game_state.gd OrganType enum
 	var organ_map: Dictionary = {
 		"BRAIN": 0,
 		"HEART": 1,
@@ -339,7 +426,6 @@ func _get_organ_type_int(organ_type: String) -> int:
 	if organ_map.has(upper_name):
 		return organ_map[upper_name]
 	
-	# Try reverse lookup
 	for key in organ_map.keys():
 		if key.to_lower() == organ_type.to_lower():
 			return organ_map[key]
@@ -374,7 +460,6 @@ func cancel_challenge() -> void:
 	_current_challenge.clear()
 
 ## Connect to tile_event_executor challenge_requested signal
-## Call this to automatically launch minigames when challenge tiles are landed on
 func connect_to_tile_event_executor(tile_event_executor: Node) -> void:
 	if tile_event_executor.has_signal("challenge_requested"):
 		tile_event_executor.connect("challenge_requested", _on_tile_challenge_requested)
@@ -386,9 +471,9 @@ func _on_tile_challenge_requested(player_index: int, challenge_data: Dictionary)
 	if not organ_type.is_empty():
 		start_minigame(player_index, organ_type, stake_multiplier)
 
-## Get minigame scene path for organ type (public method)
-func get_minigame_for_organ(organ_type: String) -> String:
-	return _get_minigame_scene(organ_type)
+## Get a random minigame scene path (public method for UI preview)
+func get_random_minigame_scene() -> String:
+	return _get_random_minigame()
 
 ## Check if player has organs available for challenge
 func player_can_challenge(player_index: int, organ_type: String) -> bool:

@@ -1,10 +1,36 @@
-[gd_scene load_steps=4 format=3 uid="uid://duj8xj1kbg5w8"]
+[gd_scene load_steps=7 format=3 uid="uid://duj8xj1kbg5w8"]
 
 [ext_resource type="PackedScene" uid="uid://becnsoal6i1ry" path="res://scenes/nage_P1.tscn" id="1_kytv1"]
 [ext_resource type="PackedScene" uid="uid://dyy81owekxuom" path="res://scenes/nage_P2.tscn" id="2_724up"]
 [ext_resource type="Texture2D" uid="uid://bsm4c5yqa6f0v" path="res://sprites/cutting board.jpg" id="3_ng1ri"]
+[ext_resource type="Script" uid="uid://du0bdp7r20408" path="res://scripts/cuisine_level.gd" id="4_cuisine"]
 
-[node name="Node" type="Node"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pregame"]
+bg_color = Color(0.2, 0.15, 0.05, 0.95)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.8, 0.4, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_control_panel"]
+bg_color = Color(0.15, 0.12, 0.08, 0.8)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8, 0.6, 0.3, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="CuisineLevel" type="Node2D"]
+script = ExtResource("4_cuisine")
 
 [node name="P1" parent="." instance=ExtResource("1_kytv1")]
 
@@ -21,3 +47,155 @@ z_index = -3
 position = Vector2(0, 530)
 scale = Vector2(0.531, 0.6)
 texture = ExtResource("3_ng1ri")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="PregamePanel" type="Panel" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -180.0
+offset_right = 200.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pregame")
+
+[node name="Title" type="Label" parent="CanvasLayer/PregamePanel"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 20.0
+offset_right = 180.0
+offset_bottom = 60.0
+grow_horizontal = 2
+text = "CUTTING CHALLENGE"
+horizontal_alignment = 1
+
+[node name="Goal" type="Label" parent="CanvasLayer/PregamePanel"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 70.0
+offset_right = 180.0
+offset_bottom = 110.0
+grow_horizontal = 2
+text = "Cut the ingredient!
+Match the displayed pattern."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="P1Controls" type="Label" parent="CanvasLayer/PregamePanel"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 130.0
+offset_right = 180.0
+offset_bottom = 155.0
+grow_horizontal = 2
+text = "[D-Pad = Position] [A Button = Cut]"
+horizontal_alignment = 1
+
+[node name="P2Controls" type="Label" parent="CanvasLayer/PregamePanel"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 165.0
+offset_right = 180.0
+offset_bottom = 190.0
+grow_horizontal = 2
+text = "[D-Pad = Position] [A Button = Cut]"
+horizontal_alignment = 1
+
+[node name="Prompt" type="Label" parent="CanvasLayer/PregamePanel"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 210.0
+offset_right = 180.0
+offset_bottom = 240.0
+grow_horizontal = 2
+text = "Press A to Start"
+horizontal_alignment = 1
+
+[node name="ControlPanel" type="Panel" parent="CanvasLayer"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 350.0
+offset_bottom = 160.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_control_panel")
+
+[node name="Title" type="Label" parent="CanvasLayer/ControlPanel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 10.0
+offset_right = 150.0
+offset_bottom = 45.0
+grow_horizontal = 2
+text = "CUTTING CHALLENGE"
+horizontal_alignment = 1
+
+[node name="Instructions" type="Label" parent="CanvasLayer/ControlPanel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 45.0
+offset_right = 150.0
+offset_bottom = 75.0
+grow_horizontal = 2
+text = "P1: D-Pad + A | P2: D-Pad + A (gamepad 1)"
+horizontal_alignment = 1
+
+[node name="Status" type="Label" parent="CanvasLayer/ControlPanel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 75.0
+offset_right = 150.0
+offset_bottom = 105.0
+grow_horizontal = 2
+horizontal_alignment = 1
+
+[node name="Timer" type="Label" parent="CanvasLayer/ControlPanel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 105.0
+offset_right = 150.0
+offset_bottom = 135.0
+grow_horizontal = 2
+text = "Time: 60.0"
+horizontal_alignment = 1
+
+[node name="CountdownLabel" type="Label" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -50.0
+offset_right = 100.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "3"
+horizontal_alignment = 1
+vertical_alignment = 1

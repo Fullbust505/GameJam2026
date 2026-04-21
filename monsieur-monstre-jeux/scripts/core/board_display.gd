@@ -14,7 +14,8 @@ const TILE_ICONS: Dictionary = {
 	"BONUS": "res://assets/sprites/heart.png",  # heart for bonus/good
 	"PENALTY": "res://assets/sprites/warning.png",  # warning for penalty
 	"EVENT": "res://assets/sprites/eye.png",  # eye for mystery/event
-	"START": "res://assets/sprites/heart.png"  # heart for start
+	"START": "res://assets/sprites/heart.png",  # heart for start
+	"END": "res://assets/sprites/heart.png"  # flag for end
 }
 
 # Tile colors for visual distinction
@@ -26,7 +27,8 @@ const TILE_COLORS: Dictionary = {
 	"BONUS": Color(0.2, 0.7, 0.3),    # Green
 	"PENALTY": Color(0.8, 0.5, 0.1),   # Orange
 	"EVENT": Color(0.4, 0.2, 0.6),     # Violet
-	"START": Color(0.9, 0.7, 0.1)      # Gold
+	"START": Color(0.9, 0.7, 0.1),     # Gold
+	"END": Color(0.1, 0.9, 0.3)        # Bright green for goal
 }
 
 # Constants
@@ -34,6 +36,8 @@ const TILE_SIZE: Vector2 = Vector2(36, 36)  # Smaller tiles for circular layout
 const PLAYER_TOKEN_SIZE: Vector2 = Vector2(20, 20)
 const BOARD_PADDING: float = 80.0
 const PATH_LINE_WIDTH: float = 3.0
+const TILES_PER_ROW: int = 5  # Grid layout: tiles per row
+const GRID_SPACING: float = 15.0  # Spacing between tiles in grid
 
 # State
 var _board_tiles: Array = []
@@ -46,6 +50,19 @@ var _highlighted_tile_index: int = -1
 var _deferred_tiles: bool = false  # Flag for _create_tiles deferral
 var _deferred_layout: bool = false  # Flag for _layout_board deferral
 var _deferred_path: bool = false  # Flag for _create_path_lines deferral
+
+# Linear vs circular board mode
+var _is_linear_board: bool = false  # true = grid layout, false = circular
+
+# Camera system for split-screen / dynamic camera
+const SPLIT_THRESHOLD: float = 300.0  # pixels apart triggers split
+var _camera_mode: int = 0  # 0 = single, 1 = split
+var _camera_main: Camera2D = null
+var _camera_p1: Camera2D = null
+var _camera_p2: Camera2D = null
+var _viewport_container: SubViewportContainer = null
+var _viewport_p1: SubViewport = null
+var _viewport_p2: SubViewport = null
 
 # Signals
 signal tile_clicked(tile_index: int)
@@ -164,12 +181,18 @@ func _create_tiles() -> void:
 		viewport_size = Vector2(640, 360)
 		print("_create_tiles(): No viewport, using fallback size ", viewport_size)
 	else:
-		viewport_size = vp.get_viewport_rect().size
-		if viewport_size.x < 100 or viewport_size.y < 100:
+		# Handle Window vs Viewport - Window has get_visible_rect(), Viewport has get_viewport_rect()
+		if vp.has_method("get_viewport_rect"):
+			viewport_size = vp.get_viewport_rect().size
+		elif vp.has_method("get_visible_rect"):
+			viewport_size = vp.get_visible_rect().size
+		else:
 			viewport_size = Vector2(640, 360)
-			print("_create_tiles(): Viewport too small, using fallback size ", viewport_size)
-	
+		print("_create_tiles(): Viewport rect = ", viewport_size)
+
 	var center = viewport_size / 2
+	print("_create_tiles(): Tile positions will be centered at ", center)
+	
 	
 	# Calculate radius for circular layout
 	var available_width = viewport_size.x - BOARD_PADDING * 2
@@ -185,20 +208,38 @@ func _create_tiles() -> void:
 	var radius_y = base_radius * 0.7
 	
 	var board_size = _board_tiles.size()
-	
+
+	# Calculate grid layout dimensions - use fewer tiles per row for longer snaking path
+	var tiles_per_row = 4  # Smaller rows = longer snake path
+	if board_size < tiles_per_row:
+		tiles_per_row = board_size
+	var num_rows = ceili(float(board_size) / float(tiles_per_row))
+
+	# Calculate total grid size
+	var total_grid_width = tiles_per_row * (TILE_SIZE.x + GRID_SPACING)
+	var total_grid_height = num_rows * (TILE_SIZE.y + GRID_SPACING)
+
+	# Starting position (top-left of grid, centered)
+	var grid_start_x = center.x - total_grid_width / 2
+	var grid_start_y = center.y - total_grid_height / 2
+
 	for i in range(board_size):
 		var tile = _board_tiles[i]
 		var tile_type_str = _get_tile_type_string(tile.tile_type)
-		
+
 		# Create tile container
 		var tile_container = _create_tile_node(i, tile_type_str)
-		
-		# Calculate position immediately and add to tree right away
-		var angle = (2.0 * PI * i / board_size) - (PI / 2)  # Start from top
-		var x = center.x + cos(angle) * radius_x - TILE_SIZE.x / 2
-		var y = center.y + sin(angle) * radius_y - TILE_SIZE.y / 2
+
+		# Calculate snake-layout position (alternating direction per row)
+		var row = i / tiles_per_row
+		var col = i % tiles_per_row
+		# Snake pattern: odd rows go right-to-left
+		if row % 2 == 1:
+			col = tiles_per_row - 1 - col
+		var x = grid_start_x + col * (TILE_SIZE.x + GRID_SPACING)
+		var y = grid_start_y + row * (TILE_SIZE.y + GRID_SPACING)
 		tile_container.position = Vector2(x, y)
-		
+
 		_tile_nodes.append(tile_container)
 		add_child(tile_container)
 		print("_create_tiles(): Created tile ", i, " type=", tile_type_str, " pos=", Vector2(x, y))
@@ -210,7 +251,7 @@ func _create_tile_node(index: int, tile_type_str: String) -> Control:
 	container.name = "Tile_" + str(index)
 	container.custom_minimum_size = TILE_SIZE
 	container.size = TILE_SIZE  # Explicitly set size
-	container.anchors_preset = Control.PRESET_CENTER
+	container.anchors_preset = Control.PRESET_TOP_LEFT  # Use top-left so position offset works
 	container.z_index = 10  # Above path lines
 	container.visible = true  # Ensure visible
 	
@@ -406,6 +447,7 @@ func _get_player_color(player_index: int) -> Color:
 # Layout tiles in a circular/oval arrangement
 # NOTE: Tiles are now positioned immediately in _create_tiles() - this function only updates path lines and player tokens
 func _layout_board() -> void:
+	print("_layout_board() START")
 	# FIX: Ensure node is in tree before getting viewport
 	if not is_inside_tree():
 		if _deferred_layout:
@@ -419,41 +461,50 @@ func _layout_board() -> void:
 
 	var board_size = _board_tiles.size()
 	if board_size == 0:
+		print("_layout_board(): No tiles yet, returning")
 		_deferred_layout = false
 		return
 
 	# Use viewport size directly since Control size may not be set yet
 	var vp = get_viewport()
-	if not vp or not vp.is_inside_tree():
-		if _deferred_layout:
-			# Already tried once, force execution with fallback
-			print("_layout_board(): Viewport still not ready, forcing with fallback")
-			_deferred_layout = false
-		else:
-			_deferred_layout = true
-			print("_layout_board(): Viewport not ready, deferring...")
-			call_deferred("_layout_board")
+	if not vp:
+		print("_layout_board(): No viewport, deferring...")
+		_deferred_layout = true
+		call_deferred("_layout_board")
+		return
+	if not vp.is_inside_tree():
+		print("_layout_board(): Viewport not in tree, deferring...")
+		_deferred_layout = true
+		call_deferred("_layout_board")
 		return
 
 	_deferred_layout = false  # Viewport is ready, clear the flag
 
-	var viewport_size = vp.get_visible_rect().size
-	if viewport_size.x < 100 or viewport_size.y < 100:
-		viewport_size = Vector2(640, 360)
-		print("_layout_board(): Viewport too small, using fallback size ", viewport_size)
+	# Handle both Window (get_visible_rect) and Viewport (get_viewport_rect)
+	var viewport_size_var: Vector2
+	if vp.has_method("get_viewport_rect"):
+		viewport_size_var = vp.get_viewport_rect().size
+	elif vp.has_method("get_visible_rect"):
+		viewport_size_var = vp.get_visible_rect().size
+	else:
+		viewport_size_var = Vector2(640, 360)
+	print("_layout_board(): viewport_size=", viewport_size_var)
+	if viewport_size_var.x < 100 or viewport_size_var.y < 100:
+		viewport_size_var = Vector2(640, 360)
+		print("_layout_board(): Viewport too small, using fallback size ", viewport_size_var)
 
-	var center = viewport_size / 2
-	var size = viewport_size
+	var board_center = viewport_size_var / 2
+	print("_layout_board(): board_center=", board_center)
 
 	# Adjust for padding
-	var available_width = size.x - BOARD_PADDING * 2
-	var available_height = size.y - BOARD_PADDING * 2
-	
+	var available_width = viewport_size_var.x - BOARD_PADDING * 2
+	var available_height = viewport_size_var.y - BOARD_PADDING * 2
+
 	# Determine radius based on board size - tiles should fit nicely in a circle
 	var base_radius = min(available_width, available_height) / 2 - TILE_SIZE.x
 	var radius_x = base_radius
 	var radius_y = base_radius * 0.7  # Slightly oval
-	
+
 	# BUG FIX #4: Tiles are already positioned by _create_tiles(), just collect their positions
 	var tile_positions: Array = []
 	for i in range(_tile_nodes.size()):
@@ -462,28 +513,46 @@ func _layout_board() -> void:
 			var tile_pos = _tile_nodes[i].position
 			var tile_center = tile_pos + TILE_SIZE / 2
 			tile_positions.append(tile_center)
-	
+
 	# Update path lines to connect tiles in order
 	_update_path_lines(tile_positions)
 	
 	# Position player tokens on their tiles
 	_update_player_token_positions()
-	
-	print("_layout_board() positioned ", tile_positions.size(), " tiles, center=", center, " radius_x=", radius_x)
 
-# Update path line points to connect tiles in order
+	print("_layout_board() positioned ", tile_positions.size(), " tiles, center=", board_center, " radius_x=", radius_x)
+
+# Update path line points to connect tiles in snake order
 func _update_path_lines(tile_positions: Array) -> void:
 	if _path_lines.size() > 0 and tile_positions.size() > 0:
 		var path_line = _path_lines[0]
 		path_line.clear_points()
-		# BUG FIX #6: Use Control.position (local to CanvasLayer) instead of global coordinates
-		# Line2D is a Node2D child of a Node (not CanvasLayer), so it's in the same coordinate space as Control.position
-		for pos in tile_positions:
-			path_line.add_point(pos)
-		# Close the loop back to first tile
-		if tile_positions.size() > 1:
-			path_line.add_point(tile_positions[0])
-		print("_update_path_lines: updated with ", tile_positions.size(), " points")
+
+		var tiles_per_row = 4
+		if tile_positions.size() < tiles_per_row:
+			tiles_per_row = tile_positions.size()
+
+		# Draw path in snake order
+		for i in range(tile_positions.size()):
+			var row = i / tiles_per_row
+			var col = i % tiles_per_row
+
+			# Snake order: odd rows go right-to-left
+			var tile_idx: int
+			if row % 2 == 0:
+				# Even row: left to right
+				tile_idx = row * tiles_per_row + col
+			else:
+				# Odd row: right to left
+				var row_start = row * tiles_per_row
+				var row_end = row_start + tiles_per_row - 1
+				tile_idx = row_end - col
+				tile_idx = clamp(tile_idx, 0, tile_positions.size() - 1)
+
+			if tile_idx < tile_positions.size():
+				path_line.add_point(tile_positions[tile_idx])
+
+		print("_update_path_lines: updated with ", path_line.get_point_count(), " points (snake path)")
 
 # Update player token positions based on current board positions
 func _update_player_token_positions() -> void:
@@ -604,6 +673,7 @@ func _get_tile_type_string(tile_type: int) -> String:
 		5: return "PENALTY"
 		6: return "EVENT"
 		7: return "START"
+		8: return "END"
 	return "UNKNOWN"
 
 # Get tile type string for external use
@@ -674,3 +744,79 @@ func get_player_position(player_index: int) -> int:
 	if player_index >= 0 and player_index < _player_positions.size():
 		return _player_positions[player_index]
 	return -1
+
+# Camera system setup
+func setup_cameras() -> void:
+	if _camera_main != null:
+		return  # Already setup
+
+	# Create main camera that zooms to fit both players
+	_camera_main = Camera2D.new()
+	_camera_main.name = "MainCamera"
+	add_child(_camera_main)
+
+	# Create player-specific cameras (disabled by default)
+	_camera_p1 = Camera2D.new()
+	_camera_p1.name = "CameraP1"
+	_camera_p1.enabled = false
+	add_child(_camera_p1)
+
+	_camera_p2 = Camera2D.new()
+	_camera_p2.name = "CameraP2"
+	_camera_p2.enabled = false
+	add_child(_camera_p2)
+
+	_camera_mode = 0
+	print("Camera system initialized")
+
+func _process(delta: float) -> void:
+	if _camera_main == null or _player_tokens.size() < 2:
+		return
+	_update_camera_mode()
+
+func _update_camera_mode() -> void:
+	var p1_pos = _player_tokens[0].global_position if _player_tokens.size() > 0 else Vector2.ZERO
+	var p2_pos = _player_tokens[1].global_position if _player_tokens.size() > 1 else Vector2.ZERO
+	var distance = p1_pos.distance_to(p2_pos)
+
+	if distance > SPLIT_THRESHOLD:
+		if _camera_mode != 1:
+			_enable_split_screen()
+	else:
+		if _camera_mode != 0:
+			_enable_main_camera()
+
+func _enable_main_camera() -> void:
+	_camera_mode = 0
+	_camera_main.enabled = true
+	_camera_p1.enabled = false
+	_camera_p2.enabled = false
+
+	# Center on midpoint of both players and zoom out to fit
+	if _player_tokens.size() >= 2:
+		var midpoint = (_player_tokens[0].global_position + _player_tokens[1].global_position) / 2
+		_camera_main.global_position = midpoint
+		# Zoom out to fit both players in view
+		var distance = _player_tokens[0].global_position.distance_to(_player_tokens[1].global_position)
+		var zoom_level = clamp(distance / 200.0, 1.0, 2.0)
+		_camera_main.zoom = Vector2(zoom_level, zoom_level)
+
+func _enable_split_screen() -> void:
+	_camera_mode = 1
+	_camera_main.enabled = false
+	_camera_p1.enabled = true
+	_camera_p2.enabled = true
+
+	# Follow each player with respective camera
+	if _player_tokens.size() > 0:
+		_camera_p1.global_position = _player_tokens[0].global_position
+	if _player_tokens.size() > 1:
+		_camera_p2.global_position = _player_tokens[1].global_position
+
+# Get camera mode (0=single, 1=split)
+func get_camera_mode() -> int:
+	return _camera_mode
+
+# Check if board is linear (for END tile detection)
+func is_linear_board() -> bool:
+	return _board_tiles.size() > 0 and _get_tile_type_string(_board_tiles[_board_tiles.size() - 1].tile_type) == "END"

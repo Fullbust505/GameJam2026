@@ -1,9 +1,21 @@
-[gd_scene load_steps=5 format=3 uid="uid://duj8xj1kbg5w8"]
+[gd_scene load_steps=6 format=3 uid="uid://duj8xj1kbg5w8"]
 
 [ext_resource type="PackedScene" uid="uid://becnsoal6i1ry" path="res://scenes/nage_P1.tscn" id="1_kytv1"]
 [ext_resource type="Script" uid="uid://dxybmt306idau" path="res://scripts/nage_level.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://dyy81owekxuom" path="res://scenes/nage_P2.tscn" id="2_724up"]
 [ext_resource type="Texture2D" uid="uid://col0ogy1mpn8i" path="res://sprites/background.png" id="3_xevx2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pregame"]
+bg_color = Color(0.02, 0.15, 0.2, 0.95)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.2, 0.8, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [node name="NageLevel" type="Node2D"]
 script = ExtResource("1_script")
@@ -21,6 +33,82 @@ scale = Vector2(1.5, 1.5)
 texture = ExtResource("3_xevx2")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="PregamePanel" type="Panel" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -180.0
+offset_right = 200.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pregame")
+
+[node name="Title" type="Label" parent="CanvasLayer/PregamePanel"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 20.0
+offset_right = 180.0
+offset_bottom = 60.0
+grow_horizontal = 2
+text = "SWIMMING CHALLENGE"
+horizontal_alignment = 1
+
+[node name="Goal" type="Label" parent="CanvasLayer/PregamePanel"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 70.0
+offset_right = 180.0
+offset_bottom = 110.0
+grow_horizontal = 2
+text = "Race to the finish line!
+Alternate L1/R1 to swim up."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="P1Controls" type="Label" parent="CanvasLayer/PregamePanel"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 130.0
+offset_right = 180.0
+offset_bottom = 155.0
+grow_horizontal = 2
+text = "[L1/R1 = Swim Up (alternate for speed)]"
+horizontal_alignment = 1
+
+[node name="P2Controls" type="Label" parent="CanvasLayer/PregamePanel"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 165.0
+offset_right = 180.0
+offset_bottom = 190.0
+grow_horizontal = 2
+text = "[L1/R1 = Swim Up (alternate for speed)]"
+horizontal_alignment = 1
+
+[node name="Prompt" type="Label" parent="CanvasLayer/PregamePanel"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 210.0
+offset_right = 180.0
+offset_bottom = 240.0
+grow_horizontal = 2
+text = "Press A to Start"
+horizontal_alignment = 1
 
 [node name="ControlPanel" type="Panel" parent="CanvasLayer"]
 offset_left = 10.0
@@ -64,7 +152,6 @@ offset_top = 75.0
 offset_right = 150.0
 offset_bottom = 105.0
 grow_horizontal = 2
-text = "PRESS SPACE TO START"
 horizontal_alignment = 1
 
 [node name="Timer" type="Label" parent="CanvasLayer/ControlPanel"]
