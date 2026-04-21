@@ -21,7 +21,7 @@ func _ready() -> void:
 	timer.wait_time = 4
 	print(number_of_cuts)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if finish_p1 and finish_p2 and not timer.is_stopped() :
 		timer.stop()
 		end_game()
@@ -74,22 +74,16 @@ func end_game():
 		p2_diff+=abs(p2_cuts[j+1]-p2_cuts[j]-perfect_length)
 	
 	if p2_diff < p1_diff:
-		winner = "p2"
+		winner = "1"
 		gamestate["players"]["p2"]["score"]+=1
 		gamestate["players"]["p2"]["money"]+=300
 	else :
+		winner = "0"
 		gamestate["players"]["p1"]["score"]+=1
 		gamestate["players"]["p1"]["money"]+=300
 	
-	print(p1_cuts)
-	print(p2_cuts)
-	print(p1_diff)
-	print(p2_diff)
-	print(winner)
-	print(gamestate)
-	
+	gamestate["last_winner"]=winner
 	write_json(gamestate)
-
 
 func _on_p1_ready() -> void:
 	p1_ready = true
