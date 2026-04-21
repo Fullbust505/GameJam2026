@@ -1,0 +1,323 @@
+[gd_scene load_steps=2]
+
+[ext_resource type="Script" path="res://scripts/core/hud.gd" id="1"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayerContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 0
+
+[node name="PlayerPanel0" type="Panel" parent="PlayerContainer"]
+custom_minimum_size = Vector2(200, 300)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorIndicator" type="ColorRect" parent="PlayerContainer/PlayerPanel0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2, 0.4, 0.8, 0.3)
+
+[node name="VBox" type="VBoxContainer" parent="PlayerContainer/PlayerPanel0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NameLabel" type="Label" parent="PlayerContainer/PlayerPanel0/VBox"]
+layout_mode = 2
+text = "Player 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MoneyLabel" type="Label" parent="PlayerContainer/PlayerPanel0/VBox"]
+layout_mode = 2
+text = "$100"
+horizontal_alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="PlayerContainer/PlayerPanel0/VBox"]
+layout_mode = 2
+text = "Score: 0"
+horizontal_alignment = 1
+
+[node name="OrgansLabel" type="Label" parent="PlayerContainer/PlayerPanel0/VBox"]
+layout_mode = 2
+text = "Organs:"
+horizontal_alignment = 1
+
+[node name="OrgansGrid" type="GridContainer" parent="PlayerContainer/PlayerPanel0/VBox"]
+layout_mode = 2
+columns = 3
+
+[node name="OrganHeart" type="VBoxContainer" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganHeart"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganHeart"]
+layout_mode = 2
+text = "x2"
+horizontal_alignment = 1
+
+[node name="OrganEyes" type="VBoxContainer" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganEyes"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganEyes"]
+layout_mode = 2
+text = "x2"
+horizontal_alignment = 1
+
+[node name="OrganArms" type="VBoxContainer" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganArms"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganArms"]
+layout_mode = 2
+text = "x2"
+horizontal_alignment = 1
+
+[node name="OrganLegs" type="VBoxContainer" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganLegs"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganLegs"]
+layout_mode = 2
+text = "x2"
+horizontal_alignment = 1
+
+[node name="OrganLungs" type="VBoxContainer" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganLungs"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganLungs"]
+layout_mode = 2
+text = "x1"
+horizontal_alignment = 1
+
+[node name="OrganPancreas" type="VBoxContainer" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganPancreas"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganPancreas"]
+layout_mode = 2
+text = "x1"
+horizontal_alignment = 1
+
+[node name="OrganLiver" type="VBoxContainer" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganLiver"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganLiver"]
+layout_mode = 2
+text = "x1"
+horizontal_alignment = 1
+
+[node name="OrganKidneys" type="VBoxContainer" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganKidneys"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganKidneys"]
+layout_mode = 2
+text = "x2"
+horizontal_alignment = 1
+
+[node name="OrganBrain" type="VBoxContainer" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganBrain"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel0/VBox/OrgansGrid/OrganBrain"]
+layout_mode = 2
+text = "x1"
+horizontal_alignment = 1
+
+[node name="PlayerPanel1" type="Panel" parent="PlayerContainer"]
+custom_minimum_size = Vector2(200, 300)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorIndicator" type="ColorRect" parent="PlayerContainer/PlayerPanel1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.8, 0.2, 0.2, 0.3)
+
+[node name="VBox" type="VBoxContainer" parent="PlayerContainer/PlayerPanel1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NameLabel" type="Label" parent="PlayerContainer/PlayerPanel1/VBox"]
+layout_mode = 2
+text = "Player 2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MoneyLabel" type="Label" parent="PlayerContainer/PlayerPanel1/VBox"]
+layout_mode = 2
+text = "$100"
+horizontal_alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="PlayerContainer/PlayerPanel1/VBox"]
+layout_mode = 2
+text = "Score: 0"
+horizontal_alignment = 1
+
+[node name="OrgansLabel" type="Label" parent="PlayerContainer/PlayerPanel1/VBox"]
+layout_mode = 2
+text = "Organs:"
+horizontal_alignment = 1
+
+[node name="OrgansGrid" type="GridContainer" parent="PlayerContainer/PlayerPanel1/VBox"]
+layout_mode = 2
+columns = 3
+
+[node name="OrganHeart" type="VBoxContainer" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganHeart"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganHeart"]
+layout_mode = 2
+text = "x2"
+horizontal_alignment = 1
+
+[node name="OrganEyes" type="VBoxContainer" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganEyes"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganEyes"]
+layout_mode = 2
+text = "x2"
+horizontal_alignment = 1
+
+[node name="OrganArms" type="VBoxContainer" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganArms"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganArms"]
+layout_mode = 2
+text = "x2"
+horizontal_alignment = 1
+
+[node name="OrganLegs" type="VBoxContainer" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganLegs"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganLegs"]
+layout_mode = 2
+text = "x2"
+horizontal_alignment = 1
+
+[node name="OrganLungs" type="VBoxContainer" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganLungs"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganLungs"]
+layout_mode = 2
+text = "x1"
+horizontal_alignment = 1
+
+[node name="OrganPancreas" type="VBoxContainer" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganPancreas"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganPancreas"]
+layout_mode = 2
+text = "x1"
+horizontal_alignment = 1
+
+[node name="OrganLiver" type="VBoxContainer" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganLiver"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganLiver"]
+layout_mode = 2
+text = "x1"
+horizontal_alignment = 1
+
+[node name="OrganKidneys" type="VBoxContainer" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganKidneys"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganKidneys"]
+layout_mode = 2
+text = "x2"
+horizontal_alignment = 1
+
+[node name="OrganBrain" type="VBoxContainer" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid"]
+layout_mode = 2
+
+[node name="Sprite" type="Sprite2D" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganBrain"]
+
+[node name="CountLabel" type="Label" parent="PlayerContainer/PlayerPanel1/VBox/OrgansGrid/OrganBrain"]
+layout_mode = 2
+text = "x1"
+horizontal_alignment = 1

@@ -1,14 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://duj8xj1kbg5w8"]
+[gd_scene load_steps=4 format=3 uid="uid://duj8xj1kbg5w8"]
 
 [ext_resource type="PackedScene" uid="uid://becnsoal6i1ry" path="res://scenes/nage_P1.tscn" id="1_kytv1"]
 [ext_resource type="PackedScene" uid="uid://dyy81owekxuom" path="res://scenes/nage_P2.tscn" id="2_724up"]
 [ext_resource type="Texture2D" uid="uid://cp1xeoun8ih63" path="res://sprites/cutting board.jpg" id="3_ng1ri"]
 
-[node name="Node" type="Node" unique_id=2062969420]
+[node name="Node" type="Node"]
 
-[node name="P1" parent="." unique_id=2103489380 instance=ExtResource("1_kytv1")]
+[node name="P1" parent="." instance=ExtResource("1_kytv1")]
 
-[node name="P2" parent="." unique_id=837561289 instance=ExtResource("2_724up")]
+[node name="P2" parent="." instance=ExtResource("2_724up")]
 position = Vector2(0, 530)
 
 [node name="background1" type="Sprite2D" parent="."]

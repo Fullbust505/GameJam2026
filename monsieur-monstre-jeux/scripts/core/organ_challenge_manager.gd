@@ -28,21 +28,21 @@ func _ready() -> void:
 func start_challenges_for_player(player_id: int, player_data: PlayerData) -> void:
 	var missing_organs = player_data.get_missing_organs()
 	
-	for organ_id in missing_organs:
-		match organ_id:
-			OrganConst.ORGAN_HEART:
+	for organ_name in missing_organs:
+		match organ_name:
+			"heart":
 				_init_heart_challenge(player_id, player_data)
-			OrganConst.ORGAN_LUNGS:
+			"lungs":
 				_init_lungs_challenge(player_id, player_data)
-			OrganConst.ORGAN_EYES:
+			"eyes":
 				_init_eyes_challenge(player_id, player_data)
-			OrganConst.ORGAN_PANCREAS:
+			"pancreas":
 				_init_pancreas_challenge(player_id, player_data)
-			OrganConst.ORGAN_LIVER:
+			"liver":
 				_init_liver_challenge(player_id, player_data)
 
 func _init_heart_challenge(player_id: int, player_data: PlayerData) -> void:
-	var hearts_count = player_data.get_organ_count(OrganConst.ORGAN_HEART)
+	var hearts_count = player_data.get_organ_count("heart")
 	if hearts_count == 0:
 		player_challenges[player_id]["heart"] = {
 			"active": true,
@@ -52,7 +52,7 @@ func _init_heart_challenge(player_id: int, player_data: PlayerData) -> void:
 		}
 
 func _init_lungs_challenge(player_id: int, player_data: PlayerData) -> void:
-	var lungs_count = player_data.get_organ_count(OrganConst.ORGAN_LUNGS)
+	var lungs_count = player_data.get_organ_count("lungs")
 	if lungs_count < 3:
 		player_challenges[player_id]["lungs"] = {
 			"active": true,
@@ -65,7 +65,7 @@ func _init_lungs_challenge(player_id: int, player_data: PlayerData) -> void:
 		}
 
 func _init_eyes_challenge(player_id: int, player_data: PlayerData) -> void:
-	var eyes_count = player_data.get_organ_count(OrganConst.ORGAN_EYES)
+	var eyes_count = player_data.get_organ_count("eyes")
 	if eyes_count == 0:
 		player_challenges[player_id]["eyes"] = {
 			"active": true,
@@ -74,7 +74,7 @@ func _init_eyes_challenge(player_id: int, player_data: PlayerData) -> void:
 		}
 
 func _init_pancreas_challenge(player_id: int, player_data: PlayerData) -> void:
-	var pancreas_count = player_data.get_organ_count(OrganConst.ORGAN_PANCREAS)
+	var pancreas_count = player_data.get_organ_count("pancreas")
 	if pancreas_count == 0:
 		player_challenges[player_id]["pancreas"] = {
 			"active": true,
@@ -86,7 +86,7 @@ func _init_pancreas_challenge(player_id: int, player_data: PlayerData) -> void:
 		}
 
 func _init_liver_challenge(player_id: int, player_data: PlayerData) -> void:
-	var liver_count = player_data.get_organ_count(OrganConst.ORGAN_LIVER)
+	var liver_count = player_data.get_organ_count("liver")
 	if liver_count == 0:
 		player_challenges[player_id]["liver"] = {
 			"active": true,

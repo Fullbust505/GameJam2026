@@ -25,8 +25,8 @@ var game_state: GameState = GameState.WAITING
 @onready var p2_feedback: Label = $CanvasLayer/P2Panel/P2Feedback
 
 # Player data
-var player1_data: PlayerData
-var player2_data: PlayerData
+var player1_data
+var player2_data
 
 # Minigame settings
 @export var duration: float = 60.0  # seconds
@@ -48,7 +48,19 @@ var countdown_timer: float = 0.0
 var p1_finished: bool = false
 var p2_finished: bool = false
 
+# MinigameConnection reference for stake handling
+var minigame_connection: Node = null
+
+# Challenge stake information
+var current_stake: Dictionary = {
+	"organ_wagered": "",
+	"stake_multiplier": 1.0,
+	"player_index": -1
+}
+
 signal minigame_ended(winner_id: int)
+# Signal for reporting result to MinigameConnection
+signal minigame_result(player_index: int, success: bool, winner_id: int)
 
 func _ready() -> void:
 	_setup_ui_references()
@@ -72,18 +84,33 @@ func _setup_ui_references() -> void:
 		status_label.add_theme_color_override("font_color", Color(0, 1, 0.5, 1))
 
 func _initialize_players() -> void:
-	player1_data = PlayerData.new(1)
-	player2_data = PlayerData.new(2)
+	# PlayerData is an autoload singleton - access via get_node to avoid class_name shadowing
+	# For 2-player data, we use the same singleton but copy organs
+	var pd = get_node("/root/PlayerData")
+	player1_data = pd
+	player2_data = pd
 	
-	if p1.has_method("set_player_organs"):
-		p1.set_player_organs(player1_data.organs)
+	# Debug logging to validate node and method resolution
+	print("[NageLevel] _initialize_players: p1=%s, p2=%s" % [p1, p2])
+	print("[NageLevel] player1_data=%s, organs=%s" % [player1_data, player1_data.organs if player1_data else "null"])
 	
-	if p2.has_method("set_player_organs"):
-		p2.set_player_organs(player2_data.organs)
+	if p1 and p1.has_method("set_player_organs"):
+		var organs_copy = player1_data.organs.duplicate() if player1_data and player1_data.has("organs") else {}
+		print("[NageLevel] Calling p1.set_player_organs with: %s" % organs_copy)
+		p1.set_player_organs(organs_copy)
+	else:
+		print("[NageLevel] WARNING: p1 is null or has no set_player_organs method")
 	
-	if p1.has_method("reset_for_new_game"):
+	if p2 and p2.has_method("set_player_organs"):
+		var organs_copy = player2_data.organs.duplicate() if player2_data and player2_data.has("organs") else {}
+		print("[NageLevel] Calling p2.set_player_organs with: %s" % organs_copy)
+		p2.set_player_organs(organs_copy)
+	else:
+		print("[NageLevel] WARNING: p2 is null or has no set_player_organs method")
+	
+	if p1 and p1.has_method("reset_for_new_game"):
 		p1.reset_for_new_game()
-	if p2.has_method("reset_for_new_game"):
+	if p2 and p2.has_method("reset_for_new_game"):
 		p2.reset_for_new_game()
 	
 	p1.position = Vector2(100, level_bottom_y - 100)
@@ -173,8 +200,8 @@ func _update_player(player: Node2D, player_data: PlayerData, player_id: int, del
 	if not player.has_method("is_player_drowned"):
 		return
 	
-	if player_data and player_data.organs and player_data.organs.has_method("process_lungs_challenge"):
-		player_data.organs.process_lungs_challenge(delta)
+	if player_data and player_data.has_method("process_lungs_challenge"):
+		player_data.process_lungs_challenge(delta)
 	
 	var is_underwater = player.position.y > surface_y
 	if player.has_method("set_surface_status"):
@@ -281,8 +308,28 @@ func _end_game(winner_id: int) -> void:
 	countdown_label.text = result_text
 	countdown_label.visible = true
 	
+	# Report result to MinigameConnection
+	emit_signal("minigame_result", current_stake.get("player_index", -1), winner_id > 0, winner_id)
+	
 	await get_tree().create_timer(3.0).timeout
 	minigame_ended.emit(winner_id)
+
+## Set stake information for this minigame session
+func set_stake(player_index: int, organ_wagered: String, multiplier: float = 1.0) -> void:
+	current_stake = {
+		"player_index": player_index,
+		"organ_wagered": organ_wagered,
+		"stake_multiplier": multiplier
+	}
+
+## Get current stake info
+func get_stake() -> Dictionary:
+	return current_stake.duplicate(true)
+
+## Start game with stake information
+func start_game_with_stake(player_index: int, organ_wagered: String, multiplier: float = 1.0) -> void:
+	set_stake(player_index, organ_wagered, multiplier)
+	_start_countdown()
 
 func force_start() -> void:
 	_start_countdown()

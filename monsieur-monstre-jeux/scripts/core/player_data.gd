@@ -3,16 +3,13 @@ extends Node
 
 ## Manages player state including organs, gold, position, and challenge meters.
 
-const OrganConst = preload("res://scripts/core/organ_constants.gd")
-const OrganType = preload("res://scripts/core/organ_type.gd")
-
 signal organs_changed
 signal gold_changed
 signal position_changed
 signal hearts_changed
 
 var player_id: int = 1
-var organs: PlayerOrgans
+var organs: Dictionary = {}
 var gold: int = 100
 var position: int = 0
 var hearts: int = 1
@@ -30,32 +27,75 @@ var is_catching_air: bool = false
 var mash_count: int = 0
 var mash_timer: float = 0.0
 
-func _init(p_id: int = 1):
-	player_id = p_id
-	organs = PlayerOrgans.new()
-	hearts = organs.get_heart_count()
+# Organ constants (matching existing challenge system)
+const ORGAN_HEART := 0
+const ORGAN_LUNGS := 1
+const ORGAN_ARMS := 2
+const ORGAN_LEGS := 3
+const ORGAN_EYES := 4
+const ORGAN_PANCREAS := 5
+const ORGAN_BRAIN := 6
+const ORGAN_LIVER := 7
+const ORGAN_KIDNEYS := 8
 
-func _ready() -> void:
-	organs.organs_changed.connect(_on_organs_changed)
+const ORGAN_NAMES := {
+	"heart": ORGAN_HEART,
+	"lungs": ORGAN_LUNGS,
+	"arms": ORGAN_ARMS,
+	"legs": ORGAN_LEGS,
+	"eyes": ORGAN_EYES,
+	"pancreas": ORGAN_PANCREAS,
+	"brain": ORGAN_BRAIN,
+	"liver": ORGAN_LIVER,
+	"kidneys": ORGAN_KIDNEYS
+}
+
+func _init():
+	_init_organs()
+
+func _init_organs():
+	organs = {
+		"brain": 1,
+		"heart": 1,
+		"lungs": 1,
+		"arms": 2,
+		"legs": 2,
+		"eyes": 2,
+		"pancreas": 1,
+		"liver": 1,
+		"kidneys": 2
+	}
+	_update_hearts()
 
 ## Handles organ change events, updating hearts when heart organ changes.
-func _on_organs_changed(organ_id: int, count: int) -> void:
-	if organ_id == OrganConst.ORGAN_HEART:
-		hearts = count
-		hearts_changed.emit()
+func _on_organs_changed() -> void:
+	_update_hearts()
 	organs_changed.emit()
 
-func get_organ_count(organ_id: int) -> int:
-	return organs.get_organ_count(organ_id)
+func _update_hearts() -> void:
+	var old_hearts = hearts
+	hearts = organs.get("heart", 1)
+	if hearts != old_hearts:
+		hearts_changed.emit()
 
-func add_organ(organ_id: int, count: int = 1) -> bool:
-	return organs.add_organ(organ_id, count)
+func get_organ_count(organ_name: String) -> int:
+	return organs.get(organ_name, 0)
 
-func remove_organ(organ_id: int, count: int = 1) -> bool:
-	return organs.remove_organ(organ_id, count)
+func add_organ(organ_name: String, count: int = 1) -> bool:
+	organs[organ_name] = organs.get(organ_name, 0) + count
+	_on_organs_changed()
+	return true
 
-func has_organ(organ_id: int) -> bool:
-	return organs.has_organ(organ_id)
+func remove_organ(organ_name: String, count: int = 1) -> bool:
+	var current = organs.get(organ_name, 0)
+	if current >= count:
+		organs[organ_name] = current - count
+		_on_organs_changed()
+		return true
+	return false
+
+func has_organ(organ_name: String) -> bool:
+	return organs.get(organ_name, 0) > 0
 
 func add_gold(amount: int) -> void:
 	gold += amount
@@ -77,7 +117,7 @@ func set_position(space_index: int) -> void:
 ## Processes heart challenge for players without hearts.
 ## Drains stamina and prompts for confirmation periodically.
 func process_heart_challenge(delta: float) -> Dictionary:
-	var hearts_count = organs.get_heart_count()
+	var hearts_count = organs.get("heart", 1)
 	var result = {"penalty": 0.0, "stamina_drain": 0.0, "needs_confirmation": false}
 	
 	if hearts_count == 0:
@@ -94,7 +134,7 @@ func process_heart_challenge(delta: float) -> Dictionary:
 
 ## Processes lungs challenge including buoyancy, oxygen capacity, and catch air mechanics.
 func process_lungs_challenge(delta: float) -> Dictionary:
-	var lungs_count = organs.get_organ_count(OrganConst.ORGAN_LUNGS)
+	var lungs_count = organs.get("lungs", 1)
 	var result = {
 		"buoyancy_force": 0.0,
 		"oxygen_capacity": 12.0,
@@ -130,7 +170,7 @@ func process_lungs_challenge(delta: float) -> Dictionary:
 
 ## Processes eyes challenge affecting vision factor and screen distortion.
 func process_eyes_challenge(delta: float) -> Dictionary:
-	var eyes_count = organs.get_organ_count(OrganConst.ORGAN_EYES)
+	var eyes_count = organs.get("eyes", 2)
 	var result = {
 		"vision_factor": 1.0,
 		"needs_audio_cues": false,
@@ -151,16 +191,32 @@ func process_eyes_challenge(delta: float) -> Dictionary:
 	return result
 
 func get_missing_organs() -> Array:
-	return organs.get_missing_organs()
+	var missing = []
+	for organ in organs:
+		if organs[organ] == 0:
+			missing.append(organ)
+	return missing
 
 func get_buoyancy_factor() -> float:
-	return organs.get_lungs_buoyancy_factor()
+	var lungs = organs.get("lungs", 1)
+	match lungs:
+		3: return 1.5
+		2: return 1.0
+		1: return 0.5
+		0: return 0.0
+	return 1.0
 
 func get_oxygen_capacity() -> float:
-	return organs.get_lungs_oxygen_capacity()
+	var lungs = organs.get("lungs", 1)
+	match lungs:
+		3: return 20.0
+		2: return 12.0
+		1: return 7.0
+		0: return 0.0
+	return 12.0
 
 func is_blind() -> bool:
-	return organs.is_blind()
+	return organs.get("eyes", 2) == 0
 
 ## Calculates performance modifier based on missing organs.
 ## Returns multiplier between 0 and 1.
@@ -168,15 +224,15 @@ func get_performance_modifier() -> float:
 	var modifier = 1.0
 	var missing = get_missing_organs()
 	
-	for organ_id in missing:
-		match organ_id:
-			OrganConst.ORGAN_LEGS:
+	for organ_name in missing:
+		match organ_name:
+			"legs":
 				modifier *= 0.5
-			OrganConst.ORGAN_EYES:
+			"eyes":
 				modifier *= 0.4
-			OrganConst.ORGAN_HANDS:
+			"arms":
 				modifier *= 0.6
-			OrganConst.ORGAN_STOMACH:
+			"pancreas":
 				modifier *= 0.5
 	
 	return modifier
@@ -191,3 +247,30 @@ func reset_challenge_meters() -> void:
 	is_catching_air = false
 	mash_count = 0
 	mash_timer = 0.0
+
+# Legacy functions for compatibility with existing challenge system
+func get_player(id: String) -> Dictionary:
+	# Returns organ data in old format for challenge_manager compatibility
+	var result = {
+		"id": id,
+		"score": 0,
+		"money": gold,
+		"organs": {}
+	}
+	for organ_name in organs:
+		result["organs"][organ_name] = organs[organ_name] > 0
+	return result
+
+func get_player_index(id: String) -> int:
+	# Simple mapping for compatibility
+	if id == "p1" or id == "1":
+		return 0
+	return 1
+
+func modify_money(id: String, amount: int) -> void:
+	gold += amount
+	gold_changed.emit()
+
+func modify_score(id: String, points: int) -> void:
+	# Score is tracked separately from gold
+	pass

@@ -8,8 +8,8 @@
 texture = ExtResource("1_7vrkn")
 modulate_color = Color(0.185181, 0.185181, 0.185181, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rhts7"]
-bg_color = Color(0.139141, 0.682279, 0.681964, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu7sn"]
+bg_color = Color(0.106666, 0.565037, 0.565037, 1)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
@@ -26,8 +26,8 @@ corner_radius_bottom_left = 20
 shadow_size = 5
 shadow_offset = Vector2(0, 1.59)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu7sn"]
-bg_color = Color(0.106666, 0.565037, 0.565037, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rhts7"]
+bg_color = Color(0.139141, 0.682279, 0.681964, 1)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
@@ -72,27 +72,27 @@ theme_override_constants/separation = 30
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 30
-theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
 text = "Start game"
 
 [node name="CreditsButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 30
-theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
 text = "Credits"
 
 [node name="ExitButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 30
-theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
 text = "Exit"
 
 [node name="Label" type="Label" parent="."]
