@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cjsh53wy3xjna" path="res://assets/sprites/arm.png" id="4_y6sft"]
 [ext_resource type="Texture2D" uid="uid://1b28wb7byurs" path="res://assets/sprites/heart.png" id="5_m4ofw"]
 [ext_resource type="Texture2D" uid="uid://d26n00kr7q32" path="res://assets/sprites/pancreas.png" id="6_heatd"]
+[ext_resource type="Texture2D" uid="uid://c03no7vg6mwlo" path="res://assets/sprites/teeth.png" id="7_ajxib"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1v8qu"]
 radius = 30.016663
@@ -157,4 +158,20 @@ position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_1v8qu")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Pancreas" unique_id=1257429193]
+libraries/ = SubResource("AnimationLibrary_7mqwv")
+
+[node name="teeth" type="RigidBody2D" parent="." unique_id=999258288]
+position = Vector2(518, 192)
+
+[node name="Sprite2D" type="Sprite2D" parent="teeth" unique_id=1612496005]
+position = Vector2(0, -0.09983158)
+scale = Vector2(1.1920793, 0.8079208)
+texture = ExtResource("7_ajxib")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="teeth" unique_id=667918274]
+visible = false
+position = Vector2(0, -7)
+shape = SubResource("CircleShape2D_1v8qu")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="teeth" unique_id=955448946]
 libraries/ = SubResource("AnimationLibrary_7mqwv")
