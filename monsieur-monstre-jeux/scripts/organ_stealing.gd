@@ -97,6 +97,5 @@ func end_steal(gamestate):
 	end_timer.start()
 	print(gamestate)
 
-
 func _on_ending_timer_timeout() -> void:
 	print("change the game scene fils de pute")

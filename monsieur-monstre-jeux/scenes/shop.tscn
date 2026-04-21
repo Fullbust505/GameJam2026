@@ -82,6 +82,7 @@ texture = ExtResource("1_lx5au")
 
 [node name="Eye" type="RigidBody2D" parent="." unique_id=373467610]
 position = Vector2(132, 68)
+gravity_scale = 0.0
 
 [node name="Sprite2D" type="Sprite2D" parent="Eye" unique_id=1765721712]
 position = Vector2(0, -0.09983158)
@@ -98,6 +99,7 @@ libraries/ = SubResource("AnimationLibrary_7mqwv")
 
 [node name="Legs" type="RigidBody2D" parent="." unique_id=1277914353]
 position = Vector2(326, 60)
+gravity_scale = 0.0
 
 [node name="Sprite2D" type="Sprite2D" parent="Legs" unique_id=943973558]
 position = Vector2(0, -0.09983158)
@@ -114,6 +116,7 @@ libraries/ = SubResource("AnimationLibrary_7mqwv")
 
 [node name="Arm" type="RigidBody2D" parent="." unique_id=1625620732]
 position = Vector2(520, 65)
+gravity_scale = 0.0
 
 [node name="Sprite2D" type="Sprite2D" parent="Arm" unique_id=700709881]
 position = Vector2(0, -0.09983158)
@@ -130,6 +133,7 @@ libraries/ = SubResource("AnimationLibrary_7mqwv")
 
 [node name="Heart" type="RigidBody2D" parent="." unique_id=758378759]
 position = Vector2(127, 195)
+gravity_scale = 0.0
 
 [node name="Sprite2D" type="Sprite2D" parent="Heart" unique_id=783003826]
 position = Vector2(0, -0.09983158)
@@ -146,6 +150,7 @@ libraries/ = SubResource("AnimationLibrary_7mqwv")
 
 [node name="Pancreas" type="RigidBody2D" parent="." unique_id=1419456948]
 position = Vector2(323, 196)
+gravity_scale = 0.0
 
 [node name="Sprite2D" type="Sprite2D" parent="Pancreas" unique_id=1742768797]
 position = Vector2(0, -0.09983158)
@@ -160,18 +165,19 @@ shape = SubResource("CircleShape2D_1v8qu")
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Pancreas" unique_id=1257429193]
 libraries/ = SubResource("AnimationLibrary_7mqwv")
 
-[node name="teeth" type="RigidBody2D" parent="." unique_id=999258288]
+[node name="Teeth" type="RigidBody2D" parent="." unique_id=999258288]
 position = Vector2(518, 192)
+gravity_scale = 0.0
 
-[node name="Sprite2D" type="Sprite2D" parent="teeth" unique_id=1612496005]
+[node name="Sprite2D" type="Sprite2D" parent="Teeth" unique_id=1612496005]
 position = Vector2(0, -0.09983158)
 scale = Vector2(1.1920793, 0.8079208)
 texture = ExtResource("7_ajxib")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="teeth" unique_id=667918274]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Teeth" unique_id=667918274]
 visible = false
 position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_1v8qu")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="teeth" unique_id=955448946]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Teeth" unique_id=955448946]
 libraries/ = SubResource("AnimationLibrary_7mqwv")
