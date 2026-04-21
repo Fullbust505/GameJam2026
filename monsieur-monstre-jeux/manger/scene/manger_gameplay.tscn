@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dcweaxm0ufmxf" path="res://manger/scripts/pea_generation.gd" id="1_vwqqj"]
 [ext_resource type="Resource" uid="uid://qnt6nufc3jw4" path="res://manger/resource/player_1_controls.tres" id="2_ifs1u"]
 [ext_resource type="Texture2D" uid="uid://cf7e62opwjtcf" path="res://sprites/arm_with_spoon.png" id="3_ifs1u"]
+[ext_resource type="Texture2D" uid="uid://xuwk6eii25mf" path="res://sprites/leg_with_spoon.png" id="5_5d185"]
 [ext_resource type="Script" uid="uid://d1noxh1y5uwuw" path="res://manger/scripts/mouth_win_condition.gd" id="5_vx3yk"]
 [ext_resource type="Texture2D" uid="uid://dlfbsmas0fqgc" path="res://sprites/biting.png" id="6_vwqqj"]
 
@@ -13,8 +14,48 @@ load_path = "res://.godot/imported/plate.png-b3180027a86b1f7bdf77b130b632465e.ct
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ifs1u"]
 size = Vector2(71, 24)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5d185"]
+size = Vector2(69, 22)
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_vwqqj"]
 radius = 82.02438
+
+[sub_resource type="Animation" id="Animation_vwqqj"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_5d185"]
+resource_name = "mouth_loop"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.0333333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [1, 0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_83226"]
+_data = {
+&"RESET": SubResource("Animation_vwqqj"),
+&"mouth_loop": SubResource("Animation_5d185")
+}
 
 [node name="MangerGameplay" type="Node2D" unique_id=33711822]
 script = ExtResource("1_vwqqj")
@@ -41,19 +82,33 @@ polygon = PackedVector2Array(65, 80, 128, 105, 154, 126, 210, 141, 288, 141, 375
 collision_layer = 4
 script = ExtResource("1_j6tjd")
 controls = ExtResource("2_ifs1u")
+handler = "foot"
 
-[node name="Sprite2D" type="Sprite2D" parent="Player" unique_id=1623110777]
+[node name="ArmSprite" type="Sprite2D" parent="Player" unique_id=1623110777]
 position = Vector2(-33, 99)
 texture = ExtResource("3_ifs1u")
 
-[node name="SpoonCollision" type="CollisionPolygon2D" parent="Player" unique_id=1504400285]
+[node name="ArmSpoonCollision" type="CollisionPolygon2D" parent="Player" unique_id=1504400285]
 polygon = PackedVector2Array(-41, 48, 4, 48, 22, 47, 35, 48, 41, 48, 46, 52, 47, 59, 53, 62, 59, 69, 67, 80, 69, 86, 75, 90, 86, 95, 103, 101, 118, 106, 135, 113, 153, 117, 180, 118, 196, 114, 202, 111, 200, 117, 189, 121, 173, 123, 157, 123, 138, 119, 115, 113, 103, 107, 81, 99, 68, 107, 51, 112, 33, 118, 13, 121, -6, 117, -24, 113, -38, 104)
 
-[node name="SpoonDetectionArea" type="Area2D" parent="Player" unique_id=61271162]
+[node name="ArmSpoonDetectionArea" type="Area2D" parent="Player" unique_id=61271162]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/SpoonDetectionArea" unique_id=973832026]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/ArmSpoonDetectionArea" unique_id=973832026]
 position = Vector2(167.5, 110)
 shape = SubResource("RectangleShape2D_ifs1u")
+
+[node name="FeetSprite" type="Sprite2D" parent="Player" unique_id=938114673]
+position = Vector2(-7, 74)
+texture = ExtResource("5_5d185")
+
+[node name="FeetSpoonCollision" type="CollisionPolygon2D" parent="Player" unique_id=264052132]
+polygon = PackedVector2Array(-90, 31, -54, 35, -23, 37, 0, 41, 19, 42, 40, 45, 52, 46, 66, 42, 83, 40, 93, 39, 105, 35, 116, 35, 124, 38, 126, 43, 116, 48, 102, 50, 99, 52, 114, 57, 133, 61, 160, 65, 179, 67, 197, 69, 215, 67, 229, 66, 231, 70, 216, 73, 196, 72, 168, 71, 141, 66, 114, 62, 100, 57, 91, 63, 78, 68, 63, 73, 49, 80, 34, 86, 31, 91, 35, 102, 32, 109, 15, 115, -8, 116, -46, 116, -71, 115, -71, 75, -41, 69, -15, 64, 11, 59, 35, 53, 45, 50, -12, 43, -71, 37, -93, 35)
+
+[node name="FootSpoonDetectionArea" type="Area2D" parent="Player" unique_id=1674252337]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/FootSpoonDetectionArea" unique_id=184521431]
+position = Vector2(195, 59)
+shape = SubResource("RectangleShape2D_5d185")
 
 [node name="Mouth" type="Area2D" parent="." unique_id=1837744114 groups=["mouth"]]
 script = ExtResource("5_vx3yk")
@@ -69,6 +124,11 @@ texture = ExtResource("6_vwqqj")
 offset = Vector2(111, 75)
 hframes = 2
 
-[connection signal="body_entered" from="Player/SpoonDetectionArea" to="Player" method="_on_spoon_detection_area_body_entered"]
-[connection signal="body_exited" from="Player/SpoonDetectionArea" to="Player" method="_on_spoon_detection_area_body_exited"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Mouth" unique_id=214744401]
+libraries/ = SubResource("AnimationLibrary_83226")
+
+[connection signal="body_entered" from="Player/ArmSpoonDetectionArea" to="Player" method="_on_spoon_detection_area_body_entered"]
+[connection signal="body_exited" from="Player/ArmSpoonDetectionArea" to="Player" method="_on_spoon_detection_area_body_exited"]
+[connection signal="body_entered" from="Player/FootSpoonDetectionArea" to="Player" method="_on_spoon_detection_area_body_entered"]
+[connection signal="body_exited" from="Player/FootSpoonDetectionArea" to="Player" method="_on_spoon_detection_area_body_exited"]
 [connection signal="body_entered" from="Mouth" to="Mouth" method="_on_body_entered"]
