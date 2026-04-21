@@ -2,8 +2,8 @@ extends CharacterBody2D
 
 @export var controls: Resource = null
 
-@export var speed = 40
-@export var rotation_speed = 1.5
+@export var speed = 100
+@export var rotation_speed = 2
 
 var rotation_direction = 0
 

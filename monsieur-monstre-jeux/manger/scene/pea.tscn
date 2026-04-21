@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://bw8vilp17thx1"]
+
+[ext_resource type="Texture2D" uid="uid://cmrr8a7y6sclw" path="res://sprites/pea.png" id="1_biti7"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_biti7"]
+friction = 0.3
+bounce = 0.3
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hu52d"]
+
+[node name="RigidBody2D" type="RigidBody2D" unique_id=1697870741]
+physics_material_override = SubResource("PhysicsMaterial_biti7")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=330279670]
+texture = ExtResource("1_biti7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=534430135]
+shape = SubResource("CircleShape2D_hu52d")
+debug_color = Color(0.19607843, 0.69803923, 0.5254902, 0.43137255)
