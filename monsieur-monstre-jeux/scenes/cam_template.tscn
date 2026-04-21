@@ -116,6 +116,14 @@ theme_override_font_sizes/font_size = 32
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="ColorRect" type="ColorRect" parent="Label" unique_id=1753334927]
+z_index = -1
+layout_mode = 0
+offset_left = -28.0
+offset_right = 68.0
+offset_bottom = 56.47059
+color = Color(0, 0, 0, 1)
+
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=307835672]
 position = Vector2(321, 179)
 rotation = -3.1415925
