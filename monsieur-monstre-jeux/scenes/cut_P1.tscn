@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://eua0qi6j81g1"]
+
+[ext_resource type="Script" uid="uid://cg20dyumds04u" path="res://scripts/cut_p1.gd" id="1_bcql0"]
+[ext_resource type="Texture2D" uid="uid://c8dij7uooqbew" path="res://sprites/couteau.png" id="1_bhh4c"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bcql0"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_bhh4c")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="P1" type="Node2D" unique_id=113941445]
+script = ExtResource("1_bcql0")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=628626285]
+scale = Vector2(0.167, 0.3)
+sprite_frames = SubResource("SpriteFrames_bcql0")
