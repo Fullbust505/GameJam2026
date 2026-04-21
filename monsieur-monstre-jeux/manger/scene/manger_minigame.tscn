@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dqqbu16kalk0l"]
 
-[ext_resource type="Script" uid="uid://dcweaxm0ufmxf" path="res://manger/scripts/manger_minigame.gd" id="1_3ydf1"]
+[ext_resource type="Script" uid="uid://dcweaxm0ufmxf" path="res://manger/scripts/pea_generation.gd" id="1_3ydf1"]
 [ext_resource type="PackedScene" uid="uid://b5efdpoinpvv3" path="res://manger/scene/manger_gameplay.tscn" id="2_5jgie"]
 
 [node name="MangerMinigame" type="Node2D" unique_id=1211804741]

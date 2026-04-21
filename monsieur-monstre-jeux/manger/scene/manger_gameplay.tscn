@@ -1,18 +1,23 @@
 [gd_scene format=3 uid="uid://b5efdpoinpvv3"]
 
 [ext_resource type="Script" uid="uid://b816vut22roj" path="res://manger/scripts/spoon_mechanic.gd" id="1_j6tjd"]
-[ext_resource type="Script" uid="uid://bpnr6bhg0o5iv" path="res://manger/scene/manger_gameplay.gd" id="1_vx3yk"]
+[ext_resource type="Script" uid="uid://dcweaxm0ufmxf" path="res://manger/scripts/pea_generation.gd" id="1_vwqqj"]
 [ext_resource type="Resource" uid="uid://qnt6nufc3jw4" path="res://manger/resource/player_1_controls.tres" id="2_ifs1u"]
 [ext_resource type="Texture2D" uid="uid://cf7e62opwjtcf" path="res://sprites/arm_with_spoon.png" id="3_ifs1u"]
+[ext_resource type="Script" uid="uid://d1noxh1y5uwuw" path="res://manger/scripts/mouth_win_condition.gd" id="5_vx3yk"]
+[ext_resource type="Texture2D" uid="uid://dlfbsmas0fqgc" path="res://sprites/biting.png" id="6_vwqqj"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ifs1u"]
 load_path = "res://.godot/imported/plate.png-b3180027a86b1f7bdf77b130b632465e.ctex"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ifs1u"]
-size = Vector2(84.25, 27.75)
+size = Vector2(71, 24)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vwqqj"]
+radius = 82.02438
 
 [node name="MangerGameplay" type="Node2D" unique_id=33711822]
-script = ExtResource("1_vx3yk")
+script = ExtResource("1_vwqqj")
 
 [node name="Background" type="ColorRect" parent="." unique_id=1694355056]
 offset_left = -82.0
@@ -47,8 +52,23 @@ polygon = PackedVector2Array(-41, 48, 4, 48, 22, 47, 35, 48, 41, 48, 46, 52, 47,
 [node name="SpoonDetectionArea" type="Area2D" parent="Player" unique_id=61271162]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player/SpoonDetectionArea" unique_id=973832026]
-position = Vector2(160.875, 108.125)
+position = Vector2(167.5, 110)
 shape = SubResource("RectangleShape2D_ifs1u")
+
+[node name="Mouth" type="Area2D" parent="." unique_id=1837744114 groups=["mouth"]]
+script = ExtResource("5_vx3yk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Mouth" unique_id=1799238471 groups=["mouth"]]
+position = Vector2(600, 40)
+shape = SubResource("CircleShape2D_vwqqj")
+debug_color = Color(0.922227, 0.19060579, 0.5143862, 0.41960785)
+
+[node name="Sprite2D" type="Sprite2D" parent="Mouth" unique_id=738243722]
+position = Vector2(418, -1)
+texture = ExtResource("6_vwqqj")
+offset = Vector2(111, 75)
+hframes = 2
 
 [connection signal="body_entered" from="Player/SpoonDetectionArea" to="Player" method="_on_spoon_detection_area_body_entered"]
 [connection signal="body_exited" from="Player/SpoonDetectionArea" to="Player" method="_on_spoon_detection_area_body_exited"]
+[connection signal="body_entered" from="Mouth" to="Mouth" method="_on_body_entered"]

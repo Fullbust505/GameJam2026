@@ -1,6 +1,6 @@
-extends RigidBody2D
+extends Area2D
 
-var in_spoon = false
+var points = 0;
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -10,3 +10,9 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
+
+
+func _on_body_entered(body: Node2D) -> void:
+	if body.is_in_group("pea"):
+		points += 1
+		body.queue_free()
