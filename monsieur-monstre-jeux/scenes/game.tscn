@@ -11,17 +11,24 @@
 script = ExtResource("1_uwrxv")
 
 # Board Display - bottom layer (z_index = 0)
-[node name="BoardDisplay" parent="." instance=ExtResource("2_board")]
+[node name="BoardDisplayLayer" type="CanvasLayer" parent="."]
+layer = 0
 z_index = 0
 
-# HUD - middle layer (z_index = 1)
-[node name="HUD" parent="." instance=ExtResource("3_hud")]
+[node name="BoardDisplay" parent="BoardDisplayLayer" instance=ExtResource("2_board")]
+
+[node name="HUDLayer" type="CanvasLayer" parent="."]
+layer = 1
 z_index = 1
 
-# Shop - top layer (z_index = 2, starts hidden)
-[node name="Shop" parent="." instance=ExtResource("4_shop")]
-visible = false
+[node name="HUD" parent="HUDLayer" instance=ExtResource("3_hud")]
+
+[node name="ShopLayer" type="CanvasLayer" parent="."]
+layer = 2
 z_index = 2
+
+[node name="Shop" parent="ShopLayer" instance=ExtResource("4_shop")]
+visible = false
 
 # UI Layer for roll button and status (above board but below shop)
 [node name="UI" type="CanvasLayer" parent="."]

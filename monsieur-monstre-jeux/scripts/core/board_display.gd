@@ -47,15 +47,8 @@ signal tile_hovered(tile_index: int)
 
 # Called when the node enters the scene tree
 func _ready() -> void:
-	# Anchor this control to fill parent for proper stretch mode scaling
-	anchor_left = 0
-	anchor_right = 1
-	anchor_top = 0
-	anchor_bottom = 1
-	offset_left = 0
-	offset_right = 0
-	offset_top = 0
-	offset_bottom = 0
+	# Use PRESET_FULL_RECT to set anchors AND offsets to fill parent in one call
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	
 	# Get animations helper
 	_animations = get_node_or_null("/root/Animations")

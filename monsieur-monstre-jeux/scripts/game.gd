@@ -103,9 +103,19 @@ func _initialize_systems() -> void:
 			print("Game: Created MinigameConnection")
 	
 	# Board Display - try to find in scene tree first, then fallback to manual instantiation
-	board_display = get_node_or_null("../BoardDisplay")
+	# Note: BoardDisplay is now under BoardDisplayLayer (CanvasLayer), so use correct path
+	board_display = get_node_or_null("../BoardDisplayLayer/BoardDisplay")
 	if not board_display:
-		board_display = get_node_or_null("/root/Game/BoardDisplay")
+		board_display = get_node_or_null("/root/Game/BoardDisplayLayer/BoardDisplay")
+	if not board_display:
+		board_display = get_node_or_null("/root/Game/BoardDisplay")  # Fallback for old path
+	
+	# Debug: Check parent type of board_display
+	if board_display:
+		var bd_parent = board_display.get_parent()
+		print("DEBUG: BoardDisplay parent type: ", bd_parent.get_class() if bd_parent else "null")
+		if bd_parent and not bd_parent is CanvasLayer and not bd_parent is Control:
+			print("DEBUG WARNING: BoardDisplay is NOT under CanvasLayer or Control! This causes positioning issues.")
 	
 	# If not found, try to load the scene and instance manually
 	if not board_display:
@@ -113,12 +123,28 @@ func _initialize_systems() -> void:
 		if board_scene:
 			board_display = board_scene.instantiate()
 			if board_display:
-				get_parent().add_child.call_deferred(board_display)
+				# Create a CanvasLayer to properly parent the Control node
+				var canvas_layer = CanvasLayer.new()
+				canvas_layer.name = "BoardDisplayLayer"
+				canvas_layer.layer = 0
+				get_parent().add_child(canvas_layer)
+				canvas_layer.add_child(board_display)
+				print("Game: Instantiated BoardDisplay under new CanvasLayer")
 	
 	# HUD - try to find in scene tree first, then fallback to manual instantiation
-	hud = get_node_or_null("../HUD")
+	# Note: HUD is now under HUDLayer (CanvasLayer), so use correct path
+	hud = get_node_or_null("../HUDLayer/HUD")
 	if not hud:
-		hud = get_node_or_null("/root/Game/HUD")
+		hud = get_node_or_null("/root/Game/HUDLayer/HUD")
+	if not hud:
+		hud = get_node_or_null("/root/Game/HUD")  # Fallback for old path
+	
+	# Debug: Check parent type of hud
+	if hud:
+		var hud_parent = hud.get_parent()
+		print("DEBUG: HUD parent type: ", hud_parent.get_class() if hud_parent else "null")
+		if hud_parent and not hud_parent is CanvasLayer and not hud_parent is Control:
+			print("DEBUG WARNING: HUD is NOT under CanvasLayer or Control! This causes positioning issues.")
 	
 	# If not found, try to load the scene and instance manually
 	if not hud:
@@ -126,12 +152,28 @@ func _initialize_systems() -> void:
 		if hud_scene:
 			hud = hud_scene.instantiate()
 			if hud:
-				get_parent().add_child.call_deferred(hud)
+				# Create a CanvasLayer to properly parent the Control node
+				var canvas_layer = CanvasLayer.new()
+				canvas_layer.name = "HUDLayer"
+				canvas_layer.layer = 1
+				get_parent().add_child(canvas_layer)
+				canvas_layer.add_child(hud)
+				print("Game: Instantiated HUD under new CanvasLayer")
 	
 	# Shop - try to find in scene tree first, then fallback to manual instantiation
-	shop = get_node_or_null("../Shop")
+	# Note: Shop is now under ShopLayer (CanvasLayer), so use correct path
+	shop = get_node_or_null("../ShopLayer/Shop")
 	if not shop:
-		shop = get_node_or_null("/root/Game/Shop")
+		shop = get_node_or_null("/root/Game/ShopLayer/Shop")
+	if not shop:
+		shop = get_node_or_null("/root/Game/Shop")  # Fallback for old path
+	
+	# Debug: Check parent type of shop
+	if shop:
+		var shop_parent = shop.get_parent()
+		print("DEBUG: Shop parent type: ", shop_parent.get_class() if shop_parent else "null")
+		if shop_parent and not shop_parent is CanvasLayer and not shop_parent is Control:
+			print("DEBUG WARNING: Shop is NOT under CanvasLayer or Control! This causes positioning issues.")
 	
 	# If not found, try to load the scene and instance manually
 	if not shop:
@@ -139,8 +181,14 @@ func _initialize_systems() -> void:
 		if shop_scene:
 			shop = shop_scene.instantiate()
 			if shop:
-				get_parent().add_child.call_deferred(shop)
+				# Create a CanvasLayer to properly parent the Control node
+				var canvas_layer = CanvasLayer.new()
+				canvas_layer.name = "ShopLayer"
+				canvas_layer.layer = 2
+				get_parent().add_child(canvas_layer)
+				canvas_layer.add_child(shop)
 				shop.visible = false
+				print("Game: Instantiated Shop under new CanvasLayer")
 	
 	# Setup references
 	if tile_event_executor and game_state:
@@ -150,6 +198,7 @@ func _initialize_systems() -> void:
 
 func _setup_ui() -> void:
 	# Get UI references from scene if they exist (UI is under CanvasLayer)
+	# Note: Path changed to include UI layer
 	roll_button = get_node_or_null("../UI/Control/VBox/CenterContainer/RollButton")
 	status_label = get_node_or_null("../UI/Control/VBox/StatusLabel")
 	
