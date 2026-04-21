@@ -1,0 +1,222 @@
+class_name PlayerOrgans
+extends RefCounted
+
+# Preload the organ constants for cross-script compatibility
+const OrganConst = preload("res://scripts/core/organ_constants.gd")
+
+# Dictionary-based organ inventory
+# Key: organ ID (int using OrganConst constants)
+# Value: int (count for stackable organs, 0/1 for boolean)
+var organs: Dictionary = {}
+
+signal organs_changed(organ_id: int, new_count: int)
+signal organ_added(organ_id: int, count: int)
+signal organ_removed(organ_id: int, count: int)
+
+func _init() -> void:
+	_init_default_organs()
+
+func _init_default_organs() -> void:
+	# Initialize all organs to default/max for testing
+	# Vital organs
+	organs[OrganConst.ORGAN_HEART] = 2  # Start with 2 hearts
+	organs[OrganConst.ORGAN_BRAIN] = 1   # Always have brain (protected)
+	
+	# Stackable organs
+	organs[OrganConst.ORGAN_LUNGS] = 2
+	organs[OrganConst.ORGAN_EYES] = 2
+	organs[OrganConst.ORGAN_LEGS] = 2
+	organs[OrganConst.ORGAN_HANDS] = 2
+	organs[OrganConst.ORGAN_LIVER] = 2
+	organs[OrganConst.ORGAN_KIDNEYS] = 2
+	organs[OrganConst.ORGAN_ADRENAL] = 2
+	organs[OrganConst.ORGAN_INTESTINE] = 2
+	
+	# Single organs
+	organs[OrganConst.ORGAN_STOMACH] = 1
+	organs[OrganConst.ORGAN_PANCREAS] = 1
+	organs[OrganConst.ORGAN_SPLEEN] = 1
+	organs[OrganConst.ORGAN_GALLBLADDER] = 1
+	organs[OrganConst.ORGAN_THYROID] = 1
+	organs[OrganConst.ORGAN_SPINAL] = 1
+	organs[OrganConst.ORGAN_SKIN] = 1
+
+func get_organ_count(organ_id: int) -> int:
+	return organs.get(organ_id, 0)
+
+func set_organ_count(organ_id: int, count: int) -> void:
+	var organ_data = OrganConst.get_organ_data(organ_id)
+	var max_count = organ_data.max_count
+	var min_count = 0 if not organ_data.is_protected else 1
+	
+	count = clamp(count, min_count, max_count)
+	organs[organ_id] = count
+	organs_changed.emit(organ_id, count)
+
+func add_organ(organ_id: int, count: int = 1) -> bool:
+	var current = get_organ_count(organ_id)
+	var organ_data = OrganConst.get_organ_data(organ_id)
+	
+	if current >= organ_data.max_count:
+		return false
+	
+	var new_count = mini(current + count, organ_data.max_count)
+	organs[organ_id] = new_count
+	organ_added.emit(organ_id, new_count)
+	organs_changed.emit(organ_id, new_count)
+	return true
+
+func remove_organ(organ_id: int, count: int = 1) -> bool:
+	var organ_data = OrganConst.get_organ_data(organ_id)
+	
+	# Cannot remove vital organs (except Heart which has special handling)
+	if organ_data.is_vital and organ_id != OrganConst.ORGAN_HEART:
+		return false
+	
+	# Cannot remove protected organs (Brain)
+	if organ_data.is_protected:
+		return false
+	
+	var current = get_organ_count(organ_id)
+	if current <= 0:
+		return false
+	
+	var new_count = maxi(current - count, 0)
+	organs[organ_id] = new_count
+	organ_removed.emit(organ_id, new_count)
+	organs_changed.emit(organ_id, new_count)
+	return true
+
+func has_organ(organ_id: int) -> bool:
+	return get_organ_count(organ_id) > 0
+
+func has_any_organ(organ_ids: Array) -> bool:
+	for organ_id in organ_ids:
+		if has_organ(organ_id):
+			return true
+	return false
+
+func get_missing_organs() -> Array:
+	var missing: Array = []
+	for organ_id in organs.keys():
+		if organs[organ_id] <= 0:
+			missing.append(organ_id)
+	return missing
+
+func get_stackable_organs() -> Array:
+	var stackable: Array = []
+	for organ_id in organs.keys():
+		var organ_data = OrganConst.get_organ_data(organ_id)
+		if organ_data.max_count > 1:
+			stackable.append(organ_id)
+	return stackable
+
+func get_all_organ_ids() -> Array:
+	return organs.keys()
+
+func get_organ_info(organ_id: int) -> Dictionary:
+	var count = get_organ_count(organ_id)
+	var organ_data = OrganConst.get_organ_data(organ_id)
+	return {
+		"id": organ_id,
+		"display_name": organ_data.display_name,
+		"count": count,
+		"max_count": organ_data.max_count,
+		"description": organ_data.description,
+		"buff_description": organ_data.buff_description,
+		"side_effect_description": organ_data.side_effect_description,
+		"is_vital": organ_data.is_vital,
+		"is_protected": organ_data.is_protected
+	}
+
+# Lungs-specific helpers
+func get_lungs_buoyancy_factor() -> float:
+	var count = get_organ_count(OrganConst.ORGAN_LUNGS)
+	match count:
+		3: return 100.0  # Very floaty
+		2: return 0.0    # Neutral
+		1: return -80.0  # Sinks
+		0: return -150.0 # Sinks fast
+	return 0.0
+
+func get_lungs_oxygen_capacity() -> float:
+	var count = get_organ_count(OrganConst.ORGAN_LUNGS)
+	match count:
+		3: return 20.0  # 20 seconds
+		2: return 12.0  # 12 seconds
+		1: return 7.0   # 7 seconds
+		0: return 0.0   # No capacity - immediate sink
+	return 12.0
+
+# Heart-specific helpers
+func get_heart_count() -> int:
+	return get_organ_count(OrganConst.ORGAN_HEART)
+
+func has_second_heart() -> bool:
+	return get_heart_count() >= 2
+
+# Eyes-specific helpers
+func is_blind() -> bool:
+	return get_organ_count(OrganConst.ORGAN_EYES) == 0
+
+func has_partial_vision() -> bool:
+	return get_organ_count(OrganConst.ORGAN_EYES) == 1
+
+# Liver-specific helpers
+func can_drink_indefinitely() -> bool:
+	return get_organ_count(OrganConst.ORGAN_LIVER) >= 2
+
+func get_alcohol_resistance() -> float:
+	var count = get_organ_count(OrganConst.ORGAN_LIVER)
+	match count:
+		2: return 0.5   # -50% intoxication
+		1: return 1.0   # Normal
+		0: return 2.0   # Double intoxication
+	return 1.0
+
+# Large Intestine (Fart boost) helpers
+func get_fart_boost_speed() -> float:
+	var count = get_organ_count(OrganConst.ORGAN_INTESTINE)
+	match count:
+		2: return 0.20  # 20% speed boost
+		1: return 0.10  # 10% speed boost
+		0: return 0.0   # No boost
+	return 0.0
+
+func get_fart_boost_duration() -> float:
+	var count = get_organ_count(OrganConst.ORGAN_INTESTINE)
+	match count:
+		2: return 3.0
+		1: return 2.0
+		0: return 0.0
+	return 0.0
+
+func get_fart_cooldown() -> float:
+	var count = get_organ_count(OrganConst.ORGAN_INTESTINE)
+	match count:
+		2: return 10.0
+		1: return 20.0
+		0: return 999.0  # Effectively no boost
+	return 999.0
+
+func get_dictionary() -> Dictionary:
+	return organs.duplicate(true)
+
+func set_from_dictionary(data: Dictionary) -> void:
+	for key in data.keys():
+		if organs.has(key):
+			organs[key] = data[key]
+
+# For Breath Hold Race minigame - get buoyancy effect
+func get_buoyancy_velocity() -> float:
+	return get_lungs_buoyancy_factor()
+
+# Get oxygen drain rate based on lungs
+func get_oxygen_drain_rate() -> float:
+	var count = get_organ_count(OrganConst.ORGAN_LUNGS)
+	match count:
+		3: return 2.0
+		2: return 3.0
+		1: return 5.0
+		0: return 8.0
+	return 3.0
