@@ -5,6 +5,9 @@ extends Node
 
 var challenge_manager: Node
 
+# Animation helper
+var _animations: Node = null
+
 # MinigameConnection reference for stake handling
 var minigame_connection: Node = null
 
@@ -66,6 +69,9 @@ signal challenge_warning(player_id: String, organ: String, intensity: float)
 signal minigame_result(player_index: int, success: bool, winner: String)
 
 func _ready() -> void:
+	# Get animations helper
+	_animations = get_node_or_null("/root/Animations")
+	
 	challenge_manager = Node.new()
 	challenge_manager.set_script(preload("res://scripts/core/challenge_manager.gd"))
 	challenge_manager.name = "ChallengeManager"
@@ -103,6 +109,8 @@ func _process(delta: float) -> void:
 func start_game() -> void:
 	game_active = true
 	game_timer = 0.0
+	if _animations:
+		_animations.challenge_start_effect()
 
 ## Start game with stake information
 func start_game_with_stake(player_index: int, organ_wagered: String, multiplier: float = 1.0) -> void:
@@ -114,6 +122,13 @@ func end_game(winner: String) -> void:
 	game_ended.emit(winner)
 	# Report result to MinigameConnection
 	emit_signal("minigame_result", current_stake.get("player_index", -1), winner != "tie", winner)
+	
+	# Apply result animation
+	if _animations:
+		if winner != "tie":
+			_animations.win_text(null, 1.5)
+		else:
+			_animations.lose_text(null, 1.5)
 
 ## Set stake information for this minigame session
 func set_stake(player_index: int, organ_wagered: String, multiplier: float = 1.0) -> void:

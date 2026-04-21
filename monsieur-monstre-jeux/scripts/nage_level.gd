@@ -24,6 +24,9 @@ var game_state: GameState = GameState.WAITING
 @onready var p1_feedback: Label = $CanvasLayer/P1Panel/P1Feedback
 @onready var p2_feedback: Label = $CanvasLayer/P2Panel/P2Feedback
 
+# Animation helper
+var _animations: Node = null
+
 # Player data
 var player1_data
 var player2_data
@@ -63,6 +66,9 @@ signal minigame_ended(winner_id: int)
 signal minigame_result(player_index: int, success: bool, winner_id: int)
 
 func _ready() -> void:
+	# Get animations helper
+	_animations = get_node_or_null("/root/Animations")
+	
 	_setup_ui_references()
 	_initialize_players()
 	_setup_level_visuals()
@@ -173,6 +179,8 @@ func _update_countdown(delta: float) -> void:
 		countdown_label.text = str(seconds_left)
 	else:
 		countdown_label.text = "SWIM!"
+		if _animations:
+			_animations.challenge_start_effect()
 		_start_game()
 
 func _start_game() -> void:
@@ -186,6 +194,10 @@ func _update_gameplay(delta: float) -> void:
 	
 	var time_left = max(0, duration - game_timer)
 	timer_label.text = "Time: %.1f" % time_left
+	
+	# Timer urgency animation when low
+	if time_left <= 10.0 and _animations:
+		_animations.timer_urgent(timer_label)
 	
 	_update_player(p1, player1_data, 1, delta)
 	_update_player(p2, player2_data, 2, delta)
@@ -297,16 +309,27 @@ func _end_game(winner_id: int) -> void:
 	game_state = GameState.FINISHED
 	
 	var result_text = ""
+	var result_color = Color.WHITE
 	if winner_id > 0:
 		result_text = "Player %d Wins!" % winner_id
+		result_color = Color(0.2, 0.8, 0.2)  # Green for win
 	elif winner_id == 0:
 		result_text = "It's a Tie!"
+		result_color = Color(0.8, 0.8, 0.2)  # Yellow for tie
 	else:
 		result_text = "Time's Up!"
+		result_color = Color(0.8, 0.2, 0.2)  # Red for lose
 	
 	status_label.text = result_text
 	countdown_label.text = result_text
 	countdown_label.visible = true
+	
+	# Apply result animation
+	if _animations:
+		if winner_id > 0:
+			_animations.win_text(countdown_label, 2.0)
+		else:
+			_animations.lose_text(countdown_label, 2.0)
 	
 	# Report result to MinigameConnection
 	emit_signal("minigame_result", current_stake.get("player_index", -1), winner_id > 0, winner_id)

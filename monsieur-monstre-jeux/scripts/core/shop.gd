@@ -11,6 +11,7 @@ signal shop_closed(player_index: int)
 var _game_state: Node = null
 var _current_player_index: int = 0
 var _price_multiplier: float = 1.0
+var _animations: Node = null
 
 # Base prices for organs (can be modified by rarity and player count)
 const BASE_PRICES: Dictionary = {
@@ -52,6 +53,8 @@ const ORGAN_NAMES: Dictionary = {
 }
 
 func _ready() -> void:
+	# Get animations helper
+	_animations = get_node_or_null("/root/Animations")
 	# Shop starts hidden
 	hide_shop()
 
@@ -96,7 +99,7 @@ func get_shop_items() -> Array:
 	
 	return items
 
-## Show the shop interface for a player
+## Show the shop interface for a player (with animation)
 func show_shop(player_index: int) -> void:
 	_current_player_index = player_index
 	
@@ -116,8 +119,11 @@ func show_shop(player_index: int) -> void:
 	# Update the shop UI
 	_update_shop_display()
 	
-	# Show the shop
-	visible = true
+	# Show with animation
+	if _animations:
+		_animations.fade_in(self, 0.3)
+	else:
+		visible = true
 	
 	# Emit signal
 	emit_signal("shop_opened", player_index)
@@ -218,9 +224,14 @@ func purchase_organ(player_index: int, organ_type: int) -> bool:
 	
 	return true
 
-## Hide the shop interface
+## Hide the shop interface (with animation)
 func hide_shop() -> void:
-	visible = false
+	if _animations:
+		_animations.fade_out(self, 0.25, 0.0, true)
+		await get_tree().create_timer(0.3).timeout
+		visible = false
+	else:
+		visible = false
 	emit_signal("shop_closed", _current_player_index)
 
 ## Refresh HUD after purchase

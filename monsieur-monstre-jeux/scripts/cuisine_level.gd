@@ -28,6 +28,9 @@ var p2_score: int = 0
 @export var duration: float = 60.0
 @export var countdown_duration: float = 3.0
 
+# Animation helper
+var _animations: Node = null
+
 # MinigameConnection reference for stake handling
 var minigame_connection: Node = null
 
@@ -42,6 +45,8 @@ signal minigame_ended(winner_id: int)
 signal minigame_result(player_index: int, success: bool, winner_id: int)
 
 func _ready() -> void:
+	# Get animations helper
+	_animations = get_node_or_null("/root/Animations")
 	game_state = GameState.WAITING
 	if countdown_label:
 		countdown_label.visible = false
@@ -96,6 +101,10 @@ func _update_gameplay(delta: float) -> void:
 	if timer_label:
 		var time_left = max(0, duration - game_timer)
 		timer_label.text = "Time: %.1f" % time_left
+		
+		# Timer urgency animation when low
+		if time_left <= 10.0 and _animations:
+			_animations.timer_urgent(timer_label)
 	
 	# Track cutting scores (simplified - actual implementation would track cuts)
 	_update_cutting_scores()
@@ -139,6 +148,13 @@ func _end_game(winner_id: int) -> void:
 	if countdown_label:
 		countdown_label.text = result_text
 		countdown_label.visible = true
+	
+	# Apply result animation
+	if _animations:
+		if winner_id > 0:
+			_animations.win_text(countdown_label, 2.0)
+		else:
+			_animations.lose_text(countdown_label, 2.0)
 	
 	# Report result to MinigameConnection
 	emit_signal("minigame_result", current_stake.get("player_index", -1), winner_id > 0, winner_id)

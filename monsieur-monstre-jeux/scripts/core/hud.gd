@@ -9,6 +9,7 @@ signal setup_complete
 var _game_state = null
 var _player_panels: Array = []
 var _current_player_index: int = 0
+var _animations: Node = null
 
 # Player colors for P1-P4
 const PLAYER_COLORS: Array = [
@@ -48,7 +49,8 @@ const ORGAN_NODE_NAMES: Dictionary = {
 const ORGAN_DISPLAY_ORDER: Array = [1, 5, 3, 4, 2, 6, 7, 8, 0]  # HEART, EYES, ARMS, LEGS, LUNGS, PANCREAS, LIVER, KIDNEYS, BRAIN
 
 func _ready() -> void:
-	pass
+	# Get animations helper
+	_animations = get_node_or_null("/root/Animations")
 
 ## Setup the HUD with a game state reference
 func setup(game_state) -> void:
@@ -170,19 +172,50 @@ func _on_score_updated(player_id: int, new_score: int) -> void:
 		var panel = _player_panels[player_id]
 		var score_label = panel.get_node_or_null("VBox/ScoreLabel")
 		if score_label:
-			score_label.text = "Score: %d" % new_score
+			# Get old value for animation
+			var old_text = score_label.text
+			var old_value = 0
+			if "Score: " in old_text:
+				old_value = int(old_text.split(": ")[1])
+			
+			# Animate the number change
+			if _animations:
+				_animations.score_tick(score_label, old_value, new_score)
+			else:
+				score_label.text = "Score: %d" % new_score
 
 func _on_money_updated(player_id: int, new_money: int) -> void:
 	if player_id < _player_panels.size():
 		var panel = _player_panels[player_id]
 		var money_label = panel.get_node_or_null("VBox/MoneyLabel")
 		if money_label:
-			money_label.text = "$%d" % new_money
+			# Get old value for animation
+			var old_text = money_label.text
+			var old_value = 0
+			if "$" in old_text:
+				old_value = int(old_text.replace("$", ""))
+			
+			# Animate the number change with flash effect
+			if _animations:
+				_animations.money_tick(money_label, old_value, new_money)
+			else:
+				money_label.text = "$%d" % new_money
 
 func _on_organ_changed(player_id: int, organ_type: int, new_count: int) -> void:
 	if player_id < _player_panels.size() and _game_state and player_id < _game_state.players.size():
 		var player = _game_state.players[player_id]
 		_update_organ_display(player_id, player)
+		
+		# Animate organ icon bounce
+		if _animations and player_id < _player_panels.size():
+			var organ_node_name = ORGAN_NODE_NAMES.get(organ_type, "")
+			if organ_node_name != "":
+				var panel = _player_panels[player_id]
+				var organs_grid = panel.get_node_or_null("VBox/OrgansGrid")
+				if organs_grid:
+					var organ_container = organs_grid.get_node_or_null(organ_node_name)
+					if organ_container:
+						_animations.organ_bounce(organ_container)
 
 func _on_game_ended(winner_id: int) -> void:
 	# Could show a game over overlay here

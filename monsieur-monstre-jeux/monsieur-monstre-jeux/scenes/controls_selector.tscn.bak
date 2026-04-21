@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://cno4ln38bj17b"]
+
+[ext_resource type="Script" uid="uid://d16fjyopxupau" path="res://monsieur-monstre-jeux/scripts/core/controls_selector.gd" id="1_77v5w"]
+
+[node name="ControlsSelector" type="CanvasLayer"]
+script = ExtResource("1_77v5w")
+
+[node name="Node" type="Node" parent="."]
+
+[node name="Node" type="Node" parent="Node"]
+
+[node name="Node" type="Node" parent="Node/Node"]
+
+[node name="Node" type="Node" parent="Node/Node/Node"]
+
+[node name="@Node@27264" type="Node" parent="Node/Node/Node"]
+
+[node name="@Node@27265" type="Node" parent="Node/Node/Node"]
+
+[node name="@Node@27266" type="Node" parent="Node/Node/Node"]
+
+[node name="@Node@27267" type="Node" parent="Node/Node/Node"]
+
+[node name="Node" type="Node" parent="Node/Node/Node/@Node@27267"]
+
+[node name="@Node@27268" type="Node" parent="Node/Node/Node/@Node@27267"]

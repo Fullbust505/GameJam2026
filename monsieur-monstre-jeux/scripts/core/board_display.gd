@@ -2,6 +2,11 @@ extends Control
 
 # Board Display for Monsieur Monstre - Visualizes the game board with tiles and player positions
 
+class_name BoardDisplay
+
+# Animation helper reference
+var _animations: Node = null
+
 # Tile type to icon mapping (using existing sprite assets where possible)
 const TILE_ICONS: Dictionary = {
 	"SHOP": "res://assets/sprites/shop.png",
@@ -44,8 +49,8 @@ signal tile_hovered(tile_index: int)
 
 # Called when the node enters the scene tree
 func _ready() -> void:
-	# Initialize empty
-	pass
+	# Get animations helper
+	_animations = get_node_or_null("/root/Animations")
 
 # Setup the board with tiles and player positions
 # board_tiles: Array of Tile objects from BoardGenerator
@@ -65,6 +70,27 @@ func setup(board_tiles: Array, player_positions: Array) -> void:
 	
 	# Layout the board
 	_layout_board()
+
+## Show board with entrance animation
+func show_board_animated() -> void:
+	visible = true
+	if _animations and _tile_nodes.size() > 0:
+		_animations.board_entrance(_tile_nodes, 0.08)
+	else:
+		visible = true
+		for tile in _tile_nodes:
+			if is_instance_valid(tile):
+				tile.scale = Vector2.ONE
+
+## Hide board with exit animation
+func hide_board_animated() -> void:
+	if _animations:
+		for tile in _tile_nodes:
+			if is_instance_valid(tile):
+				var tween = tile.create_tween()
+				tween.tween_property(tile, "scale", Vector2.ZERO, 0.2).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_SINE)
+		await get_tree().create_timer(0.3).timeout
+	visible = false
 
 # Clear all tile and player token nodes
 func _clear_tiles() -> void:
@@ -275,6 +301,17 @@ func update_player_position(player_index: int, tile_index: int) -> void:
 		_player_positions[player_index] = tile_index
 		_update_player_token_positions()
 
+## Apply penalty effect to a tile (shake)
+func apply_penalty_effect(tile_index: int) -> void:
+	if tile_index >= 0 and tile_index < _tile_nodes.size():
+		var tile = _tile_nodes[tile_index]
+		if is_instance_valid(tile) and _animations:
+			_animations.penalty_shake(tile)
+
+## Get the animations helper
+func get_animations() -> Node:
+	return _animations
+
 # Highlight a specific tile
 func highlight_tile(tile_index: int) -> void:
 	# Remove previous highlight
@@ -282,6 +319,10 @@ func highlight_tile(tile_index: int) -> void:
 		var prev_tile = _tile_nodes[_highlighted_tile_index]
 		if is_instance_valid(prev_tile):
 			_set_tile_border_color(prev_tile, Color.TRANSPARENT)
+			# Stop pulse animation
+			if prev_tile.has_method("stop"):
+				prev_tile.stop_all_tweens()
+			prev_tile.scale = Vector2.ONE
 	
 	_highlighted_tile_index = tile_index
 	
@@ -290,7 +331,7 @@ func highlight_tile(tile_index: int) -> void:
 		var tile = _tile_nodes[tile_index]
 		if is_instance_valid(tile):
 			_set_tile_border_color(tile, Color.YELLOW)
-			# Animate highlight
+			# Animate highlight with pulse
 			_animate_tile_highlight(tile)
 
 # Set border color on a tile (adds a border if needed)
@@ -309,10 +350,14 @@ func _set_tile_border_color(tile: Control, color: Color) -> void:
 
 # Animate tile highlight (pulse effect)
 func _animate_tile_highlight(tile: Control) -> void:
-	# Simple scale animation
-	var tween = create_tween()
-	tween.tween_property(tile, "scale", Vector2(1.1, 1.1), 0.15)
-	tween.tween_property(tile, "scale", Vector2(1.0, 1.0), 0.15)
+	# Use animations helper for smooth pulse
+	if _animations:
+		_animations.tile_pulse(tile, 1.2)
+	else:
+		# Fallback: simple scale animation
+		var tween = create_tween()
+		tween.tween_property(tile, "scale", Vector2(1.1, 1.1), 0.15)
+		tween.tween_property(tile, "scale", Vector2(1.0, 1.0), 0.15)
 
 # Get tile at a given viewport position (for click detection)
 func get_tile_at_position(pos: Vector2) -> int:
@@ -395,14 +440,24 @@ func animate_player_move(player_index: int, from_tile: int, to_tile: int, durati
 	if to_tile >= 0 and to_tile < _tile_nodes.size():
 		end_pos = _tile_nodes[to_tile].position + _get_player_token_offset(player_index)
 	
-	# Animate the movement
-	var tween = create_tween()
-	token.position = start_pos
-	tween.tween_property(token, "position", end_pos, duration).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+	# Use animations helper for smooth movement
+	if _animations:
+		_animations.animate_token_move(token, start_pos, end_pos, duration)
+	else:
+		# Fallback: direct tween
+		var tween = create_tween()
+		token.position = start_pos
+		tween.tween_property(token, "position", end_pos, duration).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
 	
 	# Update player position at the end
-	await tween.finished
 	_player_positions[player_index] = to_tile
+	
+	# Bounce token on landing
+	if to_tile >= 0 and to_tile < _tile_nodes.size():
+		var target_tile = _tile_nodes[to_tile]
+		if _animations and is_instance_valid(target_tile):
+			await get_tree().create_timer(duration).timeout
+			_animations.token_land_bounce(token)
 
 # Refresh the entire board layout (call on resize)
 func refresh_layout() -> void:
