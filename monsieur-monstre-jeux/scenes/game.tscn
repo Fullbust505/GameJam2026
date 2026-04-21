@@ -1,0 +1,60 @@
+[gd_scene load_steps=5 format=3 uid="uid://mvmoprc4w5ok"]
+
+[ext_resource type="Script" path="res://scripts/game.gd" id="1_uwrxv"]
+[ext_resource type="PackedScene" uid="uid://bvaxhf101ixtc" path="res://scenes/board.tscn" id="2_board"]
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" path="res://scenes/shop.tscn" id="4_shop"]
+
+[node name="Game" type="Node2D"]
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("1_uwrxv")
+
+# Board Display - bottom layer (z_index = 0)
+[node name="BoardDisplay" parent="." instance=ExtResource("2_board")]
+z_index = 0
+
+# HUD - middle layer (z_index = 1)
+[node name="HUD" parent="." instance=ExtResource("3_hud")]
+z_index = 1
+
+# Shop - top layer (z_index = 2, starts hidden)
+[node name="Shop" parent="." instance=ExtResource("4_shop")]
+visible = false
+z_index = 2
+
+# UI Layer for roll button and status (above board but below shop)
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="UI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="UI/Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StatusLabel" type="Label" parent="UI/Control/VBox"]
+layout_mode = 2
+text = "Welcome to Monsieur Monstre!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="UI/Control/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RollButton" type="Button" parent="UI/Control/VBox/CenterContainer"]
+custom_minimum_size = Vector2(200, 80)
+layout_mode = 2
+text = "Roll Dice"
+
+[node name="Spacer" type="Control" parent="UI/Control/VBox"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2

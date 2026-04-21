@@ -1,5 +1,4 @@
 extends Control
-class_name Shop
 
 ## Shop Interface for Monsieur Monstre board game
 ## Allows players to purchase organs with their money

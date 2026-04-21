@@ -2,8 +2,6 @@ extends Control
 
 # Board Display for Monsieur Monstre - Visualizes the game board with tiles and player positions
 
-class_name BoardDisplay
-
 # Animation helper reference
 var _animations: Node = null
 

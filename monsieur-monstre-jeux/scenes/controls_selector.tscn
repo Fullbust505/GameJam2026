@@ -1,9 +1,9 @@
 [gd_scene load_steps=2 format=3 uid="uid://deafuuq145r8k"]
 
-[ext_resource type="Script" uid="uid://d16fjyopxupau" path="res://monsieur-monstre-jeux/scripts/core/controls_selector.gd" id="1_77v5w"]
+[ext_resource type="Script" uid="uid://d16fjyopxupau" path="res://scripts/controls_selector.gd" id="1_d5kbq"]
 
 [node name="ControlsSelector" type="CanvasLayer"]
-script = ExtResource("1_77v5w")
+script = ExtResource("1_d5kbq")
 
 [node name="Node" type="Node" parent="."]
 

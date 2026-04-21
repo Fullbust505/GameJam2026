@@ -1,5 +1,4 @@
 extends Control
-class_name HUD
 
 ## Score/Organs HUD for Monsieur Monstre board game
 ## Displays player stats including money, score, and owned organs
