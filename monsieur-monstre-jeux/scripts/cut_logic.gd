@@ -113,7 +113,6 @@ func open_json(json_path):
 	gamestate = json_object.data
 	file.close()
 	print(gamestate)
-
 func write_json(gamestate):
 	var file = FileAccess.open("res://game_state_new.json", FileAccess.WRITE)
 	var json_text = JSON.stringify(gamestate, '\t')
