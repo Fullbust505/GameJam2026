@@ -58,9 +58,49 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="RollButton" type="Button" parent="UI/Control/VBox/CenterContainer"]
-custom_minimum_size = Vector2(200, 80)
+custom_minimum_size = Vector2(220, 90)
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal_abc123")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover_abc123")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed_abc123")
 text = "Roll Dice"
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal_abc123"]
+bg_color = Color(0.2, 0.25, 0.35, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.4, 0.5, 0.7, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover_abc123"]
+bg_color = Color(0.25, 0.32, 0.45, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.6, 0.75, 1.0, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed_abc123"]
+bg_color = Color(0.15, 0.2, 0.3, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.4, 0.6, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [node name="Spacer" type="Control" parent="UI/Control/VBox"]
 custom_minimum_size = Vector2(0, 50)

@@ -1,6 +1,6 @@
 extends Control
 
-# Board Display for Monsieur Monstre - Visualizes the game board with tiles and player positions
+# Board Display for Monsieur Monstre - Visualizes the game board with tiles, path, and player positions
 
 # Animation helper reference
 var _animations: Node = null
@@ -30,15 +30,18 @@ const TILE_COLORS: Dictionary = {
 }
 
 # Constants
-const TILE_SIZE: Vector2 = Vector2(80, 80)
-const PLAYER_TOKEN_SIZE: Vector2 = Vector2(30, 30)
-const BOARD_PADDING: float = 60.0
+const TILE_SIZE: Vector2 = Vector2(36, 36)  # Smaller tiles for circular layout
+const PLAYER_TOKEN_SIZE: Vector2 = Vector2(20, 20)
+const BOARD_PADDING: float = 80.0
+const PATH_LINE_WIDTH: float = 3.0
 
 # State
 var _board_tiles: Array = []
 var _player_positions: Array = []
 var _tile_nodes: Array = []  # Array of tile Control nodes
 var _player_tokens: Array = []  # Array of player token nodes
+var _path_lines: Array = []  # Line2D nodes for path connections
+var _path_container: Node = null  # Container for path lines
 var _highlighted_tile_index: int = -1
 
 # Signals
@@ -47,11 +50,13 @@ signal tile_hovered(tile_index: int)
 
 # Called when the node enters the scene tree
 func _ready() -> void:
-	# Use PRESET_FULL_RECT to set anchors AND offsets to fill parent in one call
-	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	
 	# Get animations helper
 	_animations = get_node_or_null("/root/Animations")
+	
+	# Create path container for Line2D nodes
+	_path_container = Node.new()
+	_path_container.name = "PathContainer"
+	add_child(_path_container)
 	
 	# Connect to window resize to refresh layout when viewport changes
 	get_viewport().size_changed.connect(_on_viewport_size_changed)
@@ -74,6 +79,9 @@ func setup(board_tiles: Array, player_positions: Array) -> void:
 	
 	# Create tile nodes
 	_create_tiles()
+	
+	# Create path connections between tiles
+	_create_path_lines()
 	
 	# Create player tokens
 	_create_player_tokens()
@@ -119,6 +127,11 @@ func _clear_tiles() -> void:
 			node.queue_free()
 	_player_tokens.clear()
 	
+	for node in _path_lines:
+		if is_instance_valid(node):
+			node.queue_free()
+	_path_lines.clear()
+	
 	_highlighted_tile_index = -1
 
 # Create tile visual nodes
@@ -132,50 +145,55 @@ func _create_tiles() -> void:
 		_tile_nodes.append(tile_container)
 		add_child(tile_container)
 
-# Create a single tile node
+# Create a single tile node - circular colored rect with icon
 func _create_tile_node(index: int, tile_type_str: String) -> Control:
 	var container = Control.new()
 	container.name = "Tile_" + str(index)
 	container.custom_minimum_size = TILE_SIZE
+	container.z_index = 10  # Above path lines
 	
-	# Create background
-	var bg = ColorRect.new()
-	bg.color = TILE_COLORS.get(tile_type_str, Color.GRAY)
+	# Create circular background using ColorRect with a Panel-style look
+	var bg = Panel.new()
 	bg.custom_minimum_size = TILE_SIZE
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	# Set the panel's background color
+	var style = StyleBoxFlat.new()
+	style.bg_color = TILE_COLORS.get(tile_type_str, Color.GRAY)
+	style.corner_radius_top_left = 6
+	style.corner_radius_top_right = 6
+	style.corner_radius_bottom_left = 6
+	style.corner_radius_bottom_right = 6
+	style.set_border_width_all(2)
+	style.border_color = TILE_COLORS.get(tile_type_str, Color.GRAY).darkened(0.3)
+	bg.add_theme_stylebox_override("panel", style)
+	
 	container.add_child(bg)
 	
 	# Create icon
 	var icon = TextureRect.new()
 	icon.expand = true
-	icon.custom_minimum_size = Vector2(40, 40)
+	icon.custom_minimum_size = Vector2(20, 20)
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	
 	var icon_path = TILE_ICONS.get(tile_type_str, "")
 	if icon_path != "" and ResourceLoader.exists(icon_path):
 		icon.texture = load(icon_path)
-	else:
-		# Create a fallback label if no icon
-		var label = Label.new()
-		label.text = tile_type_str.substr(0, 1)
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		label.set_anchors_preset(Control.PRESET_FULL_RECT)
-		icon.add_child(label)
 	
 	icon.set_anchors_preset(Control.PRESET_CENTER)
 	container.add_child(icon)
 	
-	# Create position label (tile number)
+	# Create position label (tile number) - small at bottom
 	var pos_label = Label.new()
 	pos_label.text = str(index)
-	pos_label.add_theme_font_size_override("font_size", 12)
+	pos_label.add_theme_font_size_override("font_size", 10)
+	pos_label.add_theme_color_override("font_color", Color.WHITE)
 	pos_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	pos_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
 	pos_label.anchor_top = 1.0
 	pos_label.anchor_bottom = 1.0
-	pos_label.offset_top = -20
-	pos_label.offset_bottom = -5
+	pos_label.offset_top = -14
+	pos_label.offset_bottom = -4
 	pos_label.offset_left = 0
 	pos_label.offset_right = 0
 	container.add_child(pos_label)
@@ -189,6 +207,33 @@ func _create_tile_node(index: int, tile_type_str: String) -> Control:
 	
 	return container
 
+# Create path lines connecting consecutive tiles
+func _create_path_lines() -> void:
+	if _board_tiles.size() < 2:
+		return
+	
+	# Create a single Line2D that draws the path through all tiles
+	var path_line = Line2D.new()
+	path_line.name = "BoardPath"
+	path_line.width = PATH_LINE_WIDTH
+	path_line.default_color = Color(0.5, 0.5, 0.5, 0.8)  # Gray path line
+	path_line.joint_mode = Line2D.LINE_JOINT_ROUND
+	path_line.begin_cap_mode = Line2D.LINE_CAP_ROUND
+	path_line.end_cap_mode = Line2D.LINE_CAP_ROUND
+	path_line.z_index = 5  # Below tiles
+	
+	_path_lines.append(path_line)
+	var parent = _path_container
+	if parent:
+		parent.add_child(path_line)
+	else:
+		var tree = get_tree()
+		if tree:
+			tree.root.add_child(path_line)
+		# else: do nothing, will be called later when properly in tree
+	
+	# Points will be set in _layout_board() once we know positions
+
 # Create player token nodes
 func _create_player_tokens() -> void:
 	for i in range(_player_positions.size()):
@@ -201,27 +246,34 @@ func _create_player_token_node(player_index: int) -> Control:
 	var container = Control.new()
 	container.name = "PlayerToken_" + str(player_index)
 	container.custom_minimum_size = PLAYER_TOKEN_SIZE
+	container.z_index = 100  # Above tiles
 	
-	# Create background circle using a rounded RectangleShape2D in a CollisionShape2D
-	# For simplicity, just use a ColorRect with the player color
-	var circle = ColorRect.new()
-	circle.color = _get_player_color(player_index)
+	# Create circular background using Panel with rounded style
+	var circle = Panel.new()
 	circle.custom_minimum_size = PLAYER_TOKEN_SIZE
 	circle.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	var style = StyleBoxFlat.new()
+	style.bg_color = _get_player_color(player_index)
+	style.corner_radius_top_left = 10
+	style.corner_radius_top_right = 10
+	style.corner_radius_bottom_left = 10
+	style.corner_radius_bottom_right = 10
+	style.set_border_width_all(2)
+	style.border_color = _get_player_color(player_index).darkened(0.3)
+	circle.add_theme_stylebox_override("panel", style)
+	
 	container.add_child(circle)
 	
 	# Add player number
 	var label = Label.new()
 	label.text = str(player_index + 1)
-	label.add_theme_font_size_override("font_size", 16)
+	label.add_theme_font_size_override("font_size", 12)
 	label.add_theme_color_override("font_color", Color.WHITE)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.set_anchors_preset(Control.PRESET_FULL_RECT)
 	container.add_child(label)
-	
-	# Make it appear above tiles
-	container.z_index = 100
 	
 	return container
 
@@ -246,7 +298,6 @@ func _layout_board() -> void:
 		return
 	
 	# Use the Control's own size instead of viewport size
-	# This ensures proper scaling with the stretch mode
 	var rect = get_rect()
 	var center = rect.size / 2
 	var size = rect.size
@@ -255,12 +306,13 @@ func _layout_board() -> void:
 	var available_width = size.x - BOARD_PADDING * 2
 	var available_height = size.y - BOARD_PADDING * 2
 	
-	# Determine radius based on board size
+	# Determine radius based on board size - tiles should fit nicely in a circle
 	var base_radius = min(available_width, available_height) / 2 - TILE_SIZE.x
 	var radius_x = base_radius
 	var radius_y = base_radius * 0.7  # Slightly oval
 	
-	# Position tiles in a circle
+	# Calculate tile positions first
+	var tile_positions: Array = []
 	for i in range(_tile_nodes.size()):
 		if i < _tile_nodes.size():
 			var angle = (2.0 * PI * i / board_size) - (PI / 2)  # Start from top
@@ -268,33 +320,24 @@ func _layout_board() -> void:
 			var y = center.y + sin(angle) * radius_y - TILE_SIZE.y / 2
 			
 			_tile_nodes[i].position = Vector2(x, y)
+			tile_positions.append(Vector2(x + TILE_SIZE.x / 2, y + TILE_SIZE.y / 2))
+	
+	# Update path lines to connect tiles in order
+	_update_path_lines(tile_positions)
 	
 	# Position player tokens on their tiles
 	_update_player_token_positions()
-	
-	# Scale the whole board to fit
-	_scale_board_to_fit()
 
-# Scale the board to fit within the viewport
-func _scale_board_to_fit() -> void:
-	# Calculate bounding box of all tiles
-	var min_pos = Vector2(INF, INF)
-	var max_pos = Vector2(-INF, -INF)
-	
-	for tile in _tile_nodes:
-		if is_instance_valid(tile):
-			min_pos = min_pos.min(tile.position)
-			max_pos = max_pos.max(tile.position + TILE_SIZE)
-	
-	var board_size = max_pos - min_pos
-	# Use the Control's own rect size instead of viewport size
-	var control_size = get_rect().size
-	var scale_factor = min(control_size.x / board_size.x, control_size.y / board_size.y) * 0.9
-	
-	if scale_factor < 1.0:
-		# Apply scale to a container or adjust positions
-		# For simplicity, we just ensure tiles are visible within viewport
-		pass
+# Update path line points to connect tiles in order
+func _update_path_lines(tile_positions: Array) -> void:
+	if _path_lines.size() > 0 and tile_positions.size() > 0:
+		var path_line = _path_lines[0]
+		path_line.clear_points()
+		for pos in tile_positions:
+			path_line.add_point(pos)
+		# Close the loop back to first tile
+		if tile_positions.size() > 1:
+			path_line.add_point(tile_positions[0])
 
 # Update player token positions based on current board positions
 func _update_player_token_positions() -> void:
@@ -303,19 +346,8 @@ func _update_player_token_positions() -> void:
 			var tile_index = _player_positions[i]
 			if tile_index >= 0 and tile_index < _tile_nodes.size():
 				var tile_pos = _tile_nodes[tile_index].position
-				# Offset token within the tile
-				var token_offset = _get_player_token_offset(i)
-				_player_tokens[i].position = tile_pos + token_offset
-
-# Get offset for player token to avoid stacking
-func _get_player_token_offset(player_index: int) -> Vector2:
-	# Stack tokens slightly offset from each other
-	var offset_angle = player_index * (PI / 4)
-	var offset_dist = 10.0
-	return Vector2(
-		cos(offset_angle) * offset_dist + TILE_SIZE.x / 2 - PLAYER_TOKEN_SIZE.x / 2,
-		sin(offset_angle) * offset_dist + TILE_SIZE.y / 2 - PLAYER_TOKEN_SIZE.y / 2
-	)
+				# Center token on the tile
+				_player_tokens[i].position = tile_pos + (TILE_SIZE - PLAYER_TOKEN_SIZE) / 2
 
 # Update a single player's position
 func update_player_position(player_index: int, tile_index: int) -> void:
@@ -454,13 +486,13 @@ func animate_player_move(player_index: int, from_tile: int, to_tile: int, durati
 	
 	# Get start position from tile
 	if from_tile >= 0 and from_tile < _tile_nodes.size():
-		start_pos = _tile_nodes[from_tile].position + _get_player_token_offset(player_index)
+		start_pos = _tile_nodes[from_tile].position + (TILE_SIZE - PLAYER_TOKEN_SIZE) / 2
 	else:
 		start_pos = token.position
 	
 	# Get end position from tile
 	if to_tile >= 0 and to_tile < _tile_nodes.size():
-		end_pos = _tile_nodes[to_tile].position + _get_player_token_offset(player_index)
+		end_pos = _tile_nodes[to_tile].position + (TILE_SIZE - PLAYER_TOKEN_SIZE) / 2
 	
 	# Use animations helper for smooth movement
 	if _animations:

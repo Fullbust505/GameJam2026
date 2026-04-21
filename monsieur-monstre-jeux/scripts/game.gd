@@ -49,17 +49,20 @@ func _ready() -> void:
 	# Get animations helper
 	_animations = get_node_or_null("/root/Animations")
 	
-	# Initialize all core systems
-	_initialize_systems()
-	
-	# Setup UI
-	_setup_ui()
-	
-	# Connect signals
-	_connect_signals()
-	
-	# Auto-start the game
-	start_game(2, 25)
+	# Note: We DON'T call initialization methods here directly
+	# because during _ready(), Godot's internal state has data.blocked > 0
+	# which prevents add_child() from working
+	# Instead, we use NOTIFICATION_SCENE_INSTANTIATED which fires AFTER _ready()
+	# when the scene is fully in the tree and children can be added
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_SCENE_INSTANTIATED:
+		# Scene is now fully in the tree, safe to add children
+		call_deferred("_initialize_systems")
+		call_deferred("_setup_ui")
+		call_deferred("_connect_signals")
+		# Auto-start the game
+		call_deferred("start_game", 2, 25)
 
 func _initialize_systems() -> void:
 	# Game State
@@ -127,7 +130,11 @@ func _initialize_systems() -> void:
 				var canvas_layer = CanvasLayer.new()
 				canvas_layer.name = "BoardDisplayLayer"
 				canvas_layer.layer = 0
-				get_parent().add_child(canvas_layer)
+				var parent = get_parent()
+				if parent:
+					parent.add_child(canvas_layer)
+				else:
+					get_tree().root.add_child(canvas_layer)
 				canvas_layer.add_child(board_display)
 				print("Game: Instantiated BoardDisplay under new CanvasLayer")
 	
@@ -156,7 +163,11 @@ func _initialize_systems() -> void:
 				var canvas_layer = CanvasLayer.new()
 				canvas_layer.name = "HUDLayer"
 				canvas_layer.layer = 1
-				get_parent().add_child(canvas_layer)
+				var parent = get_parent()
+				if parent:
+					parent.add_child(canvas_layer)
+				else:
+					get_tree().root.add_child(canvas_layer)
 				canvas_layer.add_child(hud)
 				print("Game: Instantiated HUD under new CanvasLayer")
 	
@@ -185,7 +196,11 @@ func _initialize_systems() -> void:
 				var canvas_layer = CanvasLayer.new()
 				canvas_layer.name = "ShopLayer"
 				canvas_layer.layer = 2
-				get_parent().add_child(canvas_layer)
+				var parent = get_parent()
+				if parent:
+					parent.add_child(canvas_layer)
+				else:
+					get_tree().root.add_child(canvas_layer)
 				canvas_layer.add_child(shop)
 				shop.visible = false
 				print("Game: Instantiated Shop under new CanvasLayer")
@@ -352,6 +367,7 @@ func _execute_player_move(spaces: int) -> void:
 ## Execute tile effect at position
 func _execute_tile_effect(tile_position: int) -> void:
 	if not tile_event_executor or not game_state:
+		push_error("Game: Missing tile_event_executor or game_state!")
 		_end_turn()
 		return
 	
@@ -360,6 +376,7 @@ func _execute_tile_effect(tile_position: int) -> void:
 		tile = board_generator.get_tile_at(tile_position)
 	
 	if not tile:
+		push_error("Game: No tile found at position " + str(tile_position))
 		_end_turn()
 		return
 	
@@ -368,36 +385,57 @@ func _execute_tile_effect(tile_position: int) -> void:
 	
 	_update_status("Landed on " + tile_type_str + " tile!")
 	
-	_set_phase(GamePhase.EXECUTE_TILE)
+	# Check if we need to wait for UI (shop/minigame)
+	# IMPORTANT: Set phase BEFORE emitting signals that might trigger _end_turn()
+	if tile_type_str == "SHOP":
+		_set_phase(GamePhase.SHOW_SHOP)
+	elif tile_type_str == "CHALLENGE":
+		_set_phase(GamePhase.SHOW_MINIGAME)
+	else:
+		_set_phase(GamePhase.EXECUTE_TILE)
 	
 	# Execute the tile effect (may emit signals for shop/minigame)
+	print("Game: Calling execute_tile_effect for ", tile_type_str)
 	var result = tile_event_executor.execute_tile_effect(
 		game_state.current_player_index,
 		tile_type_str,
 		tile.properties
 	)
+	print("Game: execute_tile_effect returned for ", tile_type_str, ": ", result)
 	
-	# Check if we need to wait for UI (shop/minigame)
-	# For now, auto-continue after brief delay unless it's shop/minigame
+	# If SHOP or CHALLENGE, wait for the UI to close before ending turn
 	if tile_type_str == "SHOP":
-		_set_phase(GamePhase.SHOW_SHOP)
+		print("Game: SHOP tile - waiting for shop to close")
 		return  # Wait for shop to close
 	elif tile_type_str == "CHALLENGE":
-		_set_phase(GamePhase.SHOW_MINIGAME)
+		print("Game: CHALLENGE tile - waiting for minigame")
 		return  # Wait for minigame to complete
 	
 	# Otherwise, continue to end turn after delay
+	print("Game: Non-interactive tile - will end turn after delay")
 	await get_tree().create_timer(1.5).timeout
 	_end_turn()
 
 ## Handle shop requested signal
 func _on_shop_requested(player_index: int, tile_data: Dictionary) -> void:
-	if shop and shop.has_method("setup_with_tile_data"):
-		shop.setup_with_tile_data(player_index, tile_data)
-		_update_status("Player " + str(player_index + 1) + " - Visit the shop!")
+	print("Game: _on_shop_requested called - player ", player_index, " tile_data ", tile_data)
+	if shop:
+		print("Game: shop reference exists, has setup_with_tile_data: ", shop.has_method("setup_with_tile_data"))
+		if shop.has_method("setup_with_tile_data"):
+			shop.setup_with_tile_data(player_index, tile_data)
+			_update_status("Player " + str(player_index + 1) + " - Visit the shop!")
+	else:
+		push_error("Game: shop reference is null in _on_shop_requested!")
 
 ## Handle shop closed signal
 func _on_shop_closed(player_index: int) -> void:
+	print("Game: _on_shop_closed called - player ", player_index, " current_phase=", current_phase)
+	# Only end turn if we're in SHOW_SHOP or SHOW_MINIGAME phase
+	# Otherwise, the turn might have already been handled
+	if current_phase != GamePhase.SHOW_SHOP and current_phase != GamePhase.SHOW_MINIGAME:
+		print("Game: _on_shop_closed - not in interactive phase, ignoring")
+		return
+	
 	_update_status("Shop closed. Ending turn...")
 	# Shop is now closed, continue to end turn
 	_end_turn()
@@ -445,11 +483,20 @@ func _on_tile_effect_completed(player_index: int, tile_type: String, result: Dic
 
 ## End current turn and move to next player
 func _end_turn() -> void:
-	# Check if shop is still open
+	print("Game: _end_turn called - current_phase=", current_phase, " shop.visible=", shop.visible if shop else "null")
+	
+	# Check if shop is still open - if so, don't end turn yet
 	if shop and shop.visible:
+		print("Game: _end_turn skipped - shop is still visible")
 		return  # Wait for shop to close
 	
+	# Don't end turn if we're in SHOW_SHOP or SHOW_MINIGAME phase
+	if current_phase == GamePhase.SHOW_SHOP or current_phase == GamePhase.SHOW_MINIGAME:
+		print("Game: _end_turn skipped - waiting for ", current_phase)
+		return
+	
 	if not game_state:
+		push_error("Game: _end_turn called but game_state is null")
 		return
 	
 	# Check for game over

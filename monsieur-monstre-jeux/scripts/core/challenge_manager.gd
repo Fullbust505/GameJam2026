@@ -89,6 +89,9 @@ func create_warning_overlay(parent: Node) -> Control:
 	overlay.name = "WarningOverlay"
 	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	parent.add_child(overlay)
+	if parent:
+		parent.add_child(overlay)
+	else:
+		get_tree().root.add_child(overlay)
 	warning_overlay = overlay
 	return overlay

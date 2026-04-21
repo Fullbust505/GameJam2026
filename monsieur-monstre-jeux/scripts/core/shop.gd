@@ -58,7 +58,9 @@ func _ready() -> void:
 	# Get animations helper
 	_animations = get_node_or_null("/root/Animations")
 	# Shop starts hidden
+	print("Shop: _ready calling hide_shop")
 	hide_shop()
+	print("Shop: _ready complete, visible=", visible)
 
 ## Setup the shop with game state reference
 func setup(game_state: Node) -> void:
@@ -71,6 +73,7 @@ func connect_to_tile_event_executor(tile_event_executor: Node) -> void:
 		tile_event_executor.connect("shop_requested", _on_tile_shop_requested)
 
 func _on_tile_shop_requested(player_index: int, tile_data: Dictionary) -> void:
+	print("Shop: _on_tile_shop_requested called - player_index=", player_index, " tile_data=", tile_data)
 	setup_with_tile_data(player_index, tile_data)
 
 ## Get available shop items with calculated prices
@@ -103,6 +106,7 @@ func get_shop_items() -> Array:
 
 ## Show the shop interface for a player (with animation)
 func show_shop(player_index: int) -> void:
+	print("Shop: show_shop called for player ", player_index)
 	_current_player_index = player_index
 	
 	# Reset price multiplier
@@ -110,11 +114,13 @@ func show_shop(player_index: int) -> void:
 	
 	# Make sure we have a valid player
 	if not _game_state or player_index >= _game_state.players.size():
+		push_error("Shop: show_shop - invalid game_state or player_index")
 		hide_shop()
 		return
 	
 	var player = _game_state.players[player_index]
 	if not player:
+		push_error("Shop: show_shop - player is null")
 		hide_shop()
 		return
 	
@@ -127,6 +133,7 @@ func show_shop(player_index: int) -> void:
 	else:
 		visible = true
 	
+	print("Shop: show_shop complete, visible=", visible)
 	# Emit signal
 	emit_signal("shop_opened", player_index)
 
@@ -228,12 +235,14 @@ func purchase_organ(player_index: int, organ_type: int) -> bool:
 
 ## Hide the shop interface (with animation)
 func hide_shop() -> void:
+	print("Shop: hide_shop called, currently visible=", visible)
 	if _animations:
 		_animations.fade_out(self, 0.25, 0.0, true)
 		await get_tree().create_timer(0.3).timeout
 		visible = false
 	else:
 		visible = false
+	print("Shop: hide_shop complete, visible=", visible, ", emitting shop_closed")
 	emit_signal("shop_closed", _current_player_index)
 
 ## Refresh HUD after purchase
