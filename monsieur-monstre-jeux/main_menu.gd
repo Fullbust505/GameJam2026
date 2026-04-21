@@ -11,7 +11,7 @@ func _process(delta: float) -> void:
 	pass
 
 func _on_start_pressed() -> void:
-	print("Start pressed")
+	get_tree().change_scene_to_file("res://scenes/apnee_level.tscn")
 
 
 func _on_credits_pressed() -> void:

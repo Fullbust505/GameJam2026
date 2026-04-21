@@ -9,7 +9,7 @@ extends Node
 	"P2" : {
 		viewport = $HBoxContainer/P2_view_container/P2_view,
 		camera = $HBoxContainer/P2_view_container/P2_view/P2Cam,
-		player = $HBoxContainer/P1_view_container/P1_view/Level/P2
+		player = $HBoxContainer/P2_view_container/P2_view/Level/P2
 	}
 }
 

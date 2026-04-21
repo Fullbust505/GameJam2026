@@ -15,6 +15,10 @@ run/main_scene="uid://bfbny43birx8b"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://sprites/icon.svg"
 
+[autoload]
+
+PlayerData="res://scripts/core/player_data.gd"
+
 [display]
 
 window/size/viewport_width=1024
@@ -23,6 +27,10 @@ window/stretch/mode="2d"
 window/stretch/aspect="keep"
 window/size/window_width_override=1024
 window/size/window_height_override=768
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
 
 [editor_plugins]
 

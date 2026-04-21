@@ -4,15 +4,19 @@
 [ext_resource type="PackedScene" uid="uid://da4q0glx3nck1" path="res://scenes/apnee_level.tscn" id="2_n5pg7"]
 
 [node name="Node" type="Node"]
+[node name="Node" type="Node"]
 script = ExtResource("1_n5pg7")
 
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 offset_right = 644.0
 offset_bottom = 360.0
 
 [node name="P1_view_container" type="SubViewportContainer" parent="HBoxContainer"]
+[node name="P1_view_container" type="SubViewportContainer" parent="HBoxContainer"]
 layout_mode = 2
 
+[node name="P1_view" type="SubViewport" parent="HBoxContainer/P1_view_container"]
 [node name="P1_view" type="SubViewport" parent="HBoxContainer/P1_view_container"]
 handle_input_locally = false
 size = Vector2i(320, 360)
@@ -23,8 +27,10 @@ render_target_update_mode = 4
 [node name="P1Cam" type="Camera2D" parent="HBoxContainer/P1_view_container/P1_view"]
 
 [node name="P2_view_container" type="SubViewportContainer" parent="HBoxContainer"]
+[node name="P2_view_container" type="SubViewportContainer" parent="HBoxContainer"]
 layout_mode = 2
 
+[node name="P2_view" type="SubViewport" parent="HBoxContainer/P2_view_container"]
 [node name="P2_view" type="SubViewport" parent="HBoxContainer/P2_view_container"]
 handle_input_locally = false
 size = Vector2i(320, 360)
