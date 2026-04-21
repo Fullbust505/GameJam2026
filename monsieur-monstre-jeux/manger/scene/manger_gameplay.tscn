@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://b5efdpoinpvv3"]
+
+[ext_resource type="Script" uid="uid://b816vut22roj" path="res://manger/scripts/player_mvt.gd" id="1_j6tjd"]
+[ext_resource type="Resource" uid="uid://qnt6nufc3jw4" path="res://manger/resource/player_1_controls.tres" id="2_ifs1u"]
+[ext_resource type="Texture2D" uid="uid://bbxo30ypwsfeu" path="res://sprites/icon.svg" id="2_r7pq4"]
+
+[node name="MangerGameplay" type="Node2D" unique_id=33711822]
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1694355056]
+offset_left = -82.0
+offset_top = -49.0
+offset_right = 794.0
+offset_bottom = 436.0
+color = Color(0.5199041, 0.6676054, 0.5755836, 1)
+
+[node name="P1" type="CharacterBody2D" parent="." unique_id=1507904587]
+script = ExtResource("1_j6tjd")
+controls = ExtResource("2_ifs1u")
+
+[node name="Sprite2D" type="Sprite2D" parent="P1" unique_id=1623110777]
+position = Vector2(55.000008, 217.00002)
+scale = Vector2(0.47656247, 0.45312494)
+texture = ExtResource("2_r7pq4")

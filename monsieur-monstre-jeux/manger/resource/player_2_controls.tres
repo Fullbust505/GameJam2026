@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PlayerControls" format=3 uid="uid://cpc07mrg8qlrp"]
+
+[ext_resource type="Script" uid="uid://65ydbjvqjpjo" path="res://manger/resource/PlayerControls.gd" id="1_f10ny"]
+
+[resource]
+script = ExtResource("1_f10ny")
+move_left = "p2_move_left"
+move_right = "p2_move_right"
+move_up = "p2_move_up"
+move_down = "p2_move_down"
+metadata/_custom_type_script = "uid://65ydbjvqjpjo"

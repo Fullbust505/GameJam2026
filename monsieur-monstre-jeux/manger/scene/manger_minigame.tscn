@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://dqqbu16kalk0l"]
+
+[ext_resource type="Script" uid="uid://dcweaxm0ufmxf" path="res://manger/scripts/manger_minigame.gd" id="1_3ydf1"]
+[ext_resource type="PackedScene" uid="uid://b5efdpoinpvv3" path="res://manger/scene/manger_gameplay.tscn" id="2_5jgie"]
+
+[node name="MangerMinigame" type="Node2D" unique_id=1211804741]
+script = ExtResource("1_3ydf1")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=146811515]
+offset_right = 1028.0
+offset_bottom = 512.0
+scale = Vector2(0.7, 0.7)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="HBoxContainer" unique_id=752786160]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SubViewport" type="SubViewport" parent="HBoxContainer/SubViewportContainer" unique_id=448279122]
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="MangerGameplay" parent="HBoxContainer/SubViewportContainer/SubViewport" unique_id=33711822 instance=ExtResource("2_5jgie")]
+
+[node name="Camera2D" type="Camera2D" parent="HBoxContainer/SubViewportContainer/SubViewport" unique_id=521024972]
+
+[node name="SubViewportContainer2" type="SubViewportContainer" parent="HBoxContainer" unique_id=146830637]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SubViewport" type="SubViewport" parent="HBoxContainer/SubViewportContainer2" unique_id=1288218940]
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="HBoxContainer/SubViewportContainer2/SubViewport" unique_id=49319697]
