@@ -390,6 +390,11 @@ func _execute_tile_effect(tile_position: int) -> void:
 	
 	_update_status("Landed on " + tile_type_str + " tile!")
 	
+	# Check for END tile - map progression
+	if tile_type_str == "END":
+		_on_reached_end_tile()
+		return
+
 	# Check if we need to wait for UI (shop/minigame)
 	# IMPORTANT: Set phase BEFORE emitting signals that might trigger _end_turn()
 	if tile_type_str == "SHOP":
