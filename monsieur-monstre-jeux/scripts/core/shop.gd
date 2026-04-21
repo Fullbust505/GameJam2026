@@ -52,6 +52,16 @@ const ORGAN_NAMES: Dictionary = {
 }
 
 func _ready() -> void:
+	# Anchor this control to fill parent for proper stretch mode scaling
+	anchor_left = 0
+	anchor_right = 1
+	anchor_top = 0
+	anchor_bottom = 1
+	offset_left = 0
+	offset_right = 0
+	offset_top = 0
+	offset_bottom = 0
+	
 	# Get animations helper
 	_animations = get_node_or_null("/root/Animations")
 	# Shop starts hidden
@@ -76,7 +86,7 @@ func get_shop_items() -> Array:
 	
 	# Get player count for price adjustment
 	var player_count: int = 1
-	if _game_state and _game_state.has("max_players"):
+	if _game_state:
 		player_count = _game_state.max_players
 	
 	# Calculate price multiplier based on player count

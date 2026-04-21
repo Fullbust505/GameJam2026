@@ -48,6 +48,16 @@ const ORGAN_NODE_NAMES: Dictionary = {
 const ORGAN_DISPLAY_ORDER: Array = [1, 5, 3, 4, 2, 6, 7, 8, 0]  # HEART, EYES, ARMS, LEGS, LUNGS, PANCREAS, LIVER, KIDNEYS, BRAIN
 
 func _ready() -> void:
+	# Anchor this control to fill parent for proper stretch mode scaling
+	anchor_left = 0
+	anchor_right = 1
+	anchor_top = 0
+	anchor_bottom = 1
+	offset_left = 0
+	offset_right = 0
+	offset_top = 0
+	offset_bottom = 0
+	
 	# Get animations helper
 	_animations = get_node_or_null("/root/Animations")
 

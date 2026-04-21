@@ -113,7 +113,7 @@ func _initialize_systems() -> void:
 		if board_scene:
 			board_display = board_scene.instantiate()
 			if board_display:
-				get_parent().add_child(board_display)
+				get_parent().add_child.call_deferred(board_display)
 	
 	# HUD - try to find in scene tree first, then fallback to manual instantiation
 	hud = get_node_or_null("../HUD")
@@ -126,7 +126,7 @@ func _initialize_systems() -> void:
 		if hud_scene:
 			hud = hud_scene.instantiate()
 			if hud:
-				get_parent().add_child(hud)
+				get_parent().add_child.call_deferred(hud)
 	
 	# Shop - try to find in scene tree first, then fallback to manual instantiation
 	shop = get_node_or_null("../Shop")
@@ -139,7 +139,7 @@ func _initialize_systems() -> void:
 		if shop_scene:
 			shop = shop_scene.instantiate()
 			if shop:
-				get_parent().add_child(shop)
+				get_parent().add_child.call_deferred(shop)
 				shop.visible = false
 	
 	# Setup references
@@ -150,8 +150,8 @@ func _initialize_systems() -> void:
 
 func _setup_ui() -> void:
 	# Get UI references from scene if they exist (UI is under CanvasLayer)
-	roll_button = get_node_or_null("UI/Control/VBox/CenterContainer/RollButton")
-	status_label = get_node_or_null("UI/Control/VBox/StatusLabel")
+	roll_button = get_node_or_null("../UI/Control/VBox/CenterContainer/RollButton")
+	status_label = get_node_or_null("../UI/Control/VBox/StatusLabel")
 	
 	# Connect button if exists
 	if roll_button:
@@ -412,9 +412,7 @@ func _end_turn() -> void:
 	game_state.next_player()
 	
 	# Check if game should end
-	var max_turns = 20
-	if game_state.has("MAX_TURNS"):
-		max_turns = game_state.MAX_TURNS
+	var max_turns = game_state.MAX_TURNS
 	if game_state.current_turn >= max_turns:
 		_end_game()
 		return

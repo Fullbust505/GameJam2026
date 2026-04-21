@@ -47,8 +47,27 @@ signal tile_hovered(tile_index: int)
 
 # Called when the node enters the scene tree
 func _ready() -> void:
+	# Anchor this control to fill parent for proper stretch mode scaling
+	anchor_left = 0
+	anchor_right = 1
+	anchor_top = 0
+	anchor_bottom = 1
+	offset_left = 0
+	offset_right = 0
+	offset_top = 0
+	offset_bottom = 0
+	
 	# Get animations helper
 	_animations = get_node_or_null("/root/Animations")
+	
+	# Connect to window resize to refresh layout when viewport changes
+	get_viewport().size_changed.connect(_on_viewport_size_changed)
+
+# Handle viewport size changes (window resize)
+func _on_viewport_size_changed() -> void:
+	# Re-layout board when window is resized
+	if _board_tiles.size() > 0:
+		_layout_board()
 
 # Setup the board with tiles and player positions
 # board_tiles: Array of Tile objects from BoardGenerator
@@ -66,8 +85,13 @@ func setup(board_tiles: Array, player_positions: Array) -> void:
 	# Create player tokens
 	_create_player_tokens()
 	
-	# Layout the board
-	_layout_board()
+	# Layout the board - use call_deferred to ensure we're in the tree
+	call_deferred("_do_layout_board")
+
+## Layout the board - called deferred to ensure node is in tree
+func _do_layout_board() -> void:
+	if is_inside_tree():
+		_layout_board()
 
 ## Show board with entrance animation
 func show_board_animated() -> void:
@@ -224,9 +248,15 @@ func _layout_board() -> void:
 	if board_size == 0:
 		return
 	
-	# Calculate center and radius for oval layout
-	var center = get_viewport_rect().size / 2
-	var size = get_viewport_rect().size
+	# Guard against being called before node is in scene tree
+	if not is_inside_tree():
+		return
+	
+	# Use the Control's own size instead of viewport size
+	# This ensures proper scaling with the stretch mode
+	var rect = get_rect()
+	var center = rect.size / 2
+	var size = rect.size
 	
 	# Adjust for padding
 	var available_width = size.x - BOARD_PADDING * 2
@@ -264,8 +294,9 @@ func _scale_board_to_fit() -> void:
 			max_pos = max_pos.max(tile.position + TILE_SIZE)
 	
 	var board_size = max_pos - min_pos
-	var viewport_size = get_viewport_rect().size
-	var scale_factor = min(viewport_size.x / board_size.x, viewport_size.y / board_size.y) * 0.9
+	# Use the Control's own rect size instead of viewport size
+	var control_size = get_rect().size
+	var scale_factor = min(control_size.x / board_size.x, control_size.y / board_size.y) * 0.9
 	
 	if scale_factor < 1.0:
 		# Apply scale to a container or adjust positions

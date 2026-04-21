@@ -1,38 +1,19 @@
-[gd_scene load_steps=7 format=3 uid="uid://player_select_scene"]
+[gd_scene load_steps=7 format=3 uid="uid://cx4cxyx03tj65"]
 
-[ext_resource type="Script" uid="uid://player_select_script" path="res://scripts/player_select.gd" id="1_ps"]
+[ext_resource type="Script" uid="uid://bc3unbnjdupi6" path="res://scripts/player_select.gd" id="1_ps"]
 [ext_resource type="FontFile" uid="uid://btoigwxng816m" path="res://GrapeSoda.ttf" id="2_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(0.106666, 0.565037, 0.565037, 0.95)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
 border_color = Color(0.139141, 0.682279, 0.681964, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_selected"]
-bg_color = Color(0.2, 0.7, 0.6, 0.9)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(1, 1, 0.2, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_normal"]
-bg_color = Color(0.139141, 0.682279, 0.681964, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
 bg_color = Color(0.2, 0.8, 0.75, 1)
@@ -43,6 +24,13 @@ corner_radius_bottom_left = 15
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
 bg_color = Color(0.0562216, 0.371567, 0.371567, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_normal"]
+bg_color = Color(0.139141, 0.682279, 0.681964, 1)
 corner_radius_top_left = 15
 corner_radius_top_right = 15
 corner_radius_bottom_right = 15
