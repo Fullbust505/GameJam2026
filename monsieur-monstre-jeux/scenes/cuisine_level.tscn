@@ -4,11 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://eua0qi6j81g1" path="res://scenes/cut_P1.tscn" id="1_evvn1"]
 [ext_resource type="PackedScene" uid="uid://3f1odqe353cn" path="res://scenes/cut_P2.tscn" id="2_4r5d3"]
 [ext_resource type="Texture2D" uid="uid://cp1xeoun8ih63" path="res://sprites/cutting board.jpg" id="3_ng1ri"]
-[ext_resource type="Shader" uid="uid://bhun1hyvwpupj" path="res://scenes/blur.gdshader" id="5_lhscs"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_v2ddi"]
-shader = ExtResource("5_lhscs")
-shader_parameter/blur_amount = 1.5
 
 [node name="Node" type="Node" unique_id=2062969420]
 script = ExtResource("1_4r5d3")
@@ -36,19 +31,21 @@ one_shot = true
 
 [node name="blur_cam_p1" type="ColorRect" parent="." unique_id=156287026]
 visible = false
-material = SubResource("ShaderMaterial_v2ddi")
-offset_left = -390.0
+offset_left = -704.0
 offset_top = -202.0
-offset_right = 395.0
+offset_right = 81.0
 offset_bottom = 204.0
+scale = Vector2(1.8357575, 1.1963068)
+color = Color(0, 0, 0, 1)
 
 [node name="blur_cam_p2" type="ColorRect" parent="." unique_id=778553783]
 visible = false
-material = SubResource("ShaderMaterial_v2ddi")
-offset_left = -397.0
+offset_left = -688.0
 offset_top = 339.0
-offset_right = 388.0
+offset_right = 97.0
 offset_bottom = 745.0
+scale = Vector2(1.77711, 1.658267)
+color = Color(0, 0, 0, 1)
 
 [connection signal="finish_p1" from="P1" to="." method="_on_finish_p1"]
 [connection signal="ready_p1" from="P1" to="." method="_on_p1_ready"]
