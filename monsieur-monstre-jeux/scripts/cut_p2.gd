@@ -12,7 +12,7 @@ signal finish_p2
 func _physics_process(delta: float) -> void:
 	if not timer.is_stopped():
 		input_velocity = Vector2.ZERO
-		if Input.is_joy_button_pressed(player_index, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button") and cut_positions.size() < minigame.number_of_cuts-1:
+		if Input.is_joy_button_pressed(player_index, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button") and cut_positions.size() < minigame.number_of_cuts-1 and minigame.timeouts==1:
 			cut_positions.append(position.x)
 			print(cut_positions)
 		input_velocity += Input.get_joy_axis(player_index, JOY_AXIS_LEFT_X) * Vector2.RIGHT * 200

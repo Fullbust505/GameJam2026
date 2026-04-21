@@ -4,6 +4,75 @@
 [ext_resource type="PackedScene" uid="uid://duj8xj1kbg5w8" path="res://scenes/cuisine_level.tscn" id="2_aep5y"]
 [ext_resource type="Texture2D" uid="uid://cp1xeoun8ih63" path="res://sprites/cutting board.jpg" id="3_rcbem"]
 [ext_resource type="Texture2D" uid="uid://66s4ikqhwo6s" path="res://sprites/500px-Seriola_on_cutting_board.png" id="4_rcbem"]
+[ext_resource type="Texture2D" uid="uid://b2b1s0ung34ie" path="res://assets/sprites/ready.png" id="5_ju86i"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ju86i"]
+atlas = ExtResource("5_ju86i")
+region = Rect2(336, 0, 168, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pcx2e"]
+atlas = ExtResource("5_ju86i")
+region = Rect2(0, 0, 168, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6e2um"]
+atlas = ExtResource("5_ju86i")
+region = Rect2(168, 0, 168, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qs1bp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ju86i")
+}],
+"loop": true,
+"name": &"ready",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pcx2e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6e2um")
+}],
+"loop": true,
+"name": &"waiting",
+"speed": 4.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7kplc"]
+atlas = ExtResource("5_ju86i")
+region = Rect2(336, 0, 168, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h8800"]
+atlas = ExtResource("5_ju86i")
+region = Rect2(0, 0, 168, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kp0td"]
+atlas = ExtResource("5_ju86i")
+region = Rect2(168, 0, 168, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8dd3u"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7kplc")
+}],
+"loop": true,
+"name": &"ready",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h8800")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kp0td")
+}],
+"loop": true,
+"name": &"waiting",
+"speed": 4.0
+}]
 
 [node name="Node" type="Node" unique_id=1193111562]
 script = ExtResource("1_n5pg7")
@@ -23,12 +92,6 @@ render_target_update_mode = 4
 [node name="P1Cam" type="Camera2D" parent="HBoxContainer/P1_view_container/P1_view" unique_id=1998250280]
 
 [node name="Level" parent="HBoxContainer/P1_view_container/P1_view" unique_id=2062969420 instance=ExtResource("2_aep5y")]
-
-[node name="Sprite2D" type="Sprite2D" parent="HBoxContainer" unique_id=307835672]
-position = Vector2(321, 179)
-rotation = 3.1415927
-scale = Vector2(0.01, -1)
-texture = ExtResource("3_rcbem")
 
 [node name="P2_view_container" type="SubViewportContainer" parent="HBoxContainer" unique_id=1012394501]
 layout_mode = 2
@@ -53,10 +116,27 @@ theme_override_font_sizes/font_size = 32
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=307835672]
+position = Vector2(321, 179)
+rotation = -3.1415925
+scale = Vector2(0.01, -1)
+texture = ExtResource("3_rcbem")
+
 [node name="tuto" type="Sprite2D" parent="." unique_id=1217964979]
+z_index = 1
 position = Vector2(321, 185)
 texture = ExtResource("4_rcbem")
 
-[node name="p1readiness" type="Sprite2D" parent="." unique_id=1748155364]
+[node name="p1readiness" type="AnimatedSprite2D" parent="." unique_id=2005211767]
+z_index = 2
+position = Vector2(84, 280)
+sprite_frames = SubResource("SpriteFrames_qs1bp")
+animation = &"waiting"
+autoplay = "waiting"
 
-[node name="p2readiness" type="Sprite2D" parent="." unique_id=1895988079]
+[node name="p2readiness" type="AnimatedSprite2D" parent="." unique_id=1642119897]
+z_index = 2
+position = Vector2(560, 280)
+sprite_frames = SubResource("SpriteFrames_8dd3u")
+animation = &"waiting"
+autoplay = "waiting"

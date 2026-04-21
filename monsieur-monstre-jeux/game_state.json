@@ -1,0 +1,30 @@
+{
+	"players": {
+		"p1": {
+			"money": 0.0,
+			"organ_number": 6.0,
+			"organs": {
+				"arms": true,
+				"eyes": true,
+				"heart": true,
+				"legs": true,
+				"lungs": true,
+				"pancreas": true
+			},
+			"score": 0.0
+		},
+		"p2": {
+			"money": 0.0,
+			"organ_number": 6.0,
+			"organs": {
+				"arms": true,
+				"eyes": true,
+				"heart": true,
+				"legs": true,
+				"lungs": true,
+				"pancreas": true
+			},
+			"score": 0.0
+		}
+	}
+}

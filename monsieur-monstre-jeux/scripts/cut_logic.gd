@@ -5,6 +5,8 @@ extends Node
 @onready var p1_readiness = $"../../../../p1readiness"
 @onready var p2_readiness = $"../../../../p2readiness"
 @export var number_of_cuts = randi_range(3, 9)
+var json_path = "res://game_state.json"
+var gamestate : Dictionary = {}
 
 var timeouts = 0
 var p1_ready = false
@@ -13,6 +15,9 @@ var finish_p1 = false
 var finish_p2 = false
 
 func _ready() -> void:
+	open_json(json_path)
+	p1_readiness.animation = "waiting"
+	p2_readiness.animation = "waiting"
 	timer.wait_time = 4
 	print(number_of_cuts)
 
@@ -70,22 +75,49 @@ func end_game():
 	
 	if p2_diff < p1_diff:
 		winner = "p2"
+		gamestate["players"]["p2"]["score"]+=1
+		gamestate["players"]["p2"]["money"]+=300
 	else :
-		winner = "p1"
+		gamestate["players"]["p1"]["score"]+=1
+		gamestate["players"]["p1"]["money"]+=300
 	
 	print(p1_cuts)
 	print(p2_cuts)
 	print(p1_diff)
 	print(p2_diff)
 	print(winner)
+	print(gamestate)
+	
+	write_json(gamestate)
 
 
 func _on_p1_ready() -> void:
 	p1_ready = true
+	p1_readiness.animation = "ready"
 func _on_p2_ready() -> void:
 	p2_ready = true
+	p2_readiness.animation = "ready"
 
 func _on_finish_p1() -> void:
 	finish_p1=true
 func _on_finish_p2() -> void:
 	finish_p2 = true
+
+func open_json(json_path):
+	var file = FileAccess.open(json_path, FileAccess.READ)
+	
+	var json = file.get_as_text()
+	var json_object = JSON.new()
+	
+	json_object.parse(json)
+	gamestate = json_object.data
+	file.close()
+	print(gamestate)
+
+
+func write_json(gamestate):
+	var file = FileAccess.open("res://game_state_new.json", FileAccess.WRITE)
+	var json_text = JSON.stringify(gamestate, '\t')
+	
+	file.store_string(json_text)
+	file.close()
