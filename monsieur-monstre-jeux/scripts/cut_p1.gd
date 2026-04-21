@@ -11,9 +11,11 @@ var missing_organ_offset = Vector2.ZERO
 
 func _physics_process(delta: float) -> void:
 	input_velocity = Vector2.ZERO
+	
 	if not minigame.gamestate["players"]["p1"]["organs"]["arms"]:
 		missing_organ_offset = Vector2.RIGHT * missing_organ()
-	if minigame.gamestate["players"]["p1"]["organs"]["eyes"]:
+
+	if not minigame.gamestate["players"]["p1"]["organs"]["eyes"]:
 		$"../blur_cam_p1".visible=true
 	if not timer.is_stopped():
 		if Input.is_joy_button_pressed(player_index, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button") and cut_positions.size() < minigame.number_of_cuts-1 and minigame.timeouts==1:

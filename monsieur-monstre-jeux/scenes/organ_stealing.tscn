@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://bbl07kp2px5a4"]
+
+[ext_resource type="Script" uid="uid://svug4ytu4ug2" path="res://scripts/organ_stealing.gd" id="1_3ygbr"]
+[ext_resource type="Texture2D" uid="uid://c1o45m3ivkfam" path="res://assets/sprites/missing_base.png" id="2_jpex6"]
+[ext_resource type="Texture2D" uid="uid://dpqhs75yhjf0f" path="res://assets/sprites/missing_arms.png" id="3_er6bn"]
+[ext_resource type="Texture2D" uid="uid://c6exrluyeku5q" path="res://assets/sprites/missing_legs.png" id="4_uxiti"]
+[ext_resource type="Texture2D" uid="uid://d3fxb0ijs277v" path="res://assets/sprites/missing_eyes.png" id="5_76gdb"]
+[ext_resource type="Texture2D" uid="uid://dbdb3ibjdl54w" path="res://assets/sprites/missing_heart.png" id="6_1xol5"]
+[ext_resource type="Texture2D" uid="uid://dsvs7tl5d0k26" path="res://assets/sprites/missing_pancreas.png" id="7_81pp3"]
+[ext_resource type="Texture2D" uid="uid://bqv8mt4qnh0bo" path="res://assets/sprites/lungs.png" id="8_jpex6"]
+[ext_resource type="Texture2D" uid="uid://c6sukfpruj55u" path="res://assets/sprites/missing_jaw.png" id="9_er6bn"]
+
+[node name="Node" type="Node" unique_id=1823434167]
+script = ExtResource("1_3ygbr")
+
+[node name="Body" type="Sprite2D" parent="." unique_id=1791944318]
+position = Vector2(-7.6293945e-06, 0)
+scale = Vector2(2.3515625, 2.3515625)
+texture = ExtResource("2_jpex6")
+
+[node name="arms" type="Sprite2D" parent="Body" unique_id=1385975494]
+texture = ExtResource("3_er6bn")
+
+[node name="eyes" type="Sprite2D" parent="Body" unique_id=43858342]
+texture = ExtResource("5_76gdb")
+
+[node name="heart" type="Sprite2D" parent="Body" unique_id=547212659]
+texture = ExtResource("6_1xol5")
+
+[node name="legs" type="Sprite2D" parent="Body" unique_id=1360450019]
+texture = ExtResource("4_uxiti")
+
+[node name="lungs" type="Sprite2D" parent="Body" unique_id=736087505]
+position = Vector2(-0.42524585, -26.365448)
+scale = Vector2(0.3662791, 0.47259134)
+texture = ExtResource("8_jpex6")
+
+[node name="pancreas" type="Sprite2D" parent="Body" unique_id=1135624481]
+texture = ExtResource("7_81pp3")
+
+[node name="teeth" type="Sprite2D" parent="Body" unique_id=1734531731]
+position = Vector2(-0.42524588, -26.365448)
+scale = Vector2(0.3662791, 0.47259134)
+texture = ExtResource("9_er6bn")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=982115540]
+
+[node name="Visibility Timer" type="Timer" parent="." unique_id=514490531]
+wait_time = 0.3
+autostart = true
+
+[node name="Select Timer" type="Timer" parent="." unique_id=1906332990]
+wait_time = 0.3
+one_shot = true
+
+[node name="Ending Timer" type="Timer" parent="." unique_id=1022891823]
+wait_time = 3.0
+one_shot = true
+
+[node name="Label" type="Label" parent="." unique_id=1152142360]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[connection signal="timeout" from="Visibility Timer" to="." method="_on_visibility_timer_timeout"]
+[connection signal="timeout" from="Ending Timer" to="." method="_on_ending_timer_timeout"]
