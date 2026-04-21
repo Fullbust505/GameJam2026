@@ -41,6 +41,7 @@ var current_stake: Dictionary = {
 	"player_index": -1
 }
 
+# Signal for result reporting (1-based winner like cuisine uses)
 signal minigame_ended(winner_id: int)
 signal minigame_result(player_index: int, success: bool, winner_id: int)
 
@@ -127,10 +128,11 @@ func _update_cutting_scores() -> void:
 		p2_score += 1
 
 func _determine_winner() -> int:
+	# Return 0-based: 0 = tie, 1 = player 1 (p1 index 0), 2 = player 2 (p2 index 1)
 	if p1_score > p2_score:
-		return 1
+		return 1  # P1 wins
 	elif p2_score > p1_score:
-		return 2
+		return 2  # P2 wins
 	else:
 		return 0  # Tie
 

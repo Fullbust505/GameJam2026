@@ -17,9 +17,9 @@ config/icon="res://sprites/icon.svg"
 
 [autoload]
 
-PlayerData="*res://scripts/core/player_data.gd"
-DisplaySettings="*res://scripts/core/display_settings.gd"
-DebugSettings="*res://scripts/core/debug_settings.gd"
+PlayerData="res://scripts/core/player_data.gd"
+DisplaySettings="res://scripts/core/display_settings.gd"
+DebugSettings="res://scripts/core/debug_settings.gd"
 InputSettings="*res://scripts/core/input_settings.gd"
 
 [display]

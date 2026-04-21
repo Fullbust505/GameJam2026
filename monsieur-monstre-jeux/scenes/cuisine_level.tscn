@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://becnsoal6i1ry" path="res://scenes/nage_P1.tscn" id="1_kytv1"]
 [ext_resource type="PackedScene" uid="uid://dyy81owekxuom" path="res://scenes/nage_P2.tscn" id="2_724up"]
-[ext_resource type="Texture2D" uid="uid://cp1xeoun8ih63" path="res://sprites/cutting board.jpg" id="3_ng1ri"]
+[ext_resource type="Texture2D" uid="uid://bsm4c5yqa6f0v" path="res://sprites/cutting board.jpg" id="3_ng1ri"]
 
 [node name="Node" type="Node"]
 

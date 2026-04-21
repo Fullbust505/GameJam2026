@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c4nsukfno26it"]
 
-[ext_resource type="Script" uid="uid://cmgmipia6irbo" path="res://scripts/core/keybind_screen.gd" id="1"]
+[ext_resource type="Script" uid="uid://b37xopbbm2l2p" path="res://scripts/core/keybind_screen.gd" id="1"]
 
 [node name="KeybindScreen" type="Control"]
 layout_mode = 3

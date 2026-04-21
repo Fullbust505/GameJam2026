@@ -339,7 +339,7 @@ func tile_pulse(target: Control, duration: float = 1.0) -> void:
 func tile_glow(target: Control, color: Color, duration: float = 0.3) -> void:
 	if not target:
 		return
-	
+
 	var tween = target.create_tween()
 	var bg = target.get_node_or_null("Border")
 	if bg:
@@ -352,7 +352,7 @@ func tile_glow(target: Control, color: Color, duration: float = 0.3) -> void:
 		border.set_anchors_preset(Control.PRESET_FULL_RECT)
 		border.z_index = -1
 		target.add_child(border)
-		tween.tween_property(bg, "modulate:a", 0.0, duration).set_ease(Tween.EASE_IN)
+		tween.tween_property(border, "modulate:a", 0.0, duration).set_ease(Tween.EASE_IN)
 
 # ==================== PLAYER TOKEN ANIMATIONS ====================
 

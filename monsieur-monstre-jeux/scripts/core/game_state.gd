@@ -151,6 +151,8 @@ func modify_money(player_id: int, delta: int) -> void:
 		var p: PlayerState = players[player_id]
 		p.money += delta
 		emit_signal("money_updated", player_id, p.money)
+		# BUG FIX: Also emit organ_changed since money affects purchasing power
+		emit_signal("organ_changed", player_id, -1, -1)
 
 func can_be_stolen(organ_type: int) -> bool:
 	# Brain cannot be stolen

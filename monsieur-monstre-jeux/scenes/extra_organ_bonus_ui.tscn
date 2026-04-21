@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://extra_organ_bonus_ui"]
+[gd_scene load_steps=2 format=3 uid="uid://6a5s2lanfht4"]
 
-[ext_resource type="Script" path="res://scripts/core/extra_organ_bonus_ui.gd" id="1"]
+[ext_resource type="Script" uid="uid://ls0gbxqt6oda" path="res://scripts/core/extra_organ_bonus_ui.gd" id="1"]
 
 [node name="ExtraOrganBonusUI" type="Control"]
 layout_mode = 3

@@ -25,7 +25,7 @@ const MINIGAME_SCENES: Dictionary = {
 	"EYES": "res://scenes/apnee_level.tscn",
 	"ARMS": "res://scenes/nage_level.tscn",
 	"LEGS": "res://scenes/nage_level.tscn",
-	"BRAIN": "res://scenes/apnee_level.tscn"
+	"BRAIN": "res://scenes/apnea_survival_level.tscn"
 }
 
 # Signals for UI feedback
@@ -197,8 +197,11 @@ func _determine_winner(result, player_index: int) -> bool:
 	# Handle different result types
 	if result == null:
 		return false  # Tie/no winner = loss for challenger
-	
-	if result is int:
+
+	if result is bool:
+		# Boolean result: true = player_index wins, false = opponent wins
+		return result
+	elif result is int:
 		# winner_id: 0 = tie, 1 = player 1 wins, 2 = player 2 wins
 		if result == 0:
 			return false  # Tie = loss for challenger
@@ -211,9 +214,7 @@ func _determine_winner(result, player_index: int) -> bool:
 		# Extract player number from string
 		var player_num: int = result.trim_prefix("p").to_int() if result.begins_with("p") else result.to_int()
 		return player_num == (player_index + 1)
-	elif result is bool:
-		return result
-	
+
 	return false
 
 ## Calculate reward based on win/loss

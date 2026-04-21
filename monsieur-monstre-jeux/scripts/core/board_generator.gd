@@ -99,14 +99,14 @@ func _select_random_tile_type(position: int, total_size: int) -> int:
 	
 	if normalized_pos < 0.25:
 		# Early game - favor shop and bonus
-		weights[TILE_WEIGHTS.keys()[0]] += 10  # Challenge
-		weights[TILE_WEIGHTS.keys()[1]] += 10  # Bonus
+		weights[TileType.CHALLENGE] += 10
+		weights[TileType.BONUS] += 10
 	elif normalized_pos < 0.75:
 		# Mid game - favor challenge and steal
-		weights[TILE_WEIGHTS.keys()[0]] += 10  # Challenge
+		weights[TileType.CHALLENGE] += 10
 	else:
 		# Late game - favor event and swap
-		weights[TILE_WEIGHTS.keys()[6]] += 10  # Event
+		weights[TileType.EVENT] += 10
 	
 	# Build weighted pool
 	var pool: Array = []
@@ -153,8 +153,8 @@ func _generate_tile_properties(tile_type: int) -> Dictionary:
 
 # Get random organ type (for challenge tiles)
 func _random_organ_type() -> int:
-	# Organ types enum from OrganData
-	var organs: Array = [0, 1, 2, 3, 4, 5, 6, 7]  # BRAIN=0, HEART=1, LUNGS=2, etc.
+	# Organ types 1-8 (skip 0=BRAIN which can't be stolen or wagered)
+	var organs: Array = [1, 2, 3, 4, 5, 6, 7, 8]  # HEART, LUNGS, ARMS, LEGS, EYES, PANCREAS, LIVER, KIDNEYS
 	return organs[randi() % organs.size()]
 
 # Get random event type

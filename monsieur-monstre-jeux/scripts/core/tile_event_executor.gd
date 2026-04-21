@@ -325,6 +325,8 @@ func _execute_penalty(player_index: int, tile_data: Dictionary) -> Dictionary:
 			var organ_to_lose: int = available_organs[randi() % available_organs.size()]
 			_game_state.transfer_organ(player_index, -1, organ_to_lose)
 			result["data"]["organ_loss"] = organ_to_lose
+			result["data"]["penalty_type"] = "organ"
+			result["data"]["penalty_value"] = organ_to_lose
 	
 	result["success"] = true
 	
@@ -378,8 +380,6 @@ func _execute_event(player_index: int, tile_data: Dictionary) -> Dictionary:
 			var total_stolen: int = 0
 			for pid in active_players:
 				if pid != player_index:
-					# Get victim money (simplified - steal random amount up to 50)
-					var victim_money: int = 50  # This would need actual victim money lookup
 					var steal_amount: int = randi() % 30 + 10
 					_game_state.modify_money(pid, -steal_amount)
 					_game_state.modify_money(player_index, steal_amount)
@@ -418,8 +418,7 @@ func _execute_event(player_index: int, tile_data: Dictionary) -> Dictionary:
 			result["message"] = "Found " + _get_organ_name(organ) + " in dumpster!"
 		
 		"cash_back":
-			# Get money back based on score
-			var current_score: int = 0  # Would need actual score lookup
+			# Get money back based on stake multiplier
 			var cash_back: int = 20
 			_game_state.modify_money(player_index, cash_back)
 			result["data"]["cash_back"] = cash_back
@@ -441,7 +440,7 @@ func _execute_event(player_index: int, tile_data: Dictionary) -> Dictionary:
 	return result
 
 # Execute Start tile - no effect (or wrap around)
-func _execute_start(player_index: int, tile_data: Dictionary) -> Dictionary:
+func _execute_start(_player_index: int, _tile_data: Dictionary) -> Dictionary:
 	var result: Dictionary = {"success": true, "message": "Landed on START - wrap around!", "data": {}}
 	# Start tile typically just marks the board start, no special effect
 	return result

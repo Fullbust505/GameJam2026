@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://becnsoal6i1ry" path="res://scenes/nage_P1.tscn" id="1_3l7bd"]
 [ext_resource type="PackedScene" uid="uid://dyy81owekxuom" path="res://scenes/nage_P2.tscn" id="2_8o8tc"]
-[ext_resource type="Texture2D" uid="uid://dy7hfpp71wuar" path="res://sprites/background.png" id="3_qhxwh"]
+[ext_resource type="Texture2D" uid="uid://col0ogy1mpn8i" path="res://sprites/background.png" id="3_qhxwh"]
 
 [node name="Node" type="Node"]
 

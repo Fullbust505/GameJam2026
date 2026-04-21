@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://deafuuq145r8k"]
 
-[ext_resource type="Script" uid="uid://d16fjyopxupau" path="res://scripts/controls_selector.gd" id="1_d5kbq"]
+[ext_resource type="Script" uid="uid://duq8r0rsk1t6h" path="res://scripts/controls_selector.gd" id="1_d5kbq"]
 
 [node name="ControlsSelector" type="CanvasLayer"]
 script = ExtResource("1_d5kbq")

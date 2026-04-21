@@ -49,20 +49,18 @@ func _ready() -> void:
 	# Get animations helper
 	_animations = get_node_or_null("/root/Animations")
 	
-	# Note: We DON'T call initialization methods here directly
-	# because during _ready(), Godot's internal state has data.blocked > 0
-	# which prevents add_child() from working
-	# Instead, we use NOTIFICATION_SCENE_INSTANTIATED which fires AFTER _ready()
-	# when the scene is fully in the tree and children can be added
+	# Initialize systems immediately in _ready
+	_initialize_systems()
+	_setup_ui()
+	_connect_signals()
+	
+	# Auto-start the game after a short delay to let systems settle
+	await get_tree().create_timer(0.5).timeout
+	start_game(2, 25)
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_SCENE_INSTANTIATED:
-		# Scene is now fully in the tree, safe to add children
-		call_deferred("_initialize_systems")
-		call_deferred("_setup_ui")
-		call_deferred("_connect_signals")
-		# Auto-start the game
-		call_deferred("start_game", 2, 25)
+	# Notification handling removed - using _ready() instead
+	pass
 
 func _initialize_systems() -> void:
 	# Game State
@@ -107,11 +105,15 @@ func _initialize_systems() -> void:
 	
 	# Board Display - try to find in scene tree first, then fallback to manual instantiation
 	# Note: BoardDisplay is now under BoardDisplayLayer (CanvasLayer), so use correct path
+	print("Game._initialize_systems: Searching for BoardDisplay...")
 	board_display = get_node_or_null("../BoardDisplayLayer/BoardDisplay")
+	print("Game._initialize_systems: ../BoardDisplayLayer/BoardDisplay = ", board_display)
 	if not board_display:
 		board_display = get_node_or_null("/root/Game/BoardDisplayLayer/BoardDisplay")
+		print("Game._initialize_systems: /root/Game/BoardDisplayLayer/BoardDisplay = ", board_display)
 	if not board_display:
 		board_display = get_node_or_null("/root/Game/BoardDisplay")  # Fallback for old path
+		print("Game._initialize_systems: /root/Game/BoardDisplay = ", board_display)
 	
 	# Debug: Check parent type of board_display
 	if board_display:
@@ -277,9 +279,12 @@ func start_game(num_players: int = 2, board_size: int = 25) -> void:
 		var player_positions = []
 		for i in range(num_players):
 			player_positions.append(0)  # All players start at position 0
+		# Board_display.setup() handles tree timing internally via is_inside_tree checks
 		board_display.setup(tiles, player_positions)
+	elif board_display:
+		print("Game: board_display.setup() NOT called - board_display exists but no setup method")
 	else:
-		print("Game: board_display.setup() NOT called - board_display: ", board_display, " has_method(setup): ", board_display.has_method("setup") if board_display else false)
+		print("Game: board_display.setup() NOT called - board_display is null!")
 	
 	# Setup HUD if available
 	if hud and hud.has_method("setup"):

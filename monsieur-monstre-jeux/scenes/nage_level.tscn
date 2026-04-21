@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://duj8xj1kbg5w8"]
 
 [ext_resource type="PackedScene" uid="uid://becnsoal6i1ry" path="res://scenes/nage_P1.tscn" id="1_kytv1"]
-[ext_resource type="Script" uid="uid://bf5w6g5i4ad1p" path="res://scripts/nage_level.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dxybmt306idau" path="res://scripts/nage_level.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://dyy81owekxuom" path="res://scenes/nage_P2.tscn" id="2_724up"]
-[ext_resource type="Texture2D" uid="uid://dy7hfpp71wuar" path="res://sprites/background.png" id="3_xevx2"]
+[ext_resource type="Texture2D" uid="uid://col0ogy1mpn8i" path="res://sprites/background.png" id="3_xevx2"]
 
 [node name="NageLevel" type="Node2D"]
 script = ExtResource("1_script")

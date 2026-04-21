@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://rj5diaay2u36"]
 
 [ext_resource type="Texture2D" uid="uid://bikruwj6j51sj" path="res://sprites/330px-Shrimp_on_cutting_board.png" id="1_nub35"]
-[ext_resource type="Texture2D" uid="uid://dgxl51x2vbe4j" path="res://sprites/500px-Red_Snapper_on_cutting_board.png" id="2_pgks6"]
-[ext_resource type="Texture2D" uid="uid://66s4ikqhwo6s" path="res://sprites/500px-Seriola_on_cutting_board.png" id="3_6lgmd"]
+[ext_resource type="Texture2D" uid="uid://c3t0iuqdp4ys1" path="res://sprites/500px-Red_Snapper_on_cutting_board.png" id="2_pgks6"]
+[ext_resource type="Texture2D" uid="uid://cloti52847je2" path="res://sprites/500px-Seriola_on_cutting_board.png" id="3_6lgmd"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_nub35"]
 animations = [{

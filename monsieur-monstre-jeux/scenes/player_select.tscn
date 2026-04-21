@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://cx4cxyx03tj65"]
 
-[ext_resource type="Script" uid="uid://bc3unbnjdupi6" path="res://scripts/player_select.gd" id="1_ps"]
-[ext_resource type="FontFile" uid="uid://btoigwxng816m" path="res://GrapeSoda.ttf" id="2_font"]
+[ext_resource type="Script" uid="uid://dl30fmpp70fkq" path="res://scripts/player_select.gd" id="1_ps"]
+[ext_resource type="FontFile" uid="uid://ccg2qg3ycrr7t" path="res://GrapeSoda.ttf" id="2_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(0.106666, 0.565037, 0.565037, 0.95)

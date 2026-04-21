@@ -1,82 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://mvmoprc4w5ok"]
+[gd_scene load_steps=8 format=3 uid="uid://mvmoprc4w5ok"]
 
-[ext_resource type="Script" path="res://scripts/game.gd" id="1_uwrxv"]
-[ext_resource type="PackedScene" uid="uid://bvaxhf101ixtc" path="res://scenes/board.tscn" id="2_board"]
-[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="3_hud"]
-[ext_resource type="PackedScene" path="res://scenes/shop.tscn" id="4_shop"]
-
-[node name="Game" type="Node2D"]
-
-[node name="Node" type="Node" parent="."]
-script = ExtResource("1_uwrxv")
-
-# Board Display - bottom layer (z_index = 0)
-[node name="BoardDisplayLayer" type="CanvasLayer" parent="."]
-layer = 0
-z_index = 0
-
-[node name="BoardDisplay" parent="BoardDisplayLayer" instance=ExtResource("2_board")]
-
-[node name="HUDLayer" type="CanvasLayer" parent="."]
-layer = 1
-z_index = 1
-
-[node name="HUD" parent="HUDLayer" instance=ExtResource("3_hud")]
-
-[node name="ShopLayer" type="CanvasLayer" parent="."]
-layer = 2
-z_index = 2
-
-[node name="Shop" parent="ShopLayer" instance=ExtResource("4_shop")]
-visible = false
-
-# UI Layer for roll button and status (above board but below shop)
-[node name="UI" type="CanvasLayer" parent="."]
-
-[node name="Control" type="Control" parent="UI"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="VBox" type="VBoxContainer" parent="UI/Control"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="StatusLabel" type="Label" parent="UI/Control/VBox"]
-layout_mode = 2
-text = "Welcome to Monsieur Monstre!"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="CenterContainer" type="CenterContainer" parent="UI/Control/VBox"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="RollButton" type="Button" parent="UI/Control/VBox/CenterContainer"]
-custom_minimum_size = Vector2(220, 90)
-layout_mode = 2
-theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxFlat_normal_abc123")
-theme_override_styles/hover = SubResource("StyleBoxFlat_hover_abc123")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed_abc123")
-text = "Roll Dice"
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal_abc123"]
-bg_color = Color(0.2, 0.25, 0.35, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.4, 0.5, 0.7, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+[ext_resource type="Script" uid="uid://wr0tyws7s17d" path="res://scripts/game.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://bvaxhf101ixtc" path="res://scenes/board.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://dh1whceyas14h" path="res://scenes/hud.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://c5exo1i68j8vs" path="res://scenes/shop.tscn" id="4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover_abc123"]
 bg_color = Color(0.25, 0.32, 0.45, 1)
@@ -84,7 +11,7 @@ border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.6, 0.75, 1.0, 1)
+border_color = Color(0.6, 0.75, 1, 1)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -102,6 +29,49 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
-[node name="Spacer" type="Control" parent="UI/Control/VBox"]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal_abc123"]
+bg_color = Color(0.2, 0.25, 0.35, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.4, 0.5, 0.7, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="Game" type="Node2D"]
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("1")
+
+[node name="BoardDisplayLayer#BoardDisplay" parent="." instance=ExtResource("2")]
+
+[node name="HUDLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="HUDLayer" instance=ExtResource("3")]
+
+[node name="ShopLayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="Shop" parent="ShopLayer" instance=ExtResource("4")]
+visible = false
+
+[node name="UI_Control#VBox" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="UI_Control_VBox#CenterContainer" type="CenterContainer" parent="."]
+size_flags_vertical = 3
+
+[node name="UI_Control_VBox_CenterContainer#RollButton" type="Button" parent="."]
+custom_minimum_size = Vector2(220, 90)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover_abc123")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed_abc123")
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal_abc123")
+text = "Roll Dice"
