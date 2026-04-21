@@ -216,7 +216,7 @@ func _initialize_systems() -> void:
 func _setup_ui() -> void:
 	# Get UI references from scene if they exist (UI is under CanvasLayer)
 	# Note: Path changed to include UI layer
-	roll_button = get_node_or_null("../UI/Control/VBox/CenterContainer/RollButton")
+	roll_button = get_node_or_null("../RollButtonLayer/RollButton")
 	status_label = get_node_or_null("../UI/Control/VBox/StatusLabel")
 	
 	# Connect button if exists
@@ -367,15 +367,20 @@ func _execute_player_move(spaces: int) -> void:
 
 	# Update game state using linear movement (no wrapping)
 	game_state.move_player_linear(spaces)
-	
+
 	# Animate movement if board display available
-	if board_display and board_display.has_method("update_player_position"):
-		await get_tree().create_timer(0.3).timeout
-		board_display.update_player_position(player.player_id, new_position)
-	
+	if board_display and board_display.has_method("animate_player_move"):
+		var old_pos = old_position
+		var new_pos = player.position
+		board_display.animate_player_move(player.player_id, old_pos, new_pos, 0.5)
+	else:
+		# Fallback: just update position
+		if board_display and board_display.has_method("update_player_position"):
+			board_display.update_player_position(player.player_id, player.position)
+
 	# Execute tile effect after movement animation
-	await get_tree().create_timer(0.5).timeout
-	_execute_tile_effect(new_position)
+	await get_tree().create_timer(0.8).timeout
+	_execute_tile_effect(player.position)
 
 ## Execute tile effect at position
 func _execute_tile_effect(tile_position: int) -> void:

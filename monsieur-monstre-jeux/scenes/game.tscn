@@ -61,18 +61,22 @@ layer = 2
 [node name="Shop" parent="ShopLayer" instance=ExtResource("4")]
 visible = false
 
-[node name="UI_Control#VBox" type="VBoxContainer" parent="."]
-anchors_preset = 15
+[node name="RollButtonLayer" type="CanvasLayer" parent="."]
+layer = 3
+
+[node name="RollButton" type="Button" parent="RollButtonLayer"]
+custom_minimum_size = Vector2(220, 90)
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="UI_Control_VBox#CenterContainer" type="CenterContainer" parent="."]
-size_flags_vertical = 3
-
-[node name="UI_Control_VBox_CenterContainer#RollButton" type="Button" parent="."]
-custom_minimum_size = Vector2(220, 90)
+offset_left = -250.0
+offset_top = -130.0
+offset_right = -30.0
+offset_bottom = -40.0
+grow_horizontal = 0
+grow_vertical = 0
 theme_override_font_sizes/font_size = 28
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover_abc123")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed_abc123")

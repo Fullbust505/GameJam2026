@@ -16,19 +16,23 @@ enum TileType {
 	PENALTY,
 	EVENT,
 	START,
-	END
+	END,
+	PATH_SPLIT,    # Branch point - player chooses which path
+	PATH_MERGE     # Merge point - paths rejoin here
 }
 
 class Tile:
 	var tile_type: int
 	var position: int
 	var properties: Dictionary
-	
+	var connections: Array = []  # Which tiles this tile connects to (for branches)
+
 	func _init(type: int, pos: int, props: Dictionary = {}):
 		tile_type = type
 		position = pos
 		properties = props
-	
+		connections = []
+
 	func get_display_name() -> String:
 		match tile_type:
 			TileType.SHOP:
@@ -49,7 +53,15 @@ class Tile:
 				return "START"
 			TileType.END:
 				return "END"
+			TileType.PATH_SPLIT:
+				return "SPLIT"
+			TileType.PATH_MERGE:
+				return "MERGE"
 		return "UNKNOWN"
+
+	func add_connection(tile_idx: int) -> void:
+		if not connections.has(tile_idx):
+			connections.append(tile_idx)
 
 # Tile distribution weights (higher = more common)
 const TILE_WEIGHTS := {
@@ -90,7 +102,7 @@ func generate_board(size: int = 0) -> Array:
 	emit_signal("board_generated", current_board)
 	return current_board
 
-# Generate a linear board (START -> middle tiles -> END)
+# Generate a linear board with branches (START -> middle tiles -> END)
 func generate_linear_board(size: int = 0) -> Array:
 	current_map += 1
 	if size < MIN_BOARD_SIZE or size > MAX_BOARD_SIZE:
@@ -98,30 +110,79 @@ func generate_linear_board(size: int = 0) -> Array:
 
 	current_board.clear()
 
-	# Always start with START tile at position 0
-	current_board.append(Tile.new(TileType.START, 0))
+	# Strategy: Build a board with potential branch points
+	# SPLIT tiles create parallel paths that MERGE back later
 
-	# Generate middle tiles (positions 1 to size-2)
+	# Always start with START tile at position 0
+	current_board.append(Tile.new(TileType.START, 0, {}))
+
+	# Create the board with strategic split/merge points
+	var mid_size = size - 2  # Without START and END
+	var split_positions: Array = []
+	var merge_positions: Array = []
+
+	# Add 2-3 split points randomly
+	var num_splits = randi() % 2 + 2  # 2-3 splits
+	for i in range(num_splits):
+		var pos = int((i + 1) * mid_size / float(num_splits + 1))
+		split_positions.append(pos)
+
+	# Create main path tiles
 	for i in range(1, size - 1):
-		var tile_type_int: int = _select_random_tile_type(i, size)
-		var properties: Dictionary = _generate_tile_properties(tile_type_int)
-		current_board.append(Tile.new(tile_type_int, i, properties))
+		var tile_type_int: int
+		var props: Dictionary = {}
+
+		# Check if this should be a SPLIT tile
+		if split_positions.has(i):
+			tile_type_int = TileType.PATH_SPLIT
+		# Check if this should be a MERGE tile (roughly after splits)
+		elif i > split_positions[0] + 3 and randi() % 4 == 0 and merge_positions.size() < split_positions.size():
+			tile_type_int = TileType.PATH_MERGE
+			merge_positions.append(i)
+		else:
+			tile_type_int = _select_random_tile_type(i, size)
+			props = _generate_tile_properties(tile_type_int)
+
+		current_board.append(Tile.new(tile_type_int, i, props))
 
 	# Always end with END tile at final position
-	current_board.append(Tile.new(TileType.END, size - 1))
+	current_board.append(Tile.new(TileType.END, size - 1, {}))
 
-	# Ensure fair distribution by adjusting (excluding START and END)
+	# Build branch connections (simplified: SPLIT connects to next 2 tiles)
+	_build_branch_connections(split_positions, merge_positions)
+
+	# Ensure fair distribution
 	_adjust_distribution_linear()
 
 	emit_signal("board_generated", current_board)
 	return current_board
+
+# Build connection information for branched paths
+func _build_branch_connections(split_positions: Array, merge_positions: Array) -> void:
+	# For each SPLIT, connect it to the next logical tiles
+	# The actual branch choice is made during gameplay
+	for split_pos in split_positions:
+		if split_pos < current_board.size():
+			var split_tile = current_board[split_pos]
+			# Connect to next tile (main path) and skip-one tile (branch path)
+			split_tile.add_connection(split_pos + 1)
+			if split_pos + 2 < current_board.size():
+				split_tile.add_connection(split_pos + 2)
+
+	# For each MERGE, it's the end of a branch - connect back to main path
+	for merge_pos in merge_positions:
+		if merge_pos < current_board.size():
+			var merge_tile = current_board[merge_pos]
+			# Merge connects forward to continue main path
+			if merge_pos + 1 < current_board.size():
+				merge_tile.add_connection(merge_pos + 1)
 
 # Ensure fair tile distribution for linear board
 func _adjust_distribution_linear() -> void:
 	var counts: Dictionary = {}
 	for tile in current_board:
 		var t: int = tile.tile_type
-		if t != TileType.START and t != TileType.END:
+		if t != TileType.START and t != TileType.END and t != TileType.PATH_SPLIT and t != TileType.PATH_MERGE:
 			counts[t] = counts.get(t, 0) + 1
 
 	# Check for missing tile types

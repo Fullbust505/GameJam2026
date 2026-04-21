@@ -15,7 +15,9 @@ const TILE_ICONS: Dictionary = {
 	"PENALTY": "res://assets/sprites/warning.png",  # warning for penalty
 	"EVENT": "res://assets/sprites/eye.png",  # eye for mystery/event
 	"START": "res://assets/sprites/heart.png",  # heart for start
-	"END": "res://assets/sprites/heart.png"  # flag for end
+	"END": "res://assets/sprites/heart.png",  # flag for end
+	"SPLIT": "res://assets/sprites/heart.png",  # branch icon
+	"MERGE": "res://assets/sprites/heart.png"   # merge icon
 }
 
 # Tile colors for visual distinction
@@ -28,16 +30,18 @@ const TILE_COLORS: Dictionary = {
 	"PENALTY": Color(0.8, 0.5, 0.1),   # Orange
 	"EVENT": Color(0.4, 0.2, 0.6),     # Violet
 	"START": Color(0.9, 0.7, 0.1),     # Gold
-	"END": Color(0.1, 0.9, 0.3)        # Bright green for goal
+	"END": Color(0.1, 0.9, 0.3),       # Bright green for goal
+	"SPLIT": Color(0.9, 0.2, 0.9),     # Magenta for split
+	"MERGE": Color(0.2, 0.9, 0.9)      # Cyan for merge
 }
 
 # Constants
-const TILE_SIZE: Vector2 = Vector2(36, 36)  # Smaller tiles for circular layout
-const PLAYER_TOKEN_SIZE: Vector2 = Vector2(20, 20)
-const BOARD_PADDING: float = 80.0
-const PATH_LINE_WIDTH: float = 3.0
-const TILES_PER_ROW: int = 5  # Grid layout: tiles per row
-const GRID_SPACING: float = 15.0  # Spacing between tiles in grid
+const TILE_SIZE: Vector2 = Vector2(60, 60)  # Tiles
+const PLAYER_TOKEN_SIZE: Vector2 = Vector2(28, 28)
+const BOARD_PADDING: float = 30.0
+const PATH_LINE_WIDTH: float = 4.0
+const TILES_PER_ROW: int = 4  # 4 tiles per row for better fit
+const GRID_SPACING: float = 100.0  # More space between tiles
 
 # State
 var _board_tiles: Array = []
@@ -63,6 +67,8 @@ var _camera_p2: Camera2D = null
 var _viewport_container: SubViewportContainer = null
 var _viewport_p1: SubViewport = null
 var _viewport_p2: SubViewport = null
+var _cameras_initialized: bool = false
+var _debug_camera_count: int = 0
 
 # Signals
 signal tile_clicked(tile_index: int)
@@ -72,17 +78,20 @@ signal tile_hovered(tile_index: int)
 func _ready() -> void:
 	# Get animations helper
 	_animations = get_node_or_null("/root/Animations")
-	
+
 	# Create path container for Line2D nodes
 	_path_container = Node.new()
 	_path_container.name = "PathContainer"
 	add_child(_path_container)
-	
+
 	# FIX: Only connect viewport signal if we're in the tree
 	# get_viewport() returns null if not in tree
 	var vp = get_viewport()
 	if vp:
 		vp.size_changed.connect(_on_viewport_size_changed)
+
+	# Set process mode to always run for camera tracking
+	process_mode = Node.PROCESS_MODE_ALWAYS
 
 # Handle viewport size changes (window resize)
 func _on_viewport_size_changed() -> void:
@@ -192,25 +201,11 @@ func _create_tiles() -> void:
 
 	var center = viewport_size / 2
 	print("_create_tiles(): Tile positions will be centered at ", center)
-	
-	
-	# Calculate radius for circular layout
-	var available_width = viewport_size.x - BOARD_PADDING * 2
-	var available_height = viewport_size.y - BOARD_PADDING * 2
-	
-	# BUG FIX: Ensure radius is always positive to prevent off-screen positioning
-	var base_radius = min(available_width, available_height) / 2 - TILE_SIZE.x
-	if base_radius <= 0:
-		base_radius = 100  # Minimum radius to keep tiles on screen
-		print("_create_tiles(): Radius was invalid, using minimum radius ", base_radius)
-	
-	var radius_x = base_radius
-	var radius_y = base_radius * 0.7
-	
+
 	var board_size = _board_tiles.size()
 
 	# Calculate grid layout dimensions - use fewer tiles per row for longer snaking path
-	var tiles_per_row = 4  # Smaller rows = longer snake path
+	var tiles_per_row = TILES_PER_ROW  # Use constant for snake layout
 	if board_size < tiles_per_row:
 		tiles_per_row = board_size
 	var num_rows = ceili(float(board_size) / float(tiles_per_row))
@@ -523,36 +518,55 @@ func _layout_board() -> void:
 	print("_layout_board() positioned ", tile_positions.size(), " tiles, center=", board_center, " radius_x=", radius_x)
 
 # Update path line points to connect tiles in snake order
+# Tiles are already positioned in snake order, so just connect sequentially
 func _update_path_lines(tile_positions: Array) -> void:
 	if _path_lines.size() > 0 and tile_positions.size() > 0:
 		var path_line = _path_lines[0]
 		path_line.clear_points()
 
-		var tiles_per_row = 4
-		if tile_positions.size() < tiles_per_row:
-			tiles_per_row = tile_positions.size()
+		# Tiles are already positioned in snake layout, just connect sequentially
+		for pos in tile_positions:
+			path_line.add_point(pos)
 
-		# Draw path in snake order
-		for i in range(tile_positions.size()):
-			var row = i / tiles_per_row
-			var col = i % tiles_per_row
-
-			# Snake order: odd rows go right-to-left
-			var tile_idx: int
-			if row % 2 == 0:
-				# Even row: left to right
-				tile_idx = row * tiles_per_row + col
-			else:
-				# Odd row: right to left
-				var row_start = row * tiles_per_row
-				var row_end = row_start + tiles_per_row - 1
-				tile_idx = row_end - col
-				tile_idx = clamp(tile_idx, 0, tile_positions.size() - 1)
-
-			if tile_idx < tile_positions.size():
-				path_line.add_point(tile_positions[tile_idx])
+		# Draw branch paths (from SPLIT tiles to their connected tiles)
+		_draw_branchpaths(tile_positions)
 
 		print("_update_path_lines: updated with ", path_line.get_point_count(), " points (snake path)")
+	else:
+		print("_update_path_lines: no tiles or path lines to update")
+
+# Draw additional lines for branch paths at SPLIT tiles
+func _draw_branchpaths(tile_positions: Array) -> void:
+	# Create a second path line for branches (dashed/different color)
+	if _path_lines.size() < 2:
+		var branch_parent = _path_container.get_node_or_null("PathParent")
+		if branch_parent:
+			var branch_line = Line2D.new()
+			branch_line.name = "BranchPath"
+			branch_line.width = 2.0
+			branch_line.default_color = Color(0.8, 0.8, 0.2, 0.6)  # Yellow dashed
+			branch_line.joint_mode = Line2D.LINE_JOINT_ROUND
+			branch_line.begin_cap_mode = Line2D.LINE_CAP_ROUND
+			branch_line.end_cap_mode = Line2D.LINE_CAP_ROUND
+			branch_line.z_index = 4  # Below main path
+			_path_lines.append(branch_line)
+			branch_parent.add_child(branch_line)
+
+	# Find SPLIT tiles and draw branches
+	for i in range(_board_tiles.size()):
+		var tile = _board_tiles[i]
+		if tile.tile_type == 9:  # SPLIT tile
+			var split_tile_idx = i
+			# Get connections from tile
+			if tile.connections.size() > 1:
+				# Draw line to the "branch" (skip one tile as branch path)
+				var branch_idx = split_tile_idx + 2
+				if branch_idx < tile_positions.size():
+					var start_pos = tile_positions[split_tile_idx]
+					var end_pos = tile_positions[branch_idx]
+					if _path_lines.size() > 1:
+						_path_lines[1].add_point(start_pos)
+						_path_lines[1].add_point(end_pos)
 
 # Update player token positions based on current board positions
 func _update_player_token_positions() -> void:
@@ -674,6 +688,8 @@ func _get_tile_type_string(tile_type: int) -> String:
 		6: return "EVENT"
 		7: return "START"
 		8: return "END"
+		9: return "SPLIT"
+		10: return "MERGE"
 	return "UNKNOWN"
 
 # Get tile type string for external use
@@ -748,64 +764,108 @@ func get_player_position(player_index: int) -> int:
 # Camera system setup
 func setup_cameras() -> void:
 	if _camera_main != null:
+		_debug_camera_count += 1
+		print("setup_cameras called but _camera_main already exists (call #", _debug_camera_count, ")")
 		return  # Already setup
 
-	# Create main camera that zooms to fit both players
+	# Find Game node - parent of BoardDisplayLayer (which is our parent)
+	var board_layer = get_parent()  # BoardDisplayLayer
+	var game_node = board_layer.get_parent() if board_layer else null
+
+	if not game_node:
+		game_node = get_tree().root.get_node_or_null("Game")
+
+	if not game_node:
+		print("ERROR: setup_cameras could not find Game node!")
+		return
+
+	print("setup_cameras: Found Game node: ", game_node.name)
+
+	# Create cameras as children of Game node (not under CanvasLayer)
 	_camera_main = Camera2D.new()
 	_camera_main.name = "MainCamera"
-	add_child(_camera_main)
+	game_node.add_child(_camera_main)
+	_camera_main.make_current()
+	print("setup_cameras: Added MainCamera to Game, current=", _camera_main.is_current())
 
-	# Create player-specific cameras (disabled by default)
 	_camera_p1 = Camera2D.new()
 	_camera_p1.name = "CameraP1"
 	_camera_p1.enabled = false
-	add_child(_camera_p1)
+	game_node.add_child(_camera_p1)
 
 	_camera_p2 = Camera2D.new()
 	_camera_p2.name = "CameraP2"
 	_camera_p2.enabled = false
-	add_child(_camera_p2)
+	game_node.add_child(_camera_p2)
 
 	_camera_mode = 0
-	print("Camera system initialized")
+	_cameras_initialized = true
+	print("setup_cameras: Camera system initialized on Game node")
+	print("setup_cameras: MainCamera is_current=", _camera_main.is_current())
 
 func _process(delta: float) -> void:
-	if _camera_main == null or _player_tokens.size() < 2:
-		return
-	_update_camera_mode()
+	# Always try to update camera if tokens exist
+	if _player_tokens.size() >= 2:
+		if _camera_main == null:
+			print("BoardDisplay _process: calling setup_cameras() because _camera_main is null")
+			setup_cameras()
+		_update_camera_mode()
+	elif _camera_main == null and _player_tokens.size() < 2:
+		# No tokens yet
+		pass
 
 func _update_camera_mode() -> void:
+	if _camera_main == null:
+		return
+
 	var p1_pos = _player_tokens[0].global_position if _player_tokens.size() > 0 else Vector2.ZERO
 	var p2_pos = _player_tokens[1].global_position if _player_tokens.size() > 1 else Vector2.ZERO
 	var distance = p1_pos.distance_to(p2_pos)
 
+	print("_update_camera_mode: p1=", p1_pos, " p2=", p2_pos, " distance=", distance, " mode=", _camera_mode)
+
 	if distance > SPLIT_THRESHOLD:
 		if _camera_mode != 1:
+			print("_update_camera_mode: Switching to SPLIT")
 			_enable_split_screen()
 	else:
 		if _camera_mode != 0:
+			print("_update_camera_mode: Switching to MAIN")
 			_enable_main_camera()
 
 func _enable_main_camera() -> void:
 	_camera_mode = 0
-	_camera_main.enabled = true
-	_camera_p1.enabled = false
-	_camera_p2.enabled = false
+	if _camera_main == null:
+		return
+
+	# Use world position directly - tokens are under CanvasLayer but we need world coords
+	var p1_pos = _player_tokens[0].global_position if _player_tokens.size() > 0 else Vector2.ZERO
+	var p2_pos = _player_tokens[1].global_position if _player_tokens.size() > 1 else Vector2.ZERO
 
 	# Center on midpoint of both players and zoom out to fit
-	if _player_tokens.size() >= 2:
-		var midpoint = (_player_tokens[0].global_position + _player_tokens[1].global_position) / 2
-		_camera_main.global_position = midpoint
-		# Zoom out to fit both players in view
-		var distance = _player_tokens[0].global_position.distance_to(_player_tokens[1].global_position)
-		var zoom_level = clamp(distance / 200.0, 1.0, 2.0)
-		_camera_main.zoom = Vector2(zoom_level, zoom_level)
+	var midpoint = (p1_pos + p2_pos) / 2
+	_camera_main.position = midpoint  # Use position, not global_position
+
+	# Zoom based on distance - more zoom out when far apart
+	var distance = p1_pos.distance_to(p2_pos)
+	var zoom_level = clamp(400.0 / max(distance, 100.0), 0.5, 1.5)
+	_camera_main.zoom = Vector2(zoom_level, zoom_level)
+	_camera_main.enabled = true
+	_camera_main.make_current()
+	_camera_p1.enabled = false if _camera_p1 else false
+	_camera_p2.enabled = false if _camera_p2 else false
+	print("Camera: main camera centered at ", midpoint, " zoom=", zoom_level, " is_current=", _camera_main.is_current())
 
 func _enable_split_screen() -> void:
 	_camera_mode = 1
-	_camera_main.enabled = false
-	_camera_p1.enabled = true
-	_camera_p2.enabled = true
+	if _camera_main:
+		_camera_main.enabled = false
+	if _camera_p1:
+		_camera_p1.enabled = true
+		_camera_p1.make_current()
+	if _camera_p2:
+		_camera_p2.enabled = true
+		_camera_p2.make_current()
 
 	# Follow each player with respective camera
 	if _player_tokens.size() > 0:
