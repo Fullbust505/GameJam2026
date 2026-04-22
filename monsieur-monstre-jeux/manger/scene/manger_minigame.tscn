@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://d1r3y0im555vf" path="res://assets/sprites/arm_feed.png" id="4_1cnjh"]
 [ext_resource type="Texture2D" uid="uid://csreeb8gg2q60" path="res://assets/sprites/foot_feed.png" id="5_v2nav"]
 [ext_resource type="Texture2D" uid="uid://b2b1s0ung34ie" path="res://assets/sprites/ready.png" id="6_or0vl"]
+[ext_resource type="Script" uid="uid://bh8bucpd5hfmc" path="res://manger/scripts/manger_minigame.gd" id="7_manger"]
 
 [node name="MangerMinigame" type="Control" unique_id=1291441387]
 layout_mode = 3
@@ -14,6 +15,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("7_manger")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=146811515]
 layout_mode = 1
@@ -76,13 +78,13 @@ position = Vector2(477, 138)
 scale = Vector2(0.8805032, 0.5760518)
 texture = ExtResource("5_v2nav")
 
-[node name="Sprite2D4" type="Sprite2D" parent="." unique_id=496790553]
+[node name="p1readiness" type="Sprite2D" parent="." unique_id=1497253891]
 position = Vector2(72, 308.00003)
 scale = Vector2(0.8630952, 0.703125)
 texture = ExtResource("6_or0vl")
 hframes = 3
 
-[node name="Sprite2D5" type="Sprite2D" parent="." unique_id=31376690]
+[node name="p2readiness" type="Sprite2D" parent="." unique_id=390476120]
 position = Vector2(568.75, 306)
 scale = Vector2(0.7648808, 0.7343749)
 texture = ExtResource("6_or0vl")
