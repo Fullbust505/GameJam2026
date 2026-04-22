@@ -2,6 +2,9 @@ extends Node2D
 
 @onready var PeaScene = preload("res://manger/scene/pea.tscn")
 
+signal p1_ready
+signal p2_ready
+
 func _ready():
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
@@ -31,3 +34,11 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
+
+
+func _on_p_1_ready_p_1() -> void:
+	p1_ready.emit()
+
+
+func _on_p_2_ready_p_2() -> void:
+	p2_ready.emit()

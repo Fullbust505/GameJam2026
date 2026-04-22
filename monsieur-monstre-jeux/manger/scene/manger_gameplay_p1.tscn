@@ -91,3 +91,4 @@ libraries/ = SubResource("AnimationLibrary_83226")
 position = Vector2(239.25006, -152.49998)
 
 [connection signal="body_entered" from="Mouth" to="Mouth" method="_on_body_entered"]
+[connection signal="ready_p1" from="P1" to="." method="_on_p_1_ready_p_1"]

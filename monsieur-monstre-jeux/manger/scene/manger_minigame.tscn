@@ -8,6 +8,74 @@
 [ext_resource type="Texture2D" uid="uid://b2b1s0ung34ie" path="res://assets/sprites/ready.png" id="6_or0vl"]
 [ext_resource type="Script" uid="uid://bh8bucpd5hfmc" path="res://manger/scripts/manger_minigame.gd" id="7_manger"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_v2nav"]
+atlas = ExtResource("6_or0vl")
+region = Rect2(336, 0, 168, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_or0vl"]
+atlas = ExtResource("6_or0vl")
+region = Rect2(0, 0, 168, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aok5u"]
+atlas = ExtResource("6_or0vl")
+region = Rect2(168, 0, 168, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1k0tf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v2nav")
+}],
+"loop": true,
+"name": &"ready",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_or0vl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aok5u")
+}],
+"loop": true,
+"name": &"waiting",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l7s5p"]
+atlas = ExtResource("6_or0vl")
+region = Rect2(336, 0, 168, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_grhx0"]
+atlas = ExtResource("6_or0vl")
+region = Rect2(0, 0, 168, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vfadf"]
+atlas = ExtResource("6_or0vl")
+region = Rect2(168, 0, 168, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6c4sn"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l7s5p")
+}],
+"loop": true,
+"name": &"ready",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_grhx0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vfadf")
+}],
+"loop": true,
+"name": &"waiting",
+"speed": 5.0
+}]
+
 [node name="MangerMinigame" type="Control" unique_id=1291441387]
 layout_mode = 3
 anchors_preset = 15
@@ -54,38 +122,49 @@ render_target_update_mode = 4
 
 [node name="MangerGameplay" parent="HBoxContainer/SubViewportContainer2/SubViewport" unique_id=855583888 instance=ExtResource("2_0ofvd")]
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1962678403]
+[node name="manger_tuto" type="Sprite2D" parent="." unique_id=1962678403]
+position = Vector2(-1, 0)
 texture = ExtResource("3_0ofvd")
 offset = Vector2(321, 182)
 
-[node name="Label" type="Label" parent="Sprite2D" unique_id=1323286250]
-offset_left = 44.0
-offset_top = 265.0
-offset_right = 606.0
-offset_bottom = 314.0
+[node name="Label" type="Label" parent="manger_tuto" unique_id=1323286250]
+offset_left = 136.0
+offset_top = 268.0
+offset_right = 518.0
+offset_bottom = 343.0
 text = "Insert as many peas that you can in your mouth ! 
 Use the left joystick to go forward / backwards,
 and rotate up and down. "
 horizontal_alignment = 1
 
-[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=2094888492]
+[node name="manger_left" type="Sprite2D" parent="manger_tuto" unique_id=2094888492]
 position = Vector2(164.68752, 137.56252)
 scale = Vector2(0.8797022, 0.579918)
 texture = ExtResource("4_1cnjh")
 
-[node name="Sprite2D3" type="Sprite2D" parent="." unique_id=211877770]
+[node name="manger_right" type="Sprite2D" parent="manger_tuto" unique_id=211877770]
 position = Vector2(477, 138)
 scale = Vector2(0.8805032, 0.5760518)
 texture = ExtResource("5_v2nav")
 
-[node name="p1readiness" type="Sprite2D" parent="." unique_id=1497253891]
-position = Vector2(72, 308.00003)
-scale = Vector2(0.8630952, 0.703125)
-texture = ExtResource("6_or0vl")
-hframes = 3
+[node name="p1readiness" type="AnimatedSprite2D" parent="manger_tuto" unique_id=1940537919]
+z_index = 2
+position = Vector2(569, 305)
+scale = Vector2(0.80000246, 0.80000246)
+sprite_frames = SubResource("SpriteFrames_1k0tf")
+animation = &"waiting"
+autoplay = "waiting"
 
-[node name="p2readiness" type="Sprite2D" parent="." unique_id=390476120]
-position = Vector2(568.75, 306)
-scale = Vector2(0.7648808, 0.7343749)
-texture = ExtResource("6_or0vl")
-hframes = 3
+[node name="p2readiness" type="AnimatedSprite2D" parent="manger_tuto" unique_id=2137581751]
+z_index = 2
+position = Vector2(77.00001, 303)
+scale = Vector2(0.7599988, 0.7599988)
+sprite_frames = SubResource("SpriteFrames_6c4sn")
+animation = &"waiting"
+autoplay = "waiting"
+
+[node name="tutocd" type="Timer" parent="." unique_id=752173573]
+
+[connection signal="p1_ready" from="HBoxContainer/SubViewportContainer/SubViewport/MangerGameplay" to="." method="_on_manger_gameplay_p_1_ready"]
+[connection signal="p2_ready" from="HBoxContainer/SubViewportContainer2/SubViewport/MangerGameplay" to="." method="_on_manger_gameplay_p_2_ready"]
+[connection signal="timeout" from="tutocd" to="." method="_on_tutocd_timeout"]
