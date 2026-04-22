@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://d1noxh1y5uwuw" path="res://manger/scripts/mouth_win_condition.gd" id="2_d5ppy"]
 [ext_resource type="Texture2D" uid="uid://dlfbsmas0fqgc" path="res://sprites/biting.png" id="3_2whpe"]
 [ext_resource type="PackedScene" uid="uid://w0ono7ds8tn6" path="res://manger/scene/manger_p2.tscn" id="4_ax17n"]
+[ext_resource type="AudioStream" uid="uid://bed8kjgutjx1" path="res://assets/sfx/bite.ogg" id="4_d5ppy"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ifs1u"]
 load_path = "res://.godot/imported/plate.png-b3180027a86b1f7bdf77b130b632465e.ctex"
@@ -86,6 +87,10 @@ hframes = 2
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Mouth" unique_id=214744401]
 libraries/ = SubResource("AnimationLibrary_83226")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Mouth" unique_id=536460245]
+stream = ExtResource("4_d5ppy")
+pitch_scale = 0.78
 
 [node name="P2" parent="." unique_id=1330219233 instance=ExtResource("4_ax17n")]
 position = Vector2(-61, 0)

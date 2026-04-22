@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://b5efdpoinpvv3"]
 
 [ext_resource type="Script" uid="uid://dcweaxm0ufmxf" path="res://manger/scripts/pea_generation.gd" id="1_vwqqj"]
+[ext_resource type="AudioStream" uid="uid://bed8kjgutjx1" path="res://assets/sfx/bite.ogg" id="4_f6ca0"]
 [ext_resource type="PackedScene" uid="uid://0fe15bjh7pi4" path="res://manger/scene/manger_p1.tscn" id="4_ifs1u"]
 [ext_resource type="Script" uid="uid://d1noxh1y5uwuw" path="res://manger/scripts/mouth_win_condition.gd" id="5_vx3yk"]
 [ext_resource type="Texture2D" uid="uid://dlfbsmas0fqgc" path="res://sprites/biting.png" id="6_vwqqj"]
@@ -86,6 +87,9 @@ hframes = 2
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Mouth" unique_id=214744401]
 libraries/ = SubResource("AnimationLibrary_83226")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Mouth" unique_id=1996727796]
+stream = ExtResource("4_f6ca0")
 
 [node name="P1" parent="." unique_id=1643094856 instance=ExtResource("4_ifs1u")]
 position = Vector2(239.25006, -152.49998)
