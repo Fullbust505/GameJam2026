@@ -70,6 +70,7 @@ scale = Vector2(2.3007815, 2.3007815)
 texture = ExtResource("5_lhscs")
 
 [node name="end_timer" type="Timer" parent="." unique_id=999641020]
+wait_time = 1.5
 
 [connection signal="finish_p1" from="P1" to="." method="_on_finish_p1"]
 [connection signal="ready_p1" from="P1" to="." method="_on_p1_ready"]

@@ -428,6 +428,29 @@ autoplay = "waiting"
 wait_time = 30.0
 one_shot = true
 
+[node name="bkc_screen_on_win" type="ColorRect" parent="." unique_id=1536455584]
+visible = false
+z_index = 10
+offset_top = -2.0
+offset_right = 40.0
+offset_bottom = 38.0
+scale = Vector2(16, 9.12)
+color = Color(0, 0, 0, 1)
+
+[node name="winner" type="Label" parent="." unique_id=1051197970]
+visible = false
+z_index = 11
+offset_left = 216.0
+offset_top = 142.0
+offset_right = 398.0
+offset_bottom = 209.0
+theme_override_font_sizes/font_size = 48
+text = "p1 won!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=357157621]
+
 [connection signal="ready_p1" from="p1_hand" to="." method="_on_p_1_hand_ready_p_1"]
 [connection signal="ready_p2" from="p2_hand" to="." method="_on_p_2_hand_ready_p_2"]
 [connection signal="timeout" from="end_timer" to="." method="_on_end_timer_timeout"]
