@@ -1,7 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://bfbny43birx8b"]
 
 [ext_resource type="Script" uid="uid://c5fqa1ax7aw5v" path="res://scripts/world.gd" id="1_n5pg7"]
-[ext_resource type="PackedScene" uid="uid://da4q0glx3nck1" path="res://scenes/apnee_level.tscn" id="2_n5pg7"]
+[ext_resource type="PackedScene" uid="uid://duj8xj1kbg5w8" path="res://scenes/cuisine_level.tscn" id="2_aep5y"]
+[ext_resource type="Texture2D" uid="uid://cp1xeoun8ih63" path="res://sprites/cutting board.jpg" id="3_rcbem"]
+[ext_resource type="Texture2D" uid="uid://66s4ikqhwo6s" path="res://sprites/500px-Seriola_on_cutting_board.png" id="4_rcbem"]
 
 [node name="Node" type="Node"]
 [node name="Node" type="Node"]
@@ -22,9 +24,15 @@ handle_input_locally = false
 size = Vector2i(320, 360)
 render_target_update_mode = 4
 
-[node name="Level" parent="HBoxContainer/P1_view_container/P1_view" unique_id=2062969420 instance=ExtResource("2_n5pg7")]
+[node name="P1Cam" type="Camera2D" parent="HBoxContainer/P1_view_container/P1_view" unique_id=1998250280]
 
-[node name="P1Cam" type="Camera2D" parent="HBoxContainer/P1_view_container/P1_view"]
+[node name="Level" parent="HBoxContainer/P1_view_container/P1_view" unique_id=2062969420 instance=ExtResource("2_aep5y")]
+
+[node name="Sprite2D" type="Sprite2D" parent="HBoxContainer" unique_id=307835672]
+position = Vector2(321, 179)
+rotation = 3.1415927
+scale = Vector2(0.01, -1)
+texture = ExtResource("3_rcbem")
 
 [node name="P2_view_container" type="SubViewportContainer" parent="HBoxContainer"]
 [node name="P2_view_container" type="SubViewportContainer" parent="HBoxContainer"]
@@ -36,4 +44,25 @@ handle_input_locally = false
 size = Vector2i(320, 360)
 render_target_update_mode = 4
 
-[node name="P2Cam" type="Camera2D" parent="HBoxContainer/P2_view_container/P2_view"]
+[node name="P2Cam" type="Camera2D" parent="HBoxContainer/P2_view_container/P2_view" unique_id=38584722]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1430971758]
+anchor_mode = 0
+
+[node name="Label" type="Label" parent="." unique_id=773116792]
+z_index = 2
+z_as_relative = false
+offset_left = 300.0
+offset_right = 340.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="tuto" type="Sprite2D" parent="." unique_id=1217964979]
+position = Vector2(321, 185)
+texture = ExtResource("4_rcbem")
+
+[node name="p1readiness" type="Sprite2D" parent="." unique_id=1748155364]
+
+[node name="p2readiness" type="Sprite2D" parent="." unique_id=1895988079]

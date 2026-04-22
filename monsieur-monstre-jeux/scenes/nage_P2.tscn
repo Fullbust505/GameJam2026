@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dyy81owekxuom"]
 
-[ext_resource type="Script" uid="uid://detpknkskdmqr" path="res://scripts/nage_p2mvt.gd" id="1_72qln"]
-[ext_resource type="Texture2D" uid="uid://55hldlrnxxo7" path="res://sprites/icon.svg" id="2_ng1ri"]
+[ext_resource type="Script" uid="uid://bg3waskesp805" path="res://scripts/nage_p2.gd" id="1_72qln"]
+[ext_resource type="Texture2D" uid="uid://bbxo30ypwsfeu" path="res://sprites/icon.svg" id="2_ng1ri"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_c4gc8"]
 
@@ -19,6 +19,7 @@ texture = ExtResource("2_ng1ri")
 [node name="RigidBody2D" type="RigidBody2D" parent="."]
 mass = 70.0
 physics_material_override = SubResource("PhysicsMaterial_c4gc8")
+gravity_scale = 0.2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
 scale = Vector2(2.5, 2.5)

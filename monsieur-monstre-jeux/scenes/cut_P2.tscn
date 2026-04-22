@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://3f1odqe353cn"]
+[gd_scene format=3 uid="uid://3f1odqe353cn"]
 
 [ext_resource type="Script" uid="uid://cacv3mtcy6q4c" path="res://scripts/cut_p2.gd" id="1_at8dn"]
 [ext_resource type="Texture2D" uid="uid://c8dij7uooqbew" path="res://sprites/couteau.png" id="1_ryuok"]
@@ -14,9 +14,9 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="P2" type="Node2D"]
+[node name="P2" type="Node2D" unique_id=113941445]
 script = ExtResource("1_at8dn")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=628626285]
 scale = Vector2(0.167, 0.3)
 sprite_frames = SubResource("SpriteFrames_bcql0")
