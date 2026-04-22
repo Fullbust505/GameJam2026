@@ -235,7 +235,7 @@ func end_shop():
 
 func _on_end_timer_timeout() -> void:
 	rand_game = randi_range(0,10)
-	if rand_game > -1:
+	if rand_game > 5:
 		get_tree().change_scene_to_file("res://scenes/cam_template.tscn")
 	else:
 		get_tree().change_scene_to_file("res://manger/scene/manger_minigame.tscn")
