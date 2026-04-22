@@ -258,5 +258,6 @@ func _on_p_1_hand_ready_p_1() -> void:
 func win_game(p_index):
 	blackscreen.visible = true
 	winner_lab.visible = true
+	$AudioStreamPlayer.play()
 	winner_lab.text = str(p_index)+"won!"
 	
