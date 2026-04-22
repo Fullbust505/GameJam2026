@@ -4,7 +4,7 @@ extends Node
 @onready var tuto = $"../../../../tuto"
 @onready var p1_readiness = $"../../../../p1readiness"
 @onready var p2_readiness = $"../../../../p2readiness"
-@export var number_of_cuts = randi_range(3, 9)
+@export var number_of_cuts = randi_range(8,12)
 var json_path = "res://game_state.json"
 var gamestate : Dictionary = {}
 
@@ -57,30 +57,39 @@ func end_game():
 	var p2_cuts = $P2.cut_positions
 	var p2_diff = 0.0
 	
-	p1_cuts.insert(0, 165)
-	p1_cuts.insert(-1, -165)
-	p1_cuts.sort()
-
-	p2_cuts.insert(0, 165)
-	p2_cuts.insert(-1, -165)
-	p2_cuts.sort()
-	
-	for i in range(p1_cuts.size()-1):
-		print(p1_diff)
-		p1_diff+=abs(p1_cuts[i+1]-p1_cuts[i]-perfect_length)
-		
-	for j in range(p2_cuts.size()-1):
-		print(p2_diff)
-		p2_diff+=abs(p2_cuts[j+1]-p2_cuts[j]-perfect_length)
-	
-	if p2_diff < p1_diff:
-		winner = "1"
-		gamestate["players"]["p2"]["score"]+=1
-		gamestate["players"]["p2"]["money"]+=300
-	else :
+	if p1_cuts.size()!=number_of_cuts-1 and p2_cuts.size()==number_of_cuts-1:
 		winner = "0"
 		gamestate["players"]["p1"]["score"]+=1
 		gamestate["players"]["p1"]["money"]+=300
+	elif p1_cuts.size()==number_of_cuts-1 and p2_cuts.size()!=number_of_cuts-1:
+		winner = "1"
+		gamestate["players"]["p2"]["score"]+=1
+		gamestate["players"]["p2"]["money"]+=300
+	else:
+		p1_cuts.insert(0, 165)
+		p1_cuts.insert(-1, -165)
+		p1_cuts.sort()
+
+		p2_cuts.insert(0, 165)
+		p2_cuts.insert(-1, -165)
+		p2_cuts.sort()
+		
+		for i in range(p1_cuts.size()-1):
+			print(p1_diff)
+			p1_diff+=abs(p1_cuts[i+1]-p1_cuts[i]-perfect_length)
+			
+		for j in range(p2_cuts.size()-1):
+			print(p2_diff)
+			p2_diff+=abs(p2_cuts[j+1]-p2_cuts[j]-perfect_length)
+		
+		if p2_diff < p1_diff:
+			winner = "1"
+			gamestate["players"]["p2"]["score"]+=1
+			gamestate["players"]["p2"]["money"]+=300
+		else :
+			winner = "0"
+			gamestate["players"]["p1"]["score"]+=1
+			gamestate["players"]["p1"]["money"]+=300
 	
 	gamestate["last_winner"]=winner
 	write_json(gamestate)

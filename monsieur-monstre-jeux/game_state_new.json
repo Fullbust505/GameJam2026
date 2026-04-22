@@ -1,8 +1,9 @@
 {
-	"last_winner": "0",
+	"last_winner": "1",
 	"players": {
 		"p1": {
-			"money": 0.0,
+			"bag": [],
+			"money": 1000.0,
 			"organ_number": 6.0,
 			"organs": {
 				"arms": true,
@@ -16,10 +17,11 @@
 			"score": 0.0
 		},
 		"p2": {
-			"money": 0.0,
+			"bag": [],
+			"money": 1300.0,
 			"organ_number": 6.0,
 			"organs": {
-				"arms": false,
+				"arms": true,
 				"eyes": true,
 				"heart": true,
 				"legs": true,
@@ -27,7 +29,7 @@
 				"pancreas": true,
 				"teeth": true
 			},
-			"score": 0.0
+			"score": 1.0
 		}
 	}
 }

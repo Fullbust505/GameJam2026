@@ -1,7 +1,7 @@
 {
 	"players": {
 		"p1": {
-			"money": 0.0,
+			"money": 1000.0,
 			"organ_number": 6.0,
 			"organs": {
 				"arms": true,
@@ -12,10 +12,11 @@
 				"pancreas": true,
 				"teeth": true
 			},
-			"score": 0.0
+			"score": 0.0,
+			"bag":[]
 		},
 		"p2": {
-			"money": 0.0,
+			"money": 1000.0,
 			"organ_number": 6.0,
 			"organs": {
 				"arms": true,
@@ -26,7 +27,8 @@
 				"pancreas": true,
 				"teeth": true
 			},
-			"score": 0.0
+			"score": 0.0,
+			"bag":[]
 		}
 	},
 	"last_winner":"0"
