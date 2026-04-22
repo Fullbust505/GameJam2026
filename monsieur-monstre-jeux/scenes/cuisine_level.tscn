@@ -60,8 +60,11 @@ position = Vector2(0, 515.80005)
 scale = Vector2(2.3007815, 2.3007815)
 texture = ExtResource("5_lhscs")
 
+[node name="end_timer" type="Timer" parent="." unique_id=999641020]
+
 [connection signal="finish_p1" from="P1" to="." method="_on_finish_p1"]
 [connection signal="ready_p1" from="P1" to="." method="_on_p1_ready"]
 [connection signal="finish_p2" from="P2" to="." method="_on_finish_p2"]
 [connection signal="ready_p2" from="P2" to="." method="_on_p2_ready"]
 [connection signal="timeout" from="mg_duration" to="." method="_on_mg_duration_timeout"]
+[connection signal="timeout" from="end_timer" to="." method="_on_end_timer_timeout"]

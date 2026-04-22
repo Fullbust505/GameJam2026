@@ -9,6 +9,12 @@ extends Node
 var json_path = "res://game_state.json"
 var gamestate : Dictionary = {}
 
+@onready var end_times = $end_timer
+
+@onready var organ_steal = "res://scenes/organ_stealing.tscn"
+
+
+
 var timeouts = 0
 var p1_ready = false
 var p2_ready = false
@@ -24,19 +30,20 @@ func _ready() -> void:
 	print(number_of_cuts)
 
 func _process(_delta: float) -> void:
-	if finish_p1 and finish_p2 and not timer.is_stopped() :
-		timer.stop()
-		end_game()
-	else:
-		if p1_ready and p2_ready and timeouts==0 and timer.is_stopped():
-			timer.start()
-		var s_dur = timer.time_left
-		if timeouts==0:
-			label.text = '%02d' % [s_dur]
-		elif timeouts ==1:
-			label.text = '%02d' % [s_dur]
-		if s_dur<1:
-			label.text = ''
+	if end_times.is_stopped():
+		if finish_p1 and finish_p2 and not timer.is_stopped() :
+			timer.stop()
+			end_game()
+		else:
+			if p1_ready and p2_ready and timeouts==0 and timer.is_stopped():
+				timer.start()
+			var s_dur = timer.time_left
+			if timeouts==0:
+				label.text = '%02d' % [s_dur]
+			elif timeouts ==1:
+				label.text = '%02d' % [s_dur]
+			if s_dur<1:
+				label.text = ''
 
 func _on_mg_duration_timeout() -> void:
 	timeouts+=1
@@ -95,6 +102,8 @@ func end_game():
 	
 	gamestate["last_winner"]=winner
 	write_json(gamestate)
+	
+	end_times.start()
 
 func _on_p1_ready() -> void:
 	p1_ready = true
@@ -119,8 +128,11 @@ func open_json(json_path):
 	file.close()
 	print(gamestate)
 func write_json(gamestate):
-	var file = FileAccess.open("res://game_state_new.json", FileAccess.WRITE)
+	var file = FileAccess.open("res://game_state.json", FileAccess.WRITE)
 	var json_text = JSON.stringify(gamestate, '\t')
 	
 	file.store_string(json_text)
 	file.close()
+
+func _on_end_timer_timeout() -> void:
+	get_tree().change_scene_to_file("res://scenes/organ_stealing.tscn")

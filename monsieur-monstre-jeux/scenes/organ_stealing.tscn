@@ -9,7 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://dsvs7tl5d0k26" path="res://assets/sprites/missing_pancreas.png" id="7_81pp3"]
 [ext_resource type="Texture2D" uid="uid://2rqwmhk5n31u" path="res://assets/sprites/missing_lung.png" id="7_er6bn"]
 [ext_resource type="Texture2D" uid="uid://c6sukfpruj55u" path="res://assets/sprites/missing_jaw.png" id="9_er6bn"]
-[ext_resource type="Texture2D" uid="uid://u6iq7hhk2r8a" path="res://assets/sprites/background.png" id="10_uxiti"]
+[ext_resource type="Texture2D" uid="uid://r401r4jqrn0v" path="res://assets/sprites/background.png" id="10_uxiti"]
 [ext_resource type="Texture2D" uid="uid://bb256mcgji7qo" path="res://assets/sprites/organ_info.png" id="11_76gdb"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_76gdb"]
@@ -111,7 +111,6 @@ wait_time = 0.3
 one_shot = true
 
 [node name="Ending Timer" type="Timer" parent="." unique_id=1022891823]
-wait_time = 3.0
 one_shot = true
 
 [node name="background" type="Sprite2D" parent="." unique_id=646919578]
@@ -138,6 +137,21 @@ offset_top = -59.0
 offset_right = 42.0
 offset_bottom = -36.0
 text = "Functionning"
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=856944029]
+offset_left = -87.99999
+offset_top = -109.00001
+offset_right = -47.999992
+offset_bottom = -69.00001
+scale = Vector2(4.7533746, 1.307305)
+color = Color(0, 0, 0, 1)
+
+[node name="Label" type="Label" parent="ColorRect" unique_id=1802396237]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+scale = Vector2(0.34362423, 1)
+vertical_alignment = 1
 
 [connection signal="timeout" from="Visibility Timer" to="." method="_on_visibility_timer_timeout"]
 [connection signal="timeout" from="Ending Timer" to="." method="_on_ending_timer_timeout"]

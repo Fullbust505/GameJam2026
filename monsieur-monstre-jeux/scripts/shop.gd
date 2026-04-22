@@ -18,29 +18,34 @@ var p2_hand_index : int = 0
 var p1_done = false
 var p2_done = false
 
+@onready var end_times = $end_timer
+
 func _ready() -> void:
 	open_json(json_path)
 	choose_random_articles()
 
 func _physics_process(delta: float) -> void:
-	p1_hand_index = p1_movement(p1_hand_index)
-	p2_hand_index = p2_movement(p2_hand_index)
+	if not p1_done:
+		p1_hand_index = p1_movement(p1_hand_index)
+		if Input.is_joy_button_pressed(0, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button"):
+			buy_item(0, p1_hand_index)
 	
-	if Input.is_joy_button_pressed(0, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button"):
-		buy_item(0, p1_hand_index)
-	
-	if Input.is_joy_button_pressed(1, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button"):
-		buy_item(1, p2_hand_index)
-	
+	if not p2_done:
+		p2_hand_index = p2_movement(p2_hand_index)
+		if Input.is_joy_button_pressed(1, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button"):
+			buy_item(1, p2_hand_index)
+
 	if Input.is_joy_button_pressed(0, JOY_BUTTON_B) and Input.is_action_just_pressed("game_sub_button"):
 		p1_done = true
+		p1_hand.modulate = Color(0.2,0,0)
 	
 	if Input.is_joy_button_pressed(1, JOY_BUTTON_B) and Input.is_action_just_pressed("game_sub_button"):
 		p2_done = true
+		p2_hand.modulate = Color(0,0,0.2)
 	
-	if p1_done and p2_done:
+	if p1_done and p2_done and end_times.is_stopped():
 		end_shop()
-
+	
 func buy_item(player_index, hand_index):
 	for i in range(articles.size()):
 		if articles[i][1]==hand_index and gamestate["players"]["p"+str(player_index+1)]["money"]>=articles[i][3]:
@@ -188,4 +193,7 @@ func choose_random_articles():
 
 func end_shop():
 	write_json(gamestate)
-	pass #passe à la scène suivante fils de pute
+	end_times.start()
+
+func _on_end_timer_timeout() -> void:
+	get_tree().change_scene_to_file("res://scenes/cam_template.tscn")

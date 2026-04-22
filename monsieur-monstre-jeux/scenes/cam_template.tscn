@@ -170,3 +170,14 @@ position = Vector2(560, 280)
 sprite_frames = SubResource("SpriteFrames_8dd3u")
 animation = &"waiting"
 autoplay = "waiting"
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1727316492]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="ColorRect" unique_id=437443508]
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0

@@ -249,3 +249,8 @@ one_shot = true
 [node name="p2_y_timer" type="Timer" parent="." unique_id=1023242070]
 wait_time = 0.3
 one_shot = true
+
+[node name="end_timer" type="Timer" parent="." unique_id=1025399312]
+one_shot = true
+
+[connection signal="timeout" from="end_timer" to="." method="_on_end_timer_timeout"]

@@ -13,6 +13,12 @@ var indexalacon = 0
 @onready var missing_label = $desc/Missing
 @onready var functionning_label = $desc/Functionning
 var victim = ""
+@onready var youstolemsg = $ColorRect/Label
+@onready var rect = $ColorRect
+
+
+
+@onready var shop_scene = preload("res://scenes/shop.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -38,6 +44,7 @@ func _ready() -> void:
 		functionning_label.visible = false
 		missing_label.visible = true
 	
+	rect.visible = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -47,6 +54,8 @@ func _process(delta: float) -> void:
 				if indexalacon == bp_id:
 					gamestate["players"][victim]["organs"][organ]=false
 					gamestate["players"]["p"+str(player_index+1)]["bag"].append([organ, 300])
+					youstolemsg.text = "You stole " + organ +"."
+					rect.visible = true
 					end_steal(gamestate)
 				indexalacon+=1
 				
@@ -111,7 +120,7 @@ func _on_visibility_timer_timeout() -> void:
 func end_steal(gamestate):
 	write_json(gamestate)
 	end_timer.start()
-	print(gamestate)
 
 func _on_ending_timer_timeout() -> void:
-	print("change the game scene fils de pute")
+	
+	get_tree().change_scene_to_file("res://scenes/shop.tscn")
