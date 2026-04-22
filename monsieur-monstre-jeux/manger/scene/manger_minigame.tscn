@@ -2,6 +2,10 @@
 
 [ext_resource type="PackedScene" uid="uid://b3nvdmgeqidga" path="res://manger/scene/manger_gameplay_p2.tscn" id="2_0ofvd"]
 [ext_resource type="PackedScene" uid="uid://b5efdpoinpvv3" path="res://manger/scene/manger_gameplay_p1.tscn" id="2_5jgie"]
+[ext_resource type="Texture2D" uid="uid://bwgqpuucsifff" path="res://assets/sprites/howto.png" id="3_0ofvd"]
+[ext_resource type="Texture2D" uid="uid://d1r3y0im555vf" path="res://assets/sprites/arm_feed.png" id="4_1cnjh"]
+[ext_resource type="Texture2D" uid="uid://csreeb8gg2q60" path="res://assets/sprites/foot_feed.png" id="5_v2nav"]
+[ext_resource type="Texture2D" uid="uid://b2b1s0ung34ie" path="res://assets/sprites/ready.png" id="6_or0vl"]
 
 [node name="MangerMinigame" type="Control" unique_id=1291441387]
 layout_mode = 3
@@ -47,3 +51,39 @@ handle_input_locally = false
 render_target_update_mode = 4
 
 [node name="MangerGameplay" parent="HBoxContainer/SubViewportContainer2/SubViewport" unique_id=855583888 instance=ExtResource("2_0ofvd")]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1962678403]
+texture = ExtResource("3_0ofvd")
+offset = Vector2(321, 182)
+
+[node name="Label" type="Label" parent="Sprite2D" unique_id=1323286250]
+offset_left = 44.0
+offset_top = 265.0
+offset_right = 606.0
+offset_bottom = 314.0
+text = "Insert as many peas that you can in your mouth ! 
+Use the left joystick to go forward / backwards,
+and rotate up and down. "
+horizontal_alignment = 1
+
+[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=2094888492]
+position = Vector2(164.68752, 137.56252)
+scale = Vector2(0.8797022, 0.579918)
+texture = ExtResource("4_1cnjh")
+
+[node name="Sprite2D3" type="Sprite2D" parent="." unique_id=211877770]
+position = Vector2(477, 138)
+scale = Vector2(0.8805032, 0.5760518)
+texture = ExtResource("5_v2nav")
+
+[node name="Sprite2D4" type="Sprite2D" parent="." unique_id=496790553]
+position = Vector2(72, 308.00003)
+scale = Vector2(0.8630952, 0.703125)
+texture = ExtResource("6_or0vl")
+hframes = 3
+
+[node name="Sprite2D5" type="Sprite2D" parent="." unique_id=31376690]
+position = Vector2(568.75, 306)
+scale = Vector2(0.7648808, 0.7343749)
+texture = ExtResource("6_or0vl")
+hframes = 3
