@@ -1,6 +1,6 @@
 extends Node2D
 var articles = []
-var json_path = "res://game_state.json"
+var json_path = "res://game_state_backup.json"
 var gamestate : Dictionary = {}
 var atlas : int = 0
 var beatles: int = 0
@@ -15,6 +15,9 @@ var beatles: int = 0
 @onready var p2_readiness = $"p2readiness"
 @onready var tuto_label = $tuto_shop/tuto_desc
 @onready var timer = $mg_duration
+
+@onready var p1_label = $p1_money
+@onready var p2_label = $p2_money
 
 var p1_hand_index : int = 0
 var p2_hand_index : int = 0
@@ -35,6 +38,9 @@ func _ready() -> void:
 	tuto_label.text = "Welcome to the shop!\nHere, buy body parts with A\nand quit with B."
 	timer.wait_time = 1.5
 	choose_random_articles()
+	p1_label.text = "Player 1 Money : %.00d B" % [gamestate["players"]["p1"]["money"]]
+	p2_label.text = "Player 2 Money : %.00d B" %  [gamestate["players"]["p2"]["money"]]
+	
 
 func _physics_process(delta: float) -> void:
 	if allready :
@@ -69,6 +75,8 @@ func buy_item(player_index, hand_index):
 			gamestate["players"]["p"+str(player_index+1)]["money"]-=articles[i][3]
 			gamestate["players"]["p"+str(player_index+1)]["bag"].append([bag.get_child(articles[i][0]).name,articles[i][3]])
 			articles.pop_at(i)
+			p1_label.text = "Player 1 Money : %.00d B" % [gamestate["players"]["p1"]["money"]]
+			p2_label.text = "Player 2 Money : %.00d B" % [gamestate["players"]["p2"]["money"]]
 			$CaChingSound.play()
 			break
 
@@ -205,7 +213,7 @@ func choose_random_articles():
 	for article in articles:
 		article.append(prices[indexalacon])
 		indexalacon+=1
-	
+		article[2].get_child(-1).text = str(prices[indexalacon-1]) + " B"
 	print(articles)
 
 func end_shop():
