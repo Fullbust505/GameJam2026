@@ -13,10 +13,11 @@ var cutmark = preload("res://scenes/cut_mark.tscn")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
 	input_velocity = Vector2.ZERO
-	if not minigame.gamestate["players"]["p1"]["organs"]["arms"]:
+	if not minigame.gamestate["players"]["p2"]["organs"]["arms"]:
 		missing_organ_offset = Vector2.RIGHT * missing_organ()
 	if not minigame.gamestate["players"]["p2"]["organs"]["eyes"]:
 		$"../blur_cam_p2".visible=true
+
 	if not timer.is_stopped():
 		if Input.is_joy_button_pressed(player_index, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button") and cut_positions.size() < minigame.number_of_cuts-1 and minigame.timeouts==1:
 			cut_positions.append(position.x)
@@ -24,8 +25,9 @@ func _physics_process(delta: float) -> void:
 			new_cut.position = position
 			print(cut_positions)
 			minigame.add_child(new_cut)
-			print(cut_positions)
+
 		input_velocity += Input.get_joy_axis(player_index, JOY_AXIS_LEFT_X) * Vector2.RIGHT * 200
+		input_velocity += missing_organ_offset
 		
 	if timer.is_stopped() and Input.is_joy_button_pressed(player_index, JOY_BUTTON_A):
 		ready_p2.emit()

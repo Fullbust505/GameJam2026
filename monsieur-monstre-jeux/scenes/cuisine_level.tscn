@@ -13,7 +13,7 @@ script = ExtResource("1_4r5d3")
 position = Vector2(4, 45)
 
 [node name="P2" parent="." unique_id=1882942523 instance=ExtResource("2_4r5d3")]
-position = Vector2(0, 575)
+position = Vector2(0, 574.8)
 
 [node name="background1" type="Sprite2D" parent="." unique_id=290239481]
 z_index = -3
@@ -23,7 +23,7 @@ texture = ExtResource("4_4r5d3")
 
 [node name="background2" type="Sprite2D" parent="." unique_id=1802017383]
 z_index = -3
-position = Vector2(0, 530)
+position = Vector2(0, 529.8)
 scale = Vector2(0.67, 0.76)
 texture = ExtResource("4_4r5d3")
 
@@ -56,7 +56,7 @@ texture = ExtResource("5_lhscs")
 
 [node name="steak_p2" type="Sprite2D" parent="." unique_id=1890856598]
 z_index = -2
-position = Vector2(0, 516.00006)
+position = Vector2(0, 515.80005)
 scale = Vector2(2.3007815, 2.3007815)
 texture = ExtResource("5_lhscs")
 

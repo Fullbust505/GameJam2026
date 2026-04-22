@@ -9,6 +9,9 @@ var indexalacon = 0
 @onready var vis_timer = $"Visibility Timer"
 @onready var sel_timer = $"Select Timer"
 @onready var end_timer = $"Ending Timer"
+@onready var desc = $desc
+@onready var missing_label = $desc/Missing
+@onready var functionning_label = $desc/Functionning
 var victim = ""
 
 # Called when the node enters the scene tree for the first time.
@@ -27,6 +30,13 @@ func _ready() -> void:
 			available_organs[i][1].modulate = Color(0,0,0)
 	for child in $Body.get_children():
 		child.visible = true
+		
+	functionning_label.visible = true
+	missing_label.visible = false
+	
+	if not available_organs[0][0]:
+		functionning_label.visible = false
+		missing_label.visible = true
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -35,9 +45,8 @@ func _process(delta: float) -> void:
 		if Input.is_joy_button_pressed(player_index, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button") and available_organs[bp_id][0]:
 			for organ in gamestate["players"][victim]["organs"].keys():
 				if indexalacon == bp_id:
-					print(gamestate)
-					print("you stole " + organ)
 					gamestate["players"][victim]["organs"][organ]=false
+					gamestate["players"]["p"+str(player_index+1)]["bag"].append([organ, 300])
 					end_steal(gamestate)
 				indexalacon+=1
 				
@@ -63,12 +72,19 @@ func selection(bp_id, dir):
 		bp_previous = dir
 	var previous_sprite = available_organs[bp_previous][1]
 	previous_sprite.visible=true
+	functionning_label.visible = false
+	missing_label.visible = false
+
 
 	var sprite = available_organs[bp_id][1]
+	desc.set_frame_and_progress(bp_id,0.0)
 	available_organs[bp_id][1].visible=false
+	functionning_label.visible = true
 	vis_timer.stop()
 	vis_timer.start()
 	if not available_organs[bp_id][0]:
+		functionning_label.visible = false
+		missing_label.visible = true
 		sprite.modulate = Color(0,0,0)
 
 func open_json(json_path):

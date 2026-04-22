@@ -5,6 +5,7 @@ extends Node
 @onready var p1_readiness = $"../../../../p1readiness"
 @onready var p2_readiness = $"../../../../p2readiness"
 @export var number_of_cuts = randi_range(8,12)
+@onready var tuto_label = $"../../../../tuto/tuto_desc"
 var json_path = "res://game_state.json"
 var gamestate : Dictionary = {}
 
@@ -18,6 +19,7 @@ func _ready() -> void:
 	open_json(json_path)
 	p1_readiness.animation = "waiting"
 	p2_readiness.animation = "waiting"
+	tuto_label.text = "In this minigame, you will have to cut\n this piece of meat\n in %d pieces of the same size !" % [number_of_cuts]
 	timer.wait_time = 4
 	print(number_of_cuts)
 
@@ -28,9 +30,6 @@ func _process(_delta: float) -> void:
 	else:
 		if p1_ready and p2_ready and timeouts==0 and timer.is_stopped():
 			timer.start()
-			tuto.visible=false
-			p1_readiness.visible = false
-			p2_readiness.visible=false
 		var s_dur = timer.time_left
 		if timeouts==0:
 			label.text = '%02d' % [s_dur]
@@ -42,6 +41,9 @@ func _process(_delta: float) -> void:
 func _on_mg_duration_timeout() -> void:
 	timeouts+=1
 	if timeouts ==1:
+		tuto.visible=false
+		p1_readiness.visible = false
+		p2_readiness.visible=false
 		timer.wait_time = 10
 		timer.start()
 	if timeouts == 2:
