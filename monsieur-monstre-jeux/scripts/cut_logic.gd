@@ -64,14 +64,18 @@ func end_game():
 	var p2_cuts = $P2.cut_positions
 	var p2_diff = 0.0
 	
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	var money_won = rng.randi_range(300, 500)
+	
 	if p1_cuts.size()!=number_of_cuts-1 and p2_cuts.size()==number_of_cuts-1:
 		winner = "0"
 		gamestate["players"]["p1"]["score"]+=1
-		gamestate["players"]["p1"]["money"]+=300
+		gamestate["players"]["p1"]["money"]+=money_won
 	elif p1_cuts.size()==number_of_cuts-1 and p2_cuts.size()!=number_of_cuts-1:
 		winner = "1"
 		gamestate["players"]["p2"]["score"]+=1
-		gamestate["players"]["p2"]["money"]+=300
+		gamestate["players"]["p2"]["money"]+=money_won
 	else:
 		p1_cuts.insert(0, 165)
 		p1_cuts.insert(-1, -165)
