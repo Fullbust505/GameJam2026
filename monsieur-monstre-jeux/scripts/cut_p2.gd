@@ -24,7 +24,6 @@ func _physics_process(delta: float) -> void:
 			var new_cut = cutmark.instantiate()
 			$SliceP2.play()
 			new_cut.position = position
-			print(cut_positions)
 			minigame.add_child(new_cut)
 
 		input_velocity += Input.get_joy_axis(player_index, JOY_AXIS_LEFT_X) * Vector2.RIGHT * 200

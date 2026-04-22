@@ -3,7 +3,7 @@
 	"players": {
 		"p1": {
 			"bag": [],
-			"money": 2100.0,
+			"money": 0.0,
 			"organ_number": 6.0,
 			"organs": {
 				"arms": true,
@@ -14,11 +14,11 @@
 				"pancreas": true,
 				"teeth": true
 			},
-			"score": 7.0
+			"score": 0.0
 		},
 		"p2": {
 			"bag": [],
-			"money": 2400.0,
+			"money": 0.0,
 			"organ_number": 6.0,
 			"organs": {
 				"arms": true,
@@ -29,7 +29,7 @@
 				"pancreas": true,
 				"teeth": true
 			},
-			"score": 8.0
+			"score": 0.0
 		}
 	}
 }
