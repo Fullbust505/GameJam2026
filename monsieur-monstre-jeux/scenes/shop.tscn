@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://53c1fs481ryl" path="res://sprites/shop_left.png" id="15_5u241"]
 [ext_resource type="Texture2D" uid="uid://b2b1s0ung34ie" path="res://assets/sprites/ready.png" id="15_gobkm"]
 [ext_resource type="Texture2D" uid="uid://dbbevssmfjfxw" path="res://sprites/shop_right.png" id="16_pqync"]
+[ext_resource type="AudioStream" uid="uid://cg1t4gg1df0un" path="res://assets/sfx/conf.mp3" id="18_pqync"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1v8qu"]
 radius = 30.016663
@@ -450,6 +451,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=357157621]
+stream = ExtResource("18_pqync")
 
 [connection signal="ready_p1" from="p1_hand" to="." method="_on_p_1_hand_ready_p_1"]
 [connection signal="ready_p2" from="p2_hand" to="." method="_on_p_2_hand_ready_p_2"]
