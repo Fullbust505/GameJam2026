@@ -22,6 +22,7 @@ func _physics_process(delta: float) -> void:
 		if Input.is_joy_button_pressed(player_index, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button") and cut_positions.size() < minigame.number_of_cuts-1 and minigame.timeouts==1:
 			cut_positions.append(position.x)
 			var new_cut = cutmark.instantiate()
+			$SliceP2.play()
 			new_cut.position = position
 			minigame.add_child(new_cut)
 

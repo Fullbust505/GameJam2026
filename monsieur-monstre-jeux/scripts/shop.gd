@@ -61,6 +61,7 @@ func buy_item(player_index, hand_index):
 			articles.pop_at(i)
 			p1_label.text = "Player 1 Money : %.00d B" % [gamestate["players"]["p1"]["money"]]
 			p2_label.text = "Player 2 Money : %.00d B" % [gamestate["players"]["p2"]["money"]]
+			$CaChingSound.play()
 			break
 
 func open_json(json_path):

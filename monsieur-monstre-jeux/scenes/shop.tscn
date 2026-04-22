@@ -1,15 +1,16 @@
 [gd_scene format=3 uid="uid://bff3msatkfsof"]
 
 [ext_resource type="Texture2D" uid="uid://digwq15ak0dvh" path="res://assets/sprites/shop.png" id="1_lx5au"]
-[ext_resource type="Script" uid="uid://cyt17tjg3iseq" path="res://scripts/shop.gd" id="1_y6sft"]
+[ext_resource type="Script" path="res://scripts/shop.gd" id="1_y6sft"]
 [ext_resource type="Texture2D" uid="uid://dkusi86pbm2s3" path="res://assets/sprites/eye.png" id="2_8r1wq"]
 [ext_resource type="Texture2D" uid="uid://b1g0mxm3nlo10" path="res://assets/sprites/legs.png" id="3_ajxib"]
+[ext_resource type="Texture2D" uid="uid://35ilmj7qiybm" path="res://assets/sprites/pointer.png" id="3_heatd"]
 [ext_resource type="Texture2D" uid="uid://cjsh53wy3xjna" path="res://assets/sprites/arm.png" id="4_y6sft"]
 [ext_resource type="Texture2D" uid="uid://1b28wb7byurs" path="res://assets/sprites/heart.png" id="5_m4ofw"]
 [ext_resource type="Texture2D" uid="uid://d26n00kr7q32" path="res://assets/sprites/pancreas.png" id="6_heatd"]
 [ext_resource type="Texture2D" uid="uid://c03no7vg6mwlo" path="res://assets/sprites/teeth.png" id="7_ajxib"]
 [ext_resource type="Texture2D" uid="uid://bqv8mt4qnh0bo" path="res://assets/sprites/lungs.png" id="8_heatd"]
-[ext_resource type="Texture2D" uid="uid://i4avijbi8eqy" path="res://assets/sprites/pointing_hand.png" id="9_m4ofw"]
+[ext_resource type="AudioStream" uid="uid://bejwsj6j3xvms" path="res://assets/sfx/caching.ogg" id="11_1v8qu"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1v8qu"]
 radius = 30.016663
@@ -100,15 +101,13 @@ offset_bottom = 323.0
 modulate = Color(0.90526885, 3.3450872e-06, 1.1551381e-06, 1)
 position = Vector2(250, 250)
 rotation = -0.7853982
-scale = Vector2(0.031933498, 0.03193351)
-texture = ExtResource("9_m4ofw")
+texture = ExtResource("3_heatd")
 
 [node name="p2_hand" type="Sprite2D" parent="." unique_id=851162452]
 modulate = Color(0, 0, 1, 1)
 position = Vector2(400, 250)
 rotation = 0.7853982
-scale = Vector2(0.032, 0.035)
-texture = ExtResource("9_m4ofw")
+texture = ExtResource("3_heatd")
 flip_h = true
 
 [node name="Articles" type="Node" parent="." unique_id=315831633]
@@ -305,5 +304,9 @@ one_shot = true
 
 [node name="end_timer" type="Timer" parent="." unique_id=1025399312]
 one_shot = true
+
+[node name="CaChingSound" type="AudioStreamPlayer" parent="." unique_id=247561245]
+stream = ExtResource("11_1v8qu")
+bus = &"Sfx"
 
 [connection signal="timeout" from="end_timer" to="." method="_on_end_timer_timeout"]
