@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://r401r4jqrn0v"
-path="res://.godot/imported/background.png-dde469fb1f19281f3784b52d4bea96cd.ctex"
+uid="uid://dlfbsmas0fqgc"
+path="res://.godot/imported/biting.png-230715152611549bf85e372714b19666.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/background.png"
-dest_files=["res://.godot/imported/background.png-dde469fb1f19281f3784b52d4bea96cd.ctex"]
+source_file="res://sprites/biting.png"
+dest_files=["res://.godot/imported/biting.png-230715152611549bf85e372714b19666.ctex"]
 
 [params]
 
