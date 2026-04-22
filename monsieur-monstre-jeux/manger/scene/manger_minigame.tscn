@@ -165,6 +165,11 @@ autoplay = "waiting"
 
 [node name="tutocd" type="Timer" parent="." unique_id=752173573]
 
+[node name="Timer" type="Timer" parent="." unique_id=432765418]
+wait_time = 15.0
+one_shot = true
+
 [connection signal="p1_ready" from="HBoxContainer/SubViewportContainer/SubViewport/MangerGameplay" to="." method="_on_manger_gameplay_p_1_ready"]
 [connection signal="p2_ready" from="HBoxContainer/SubViewportContainer2/SubViewport/MangerGameplay" to="." method="_on_manger_gameplay_p_2_ready"]
 [connection signal="timeout" from="tutocd" to="." method="_on_tutocd_timeout"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
