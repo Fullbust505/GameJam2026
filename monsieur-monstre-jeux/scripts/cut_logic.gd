@@ -7,13 +7,12 @@ extends Node
 @export var number_of_cuts = randi_range(8,12)
 @onready var tuto_label = $"../../../../tuto/tuto_desc"
 var json_path = "res://game_state.json"
+var json_path_backup = "res://game_state_backup.json"
 var gamestate : Dictionary = {}
 
 @onready var end_times = $end_timer
 
 @onready var organ_steal = "res://scenes/organ_stealing.tscn"
-
-
 
 var timeouts = 0
 var p1_ready = false
@@ -27,7 +26,6 @@ func _ready() -> void:
 	p2_readiness.animation = "waiting"
 	tuto_label.text = "In this minigame, you will have to cut\n this piece of meat\n in %d pieces of the same size !" % [number_of_cuts]
 	timer.wait_time = 4
-	print(number_of_cuts)
 
 func _process(_delta: float) -> void:
 	if end_times.is_stopped():
@@ -118,15 +116,24 @@ func _on_finish_p2() -> void:
 	finish_p2 = true
 
 func open_json(json_path):
-	var file = FileAccess.open(json_path, FileAccess.READ)
+	if FileAccess.file_exists(json_path):
+		var file = FileAccess.open(json_path, FileAccess.READ)
+		var json = file.get_as_text()
+		var json_object = JSON.new()
+		json_object.parse(json)
+		gamestate = json_object.data
+		file.close()
+		print(gamestate)
+	else:
+		var file = FileAccess.open(json_path_backup, FileAccess.READ)
+		var json = file.get_as_text()
+		var json_object = JSON.new()
+		json_object.parse(json)
+		gamestate = json_object.data
+		file.close()
+		print(gamestate)
 	
-	var json = file.get_as_text()
-	var json_object = JSON.new()
-	
-	json_object.parse(json)
-	gamestate = json_object.data
-	file.close()
-	print(gamestate)
+
 func write_json(gamestate):
 	var file = FileAccess.open("res://game_state.json", FileAccess.WRITE)
 	var json_text = JSON.stringify(gamestate, '\t')
