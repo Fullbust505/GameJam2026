@@ -492,9 +492,26 @@ func unassign_gamepad(player_slot: int) -> bool:
 
 func _update_action_devices() -> void:
 	"""Update all action events to use the correct device IDs."""
-	# This is called when controller assignments change
-	# The InputMap events already have device IDs embedded
-	pass
+	for slot in range(MAX_PLAYERS):
+		var device_id = _slot_to_device.get(slot, -1)
+		if device_id < 0:
+			continue
+		var actions = _get_actions_for_slot(slot)
+		for action in actions:
+			var events = InputMap.action_get_events(action)
+			for evt in events:
+				if evt is InputEventJoypadButton and evt.get_device() != device_id:
+					evt.set_device(device_id)
+				elif evt is InputEventJoypadMotion and evt.get_device() != device_id:
+					evt.set_device(device_id)
+
+func _get_actions_for_slot(slot: int) -> Array:
+	match slot:
+		0: return PLAYER1_ACTIONS.duplicate()
+		1: return PLAYER2_ACTIONS.duplicate()
+		2: return PLAYER3_ACTIONS.duplicate()
+		3: return PLAYER4_ACTIONS.duplicate()
+	return []
 
 func get_gamepads() -> Dictionary:
 	"""Returns the current gamepad assignments (slot -> device_id)."""
@@ -551,11 +568,12 @@ func _handle_gamepad_connect(device_id: int) -> void:
 	# Check if already assigned
 	if device_id in _device_to_slot:
 		return
-	
+
 	# Find first available slot
 	for slot in range(MAX_PLAYERS):
 		if _slot_to_device.get(slot, -1) < 0:
 			_assign_device_to_slot(device_id, slot)
+			_update_action_devices()
 			gamepad_connected.emit(slot, device_id)
 			controller_assignment_changed.emit()
 			return
@@ -576,18 +594,19 @@ func _reassign_controllers() -> void:
 	"""Reassign controllers to fill empty slots after disconnection."""
 	var connected = Input.get_connected_joypads()
 	var available_devices: Array = []
-	
+
 	# Find devices not currently assigned
 	for device_id in connected:
 		if device_id not in _device_to_slot:
 			available_devices.append(device_id)
-	
+
 	# Fill empty slots with available devices
 	for slot in range(MAX_PLAYERS):
 		if _slot_to_device.get(slot, -1) < 0 and available_devices.size() > 0:
 			var device_id = available_devices.pop_front()
 			_assign_device_to_slot(device_id, slot)
-			gamepad_connected.emit(slot, device_id)
+
+	_update_action_devices()
 
 # Helper functions for checking actions
 func is_action_pressed(action: String) -> bool:

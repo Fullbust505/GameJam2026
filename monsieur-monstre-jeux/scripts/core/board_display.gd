@@ -822,7 +822,7 @@ func _update_camera_mode() -> void:
 	var p2_pos = _player_tokens[1].global_position if _player_tokens.size() > 1 else Vector2.ZERO
 	var distance = p1_pos.distance_to(p2_pos)
 
-	print("_update_camera_mode: p1=", p1_pos, " p2=", p2_pos, " distance=", distance, " mode=", _camera_mode)
+	#print("_update_camera_mode: p1=", p1_pos, " p2=", p2_pos, " distance=", distance, " mode=", _camera_mode)
 
 	if distance > SPLIT_THRESHOLD:
 		if _camera_mode != 1:
@@ -846,9 +846,12 @@ func _enable_main_camera() -> void:
 	var midpoint = (p1_pos + p2_pos) / 2
 	_camera_main.position = midpoint  # Use position, not global_position
 
-	# Zoom based on distance - more zoom out when far apart
+	# Zoom based on distance - zoom OUT when close (show whole board), zoom IN when far (follow players)
 	var distance = p1_pos.distance_to(p2_pos)
-	var zoom_level = clamp(400.0 / max(distance, 100.0), 0.5, 1.5)
+	# When distance=0 (players together): zoom 0.5 (zoomed out to see whole board)
+	# When distance=400 (split threshold): zoom 1.0 (normal)
+	# When distance=800+: zoom 1.5+ (zoomed in to follow)
+	var zoom_level = clamp(0.5 + (distance / SPLIT_THRESHOLD) * 0.5, 0.5, 2.0)
 	_camera_main.zoom = Vector2(zoom_level, zoom_level)
 	_camera_main.enabled = true
 	_camera_main.make_current()

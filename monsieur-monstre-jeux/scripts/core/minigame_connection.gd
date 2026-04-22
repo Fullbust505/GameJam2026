@@ -78,7 +78,7 @@ func start_minigame(player_index: int, organ_type: String, stake_multiplier: flo
 	if not _game_state:
 		push_error("MinigameConnection: No GameState reference set!")
 		return false
-	
+
 	# Store challenge context
 	_current_challenge = {
 		"player_index": player_index,
@@ -86,12 +86,13 @@ func start_minigame(player_index: int, organ_type: String, stake_multiplier: flo
 		"stake_multiplier": stake_multiplier,
 		"minigame_scene": ""
 	}
-	
-	# Check if player has the organ to wager
+
+	# Check if player has the organ to wager (skip for "Challenge" organ_type - winner steals randomly)
 	var organ_type_int: int = _get_organ_type_int(organ_type)
-	if not _game_state.can_challenge(player_index, organ_type_int):
-		emit_signal("no_organs_to_wager", player_index)
-		return false
+	if organ_type != "Challenge" and organ_type_int >= 0:
+		if not _game_state.can_challenge(player_index, organ_type_int):
+			emit_signal("no_organs_to_wager", player_index)
+			return false
 	
 	# Get a random minigame from the pool (independent of organ type)
 	var minigame_scene: String = _get_random_minigame()

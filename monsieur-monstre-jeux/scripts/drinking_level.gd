@@ -9,6 +9,7 @@ signal minigame_result(player_index: int, success: bool, winner_id: String)
 signal minigame_ended(winner_id: String)
 signal countdown_tick(tick: int)
 signal coma_warning(player_id: String, intensity: float)
+signal player_drinking(player_id: String)
 
 # Game states
 enum GameState {
@@ -30,6 +31,15 @@ const COUNTDOWN_DURATION: float = 3.0
 @onready var background: ColorRect = $Background
 @onready var countdown_label: Label = $CountdownLabel
 
+# Split screen coma overlays
+@onready var p1_coma_overlay: ColorRect = $P1ComaOverlay
+@onready var p2_coma_overlay: ColorRect = $P2ComaOverlay
+@onready var p1_split_bg: ColorRect = $P1SplitBg
+@onready var p2_split_bg: ColorRect = $P2SplitBg
+
+# Game state reference
+var _game_state_ref: Node = null
+
 # Pre-game popup references
 @onready var pregame_panel: Panel = $PregamePanel
 @onready var pregame_title: Label = $PregamePanel/Title
@@ -39,8 +49,8 @@ const COUNTDOWN_DURATION: float = 3.0
 @onready var pregame_prompt: Label = $PregamePanel/Prompt
 var pregame_timer: float = 5.0
 
-# Game state
-var game_state: GameState = GameState.PREGAME
+# Local game state
+var _current_state: GameState = GameState.PREGAME
 var game_timer: float = 0.0
 var countdown_timer: float = 0.0
 var countdown_value: int = 3
@@ -69,13 +79,17 @@ func _ready() -> void:
 	# Get input settings
 	input_settings = get_node_or_null("/root/InputSettings")
 	_animations = get_node_or_null("/root/Animations")
-	
+	_game_state_ref = get_node_or_null("/root/Game/GameState")
+
 	# Setup HUD if available
 	_setup_hud()
-	
+
 	# Connect player signals
 	_connect_player_signals()
-	
+
+	# Setup coma overlays
+	_setup_coma_overlays()
+
 	# Show pre-game popup first
 	_show_pregame_popup()
 
@@ -103,11 +117,15 @@ func _show_pregame_popup() -> void:
 
 func _setup_hud() -> void:
 	if hud and hud.has_node("P1AlcoholBar"):
-		hud.get_node("P1AlcoholBar").max_value = 100.0
-		hud.get_node("P1AlcoholBar").value = 0.0
+		var bar = hud.get_node("P1AlcoholBar")
+		bar.max_value = 100.0
+		bar.step = 0.1
+		bar.value = 0.0
 	if hud and hud.has_node("P2AlcoholBar"):
-		hud.get_node("P2AlcoholBar").max_value = 100.0
-		hud.get_node("P2AlcoholBar").value = 0.0
+		var bar = hud.get_node("P2AlcoholBar")
+		bar.max_value = 100.0
+		bar.step = 0.1
+		bar.value = 0.0
 	if hud and hud.has_node("TimerLabel"):
 		hud.get_node("TimerLabel").text = "60"
 	if hud and hud.has_node("P1Status"):
@@ -121,7 +139,7 @@ func _connect_player_signals() -> void:
 		p1.alcohol_changed.connect(_on_p1_alcohol_changed)
 	if p2 and p2.has_signal("alcohol_changed"):
 		p2.alcohol_changed.connect(_on_p2_alcohol_changed)
-	
+
 	# Connect coma signals
 	if p1 and p1.has_signal("coma_started"):
 		p1.coma_started.connect(_on_p1_coma_started)
@@ -130,8 +148,29 @@ func _connect_player_signals() -> void:
 		p2.coma_started.connect(_on_p2_coma_started)
 		p2.coma_ended.connect(_on_p2_coma_ended)
 
+	# Connect drinking signals for arm animation
+	if p1 and p1.has_signal("drinking"):
+		p1.drinking.connect(_on_p1_drinking)
+	if p2 and p2.has_signal("drinking"):
+		p2.drinking.connect(_on_p2_drinking)
+
+func _setup_coma_overlays() -> void:
+	# Setup split-screen backgrounds (semi-transparent for split view)
+	if p1_split_bg:
+		p1_split_bg.visible = true
+	if p2_split_bg:
+		p2_split_bg.visible = true
+
+	# Initially hide coma overlays
+	if p1_coma_overlay:
+		p1_coma_overlay.visible = false
+		p1_coma_overlay.color = Color(0, 0, 0, 0.85)
+	if p2_coma_overlay:
+		p2_coma_overlay.visible = false
+		p2_coma_overlay.color = Color(0, 0, 0, 0.85)
+
 func _process(delta: float) -> void:
-	match game_state:
+	match _current_state:
 		GameState.PREGAME:
 			_update_pregame(delta)
 		GameState.COUNTDOWN:
@@ -202,7 +241,7 @@ func _process_playing(delta: float) -> void:
 	_check_coma_warnings()
 	
 	# Check game end
-	if game_timer >= GAME_DURATION:
+	if game_timer >= float(GAME_DURATION) - 0.001:
 		_end_game()
 
 func _handle_input() -> void:
@@ -232,7 +271,7 @@ func _update_timer_display() -> void:
 		hud.get_node("TimerLabel").text = str(int(remaining))
 
 func _start_countdown() -> void:
-	game_state = GameState.COUNTDOWN
+	_current_state = GameState.COUNTDOWN
 	countdown_timer = 0.0
 	countdown_value = 3
 	countdown_label.text = "3"
@@ -248,7 +287,7 @@ func _start_countdown() -> void:
 	p2_awake_time = 0.0
 
 func _start_game() -> void:
-	game_state = GameState.PLAYING
+	_current_state = GameState.PLAYING
 	countdown_label.visible = false
 	game_timer = 0.0
 	
@@ -258,7 +297,7 @@ func _start_game() -> void:
 	_update_hud()
 
 func _end_game() -> void:
-	game_state = GameState.FINISHED
+	_current_state = GameState.FINISHED
 	
 	# Determine winner
 	var winner_id = _determine_winner()
@@ -310,37 +349,96 @@ func _determine_winner() -> String:
 func _update_hud() -> void:
 	if hud:
 		if p1 and hud.has_node("P1AlcoholBar"):
-			hud.get_node("P1AlcoholBar").value = p1.get_alcohol_level()
+			var bar = hud.get_node("P1AlcoholBar")
+			bar.step = 0.1
+			bar.value = p1.get_alcohol_level()
 		if p2 and hud.has_node("P2AlcoholBar"):
-			hud.get_node("P2AlcoholBar").value = p2.get_alcohol_level()
+			var bar = hud.get_node("P2AlcoholBar")
+			bar.step = 0.1
+			bar.value = p2.get_alcohol_level()
 
-func _on_p1_alcohol_changed(player_id: String, level: float) -> void:
+func _on_p1_alcohol_changed(_player_id: String, level: float) -> void:
 	if hud and hud.has_node("P1AlcoholBar"):
-		hud.get_node("P1AlcoholBar").value = level
+		var bar = hud.get_node("P1AlcoholBar")
+		bar.step = 0.1
+		bar.value = level
+	_sync_alcohol_to_game("p1")
 
-func _on_p2_alcohol_changed(player_id: String, level: float) -> void:
+func _on_p2_alcohol_changed(_player_id: String, level: float) -> void:
 	if hud and hud.has_node("P2AlcoholBar"):
-		hud.get_node("P2AlcoholBar").value = level
+		var bar = hud.get_node("P2AlcoholBar")
+		bar.step = 0.1
+		bar.value = level
+	_sync_alcohol_to_game("p2")
 
-func _on_p1_coma_started(player_id: String) -> void:
+func _on_p1_coma_started(_player_id: String) -> void:
 	if hud and hud.has_node("P1Status"):
 		hud.get_node("P1Status").text = "COMA!"
 	if _animations:
 		_animations.warning_effect()
+	if p1_coma_overlay:
+		p1_coma_overlay.visible = true
+	_sync_coma_to_game("p1", false, p1.get_coma_remaining() if p1 else 0.0)
 
-func _on_p1_coma_ended(player_id: String) -> void:
+func _on_p1_coma_ended(_player_id: String) -> void:
 	if hud and hud.has_node("P1Status"):
 		hud.get_node("P1Status").text = ""
+	if p1_coma_overlay:
+		p1_coma_overlay.visible = false
+	_sync_coma_to_game("p1", true, p1.get_coma_remaining())
 
-func _on_p2_coma_started(player_id: String) -> void:
+func _on_p2_coma_started(_player_id: String) -> void:
 	if hud and hud.has_node("P2Status"):
 		hud.get_node("P2Status").text = "COMA!"
 	if _animations:
 		_animations.warning_effect()
+	if p2_coma_overlay:
+		p2_coma_overlay.visible = true
+	_sync_coma_to_game("p2", false, p2.get_coma_remaining() if p2 else 0.0)
 
-func _on_p2_coma_ended(player_id: String) -> void:
+func _on_p2_coma_ended(_player_id: String) -> void:
 	if hud and hud.has_node("P2Status"):
 		hud.get_node("P2Status").text = ""
+	if p2_coma_overlay:
+		p2_coma_overlay.visible = false
+	_sync_coma_to_game("p2", true, p2.get_coma_remaining())
+
+func _on_p1_drinking(player_id: String) -> void:
+	player_drinking.emit(player_id)
+
+func _on_p2_drinking(player_id: String) -> void:
+	player_drinking.emit(player_id)
+
+func _sync_coma_to_game(player_id: String, coma_ended: bool, coma_remaining: float) -> void:
+	if not _game_state_ref:
+		return
+
+	var player_index: int = 0 if player_id == "p1" else 1
+	var player_state = _game_state_ref.players[player_index] if _game_state_ref.players.size() > player_index else null
+	if not player_state:
+		return
+
+	if coma_ended:
+		player_state.exit_coma()
+	else:
+		player_state.enter_coma(coma_remaining)
+
+func _sync_alcohol_to_game(player_id: String) -> void:
+	if not _game_state_ref:
+		return
+
+	var player_index: int = 0 if player_id == "p1" else 1
+	var player_state = _game_state_ref.players[player_index] if _game_state_ref.players.size() > player_index else null
+	if not player_state:
+		return
+
+	var alcohol_level: float = 0.0
+	if player_id == "p1" and p1:
+		alcohol_level = p1.get_alcohol_level()
+	elif player_id == "p2" and p2:
+		alcohol_level = p2.get_alcohol_level()
+
+	player_state.set_alcohol_level(alcohol_level)
 
 ## Start game with stake information
 func start_game_with_stake(player_index: int, organ_wagered: String, multiplier: float = 1.0) -> void:
@@ -360,10 +458,10 @@ func get_stake() -> Dictionary:
 	return current_stake.duplicate(true)
 
 func is_game_active() -> bool:
-	return game_state == GameState.PLAYING
+	return _current_state == GameState.PLAYING
 
-func get_game_state() -> GameState:
-	return game_state
+func get_current_state() -> GameState:
+	return _current_state
 
 func get_time_remaining() -> float:
 	return max(0, GAME_DURATION - game_timer)

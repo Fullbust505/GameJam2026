@@ -69,7 +69,12 @@ class PlayerState:
 	var position: int = 0  # Board position
 	var turns_without_brain: int = 0
 	var is_eliminated: bool = false
-	
+
+	# Alcohol tracking for drinking minigame
+	var alcohol_level: float = 0.0
+	var is_in_coma: bool = false
+	var coma_duration: float = 0.0
+
 	func _init(p_id: int):
 		player_id = p_id
 		_init_organs()
@@ -108,12 +113,35 @@ class PlayerState:
 	
 	func can_win() -> bool:
 		return not is_eliminated and has_brain()
-	
+
 	func get_total_organs() -> int:
 		var total: int = 0
 		for count_value in organs.values():
 			total += count_value
 		return total
+
+	# Alcohol/coma state methods for drinking minigame
+	func set_alcohol_level(level: float) -> void:
+		alcohol_level = clamp(level, 0.0, 100.0)
+
+	func get_alcohol_level() -> float:
+		return alcohol_level
+
+	func enter_coma(duration: float) -> void:
+		is_in_coma = true
+		coma_duration = max(0.0, duration)
+
+	func exit_coma() -> void:
+		is_in_coma = false
+		coma_duration = 0.0
+
+	func process_coma_decay(delta: float, metabolism_rate: float) -> void:
+		if is_in_coma:
+			coma_duration -= delta
+			if coma_duration <= 0.0:
+				exit_coma()
+			else:
+				alcohol_level = max(0.0, alcohol_level - (metabolism_rate * delta))
 
 func _ready() -> void:
 	pass

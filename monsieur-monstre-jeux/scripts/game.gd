@@ -62,6 +62,19 @@ func _notification(what: int) -> void:
 	# Notification handling removed - using _ready() instead
 	pass
 
+func _input(event: InputEvent) -> void:
+	if current_phase == GamePhase.ROLL_DICE:
+		_handle_roll_input(event)
+
+func _handle_roll_input(event: InputEvent) -> void:
+	if not (event is InputEventJoypadButton and event.is_pressed()):
+		return
+	if event.get_button_index() != JOY_BUTTON_A:
+		return
+	print("Game: A button pressed for roll, device=", event.get_device())
+	if roll_button and not roll_button.disabled:
+		roll_button.emit_signal("pressed")
+
 func _initialize_systems() -> void:
 	# Game State
 	game_state = get_node_or_null("GameState")
@@ -471,16 +484,12 @@ func _on_organ_purchased(player_index: int, organ_type: int, price: int) -> void
 		hud.refresh()
 
 ## Handle challenge requested signal
-func _on_challenge_requested(player_index: int, challenge_data: Dictionary) -> void:
-	var organ_type = challenge_data.get("organ_type", -1)
-	var organ_name = "Unknown"
-	if game_state and game_state.has_method("get_organ_name"):
-		organ_name = game_state.get_organ_name(organ_type) if organ_type >= 0 else "Unknown"
-	_update_status("Challenge! Wagering " + organ_name)
-	
-	# Start minigame
+func _on_challenge_requested(player_index: int, _challenge_data: Dictionary) -> void:
+	_update_status("Challenge! Random minigame - winner steals an organ!")
+
+	# Start minigame (no organ specified - winner will steal after winning)
 	if minigame_connection:
-		minigame_connection.start_minigame(player_index, organ_name, challenge_data.get("stake_multiplier", 1.0))
+		minigame_connection.start_minigame(player_index, "Challenge", 1.0)
 
 ## Handle minigame ended
 func _on_minigame_ended(player_index: int, success: bool, reward_data: Dictionary) -> void:

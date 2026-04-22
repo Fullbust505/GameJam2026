@@ -64,69 +64,76 @@ func execute_tile_effect(player_index: int, tile_type: String, tile_data: Dictio
 	emit_signal("tile_effect_completed", player_index, normalized_type, result)
 	return result
 
-# Execute Challenge tile - triggers minigame via ChallengeManager
+# Execute Challenge tile - triggers minigame, winner steals organ from loser
 func _execute_challenge(player_index: int, tile_data: Dictionary) -> Dictionary:
-	var result: Dictionary = {"success": false, "message": "Challenge initiated", "data": {}}
-	
-	# Get organ type from tile data
-	var organ_type: int = tile_data.get("organ_type", -1)
-	var stake_multiplier: float = tile_data.get("stake_multiplier", 1.0)
-	
-	if organ_type < 0:
-		result["message"] = "Challenge failed: No organ type specified"
-		return result
-	
-	# Emit signal to request challenge minigame
+	var result: Dictionary = {"success": false, "message": "Challenge initiated!", "data": {}}
+
+	# Challenge tiles don't specify an organ - winner will choose after winning
+	# Just trigger the minigame
 	var challenge_data: Dictionary = {
-		"organ_type": organ_type,
-		"stake_multiplier": stake_multiplier,
 		"tile_data": tile_data
 	}
-	
+
 	emit_signal("challenge_requested", player_index, challenge_data)
 	result["success"] = true
+	result["message"] = "Challenge! Random minigame - winner steals an organ!"
 	result["data"]["challenge_data"] = challenge_data
-	
+
 	return result
 
 # Called when challenge minigame completes
 func on_challenge_completed(player_index: int, success: bool, reward_data: Dictionary) -> Dictionary:
 	var result: Dictionary = {"success": success, "message": "", "data": reward_data}
-	
+
 	if not _game_state:
 		result["message"] = "No game state reference"
 		return result
-	
+
+	# Get other players to determine victim
+	var active_players: Array = _game_state.get_active_players()
+	var other_players: Array = []
+	for pid in active_players:
+		if pid != player_index:
+			other_players.append(pid)
+
+	if other_players.is_empty():
+		result["message"] = "No other players - challenge cancelled"
+		return result
+
+	# For now, pick first other player as victim (in multi-player, could prompt winner to choose)
+	var victim_id: int = other_players[randi() % other_players.size()]
+
 	if success:
-		# Player won - give reward
-		var organ_type: int = reward_data.get("organ_type", -1)
-		var points: int = reward_data.get("points", 10)
-		var money: int = reward_data.get("money", 0)
-		
-		if organ_type >= 0:
-			_game_state.transfer_organ(-1, player_index, organ_type)
-			result["message"] = "Challenge won! Gained organ."
+		# Player WON - steal an organ of their choice from victim
+		# For now, steal a random organ (UI could allow winner to choose)
+		var available_organs: Array = _game_state.get_available_organs_for_stealing(victim_id)
+
+		if available_organs.is_empty():
+			result["message"] = "Challenge won! But victim has no organs to steal."
 		else:
-			_game_state.modify_score(player_index, points)
-			result["message"] = "Challenge won! +" + str(points) + " points"
-		
-		if money > 0:
-			_game_state.modify_money(player_index, money)
+			# Steal a random organ from victim
+			var organ_to_steal: int = available_organs[randi() % available_organs.size()]
+			if _game_state.transfer_organ(victim_id, player_index, organ_to_steal):
+				var organ_name: String = _get_organ_name(organ_to_steal)
+				result["message"] = "Challenge WON! Stole " + organ_name + " from opponent!"
+				result["data"]["stolen_organ"] = organ_to_steal
+				result["data"]["victim"] = victim_id
 	else:
-		# Player lost - apply penalty
-		var penalty_type: String = reward_data.get("penalty_type", "organ")
-		var penalty_value: int = reward_data.get("penalty_value", 1)
-		
-		if penalty_type == "organ":
-			_game_state.transfer_organ(player_index, -1, penalty_value)
-			result["message"] = "Challenge lost! Lost an organ."
-		elif penalty_type == "money":
-			_game_state.modify_money(player_index, -penalty_value)
-			result["message"] = "Challenge lost! -" + str(penalty_value) + " money"
+		# Player LOST - winner steals from them
+		# Find who beat them (would need minigame manager to know this)
+		# For now, victim is the player themselves losing an organ
+		var available_organs: Array = _game_state.get_available_organs_for_stealing(player_index)
+
+		if not available_organs.is_empty():
+			# Loser loses a random organ to the void (organ removed from game)
+			var organ_to_lose: int = available_organs[randi() % available_organs.size()]
+			_game_state.transfer_organ(player_index, -1, organ_to_lose)
+			var organ_name: String = _get_organ_name(organ_to_lose)
+			result["message"] = "Challenge LOST! Lost " + organ_name + "!"
+			result["data"]["lost_organ"] = organ_to_lose
 		else:
-			_game_state.modify_score(player_index, -penalty_value)
-			result["message"] = "Challenge lost! -" + str(penalty_value) + " points"
-	
+			result["message"] = "Challenge LOST! But had no organs to lose."
+
 	emit_signal("challenge_completed", player_index, success, reward_data)
 	return result
 

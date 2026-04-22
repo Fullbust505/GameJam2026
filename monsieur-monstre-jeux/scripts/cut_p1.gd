@@ -28,3 +28,6 @@ func _physics_process(delta: float) -> void:
 		position -= input_velocity * delta
 	elif position.x < -165:
 		position -= input_velocity * delta
+
+func missing_organ():
+	return (100*sin(timer.time_left*5)+80*cos(timer.time_left*3))

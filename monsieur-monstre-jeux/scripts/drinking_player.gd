@@ -30,8 +30,7 @@ const COMA_DRINK_WINDOW: float = 5.0  # 5 second window
 # Coma state
 var is_in_coma: bool = false
 var coma_duration: float = 0.0
-const COMA_DURATION_MIN: float = 5.0
-const COMA_DURATION_MAX: float = 10.0
+const COMA_DURATION: float = 10.0  # Fixed 10 second coma duration
 
 # Drinking input tracking
 var _drink_times: Array = []  # Timestamps of recent drinks
@@ -114,7 +113,7 @@ func _check_coma() -> void:
 
 func _start_coma() -> void:
 	is_in_coma = true
-	coma_duration = randf_range(COMA_DURATION_MIN, COMA_DURATION_MAX)
+	coma_duration = COMA_DURATION
 	coma_started.emit(player_id)
 
 func _end_coma() -> void:
@@ -122,6 +121,7 @@ func _end_coma() -> void:
 	coma_duration = 0.0
 	_drink_times.clear()
 	coma_ended.emit(player_id)
+	coma_state_changed.emit(player_id, false, 0.0)
 
 func get_alcohol_level() -> float:
 	return alcohol_level

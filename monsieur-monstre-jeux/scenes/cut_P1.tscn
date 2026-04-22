@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://eua0qi6j81g1"]
 
-[ext_resource type="Script" uid="uid://cg20dyumds04u" path="res://scripts/cut_p1.gd" id="1_bcql0"]
-[ext_resource type="Texture2D" uid="uid://c8dij7uooqbew" path="res://sprites/couteau.png" id="1_bhh4c"]
+[ext_resource type="Script" uid="uid://berur1wcedh7k" path="res://scripts/cut_p1.gd" id="1_bcql0"]
+[ext_resource type="Texture2D" uid="uid://nqkcss02eyd4" path="res://sprites/knife.jpg" id="1_bhh4c"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_bcql0"]
 animations = [{
