@@ -76,3 +76,13 @@ func _process(delta: float) -> void:
 	get_input()
 	rotation += rotation_direction * rotation_speed * delta
 	move_and_slide()
+
+func _physics_process(delta):
+	get_input()
+	rotation += rotation_direction * rotation_speed * delta
+	move_and_slide()
+
+	var screen_size = get_viewport_rect().size
+	
+	global_position.x = clamp(global_position.x, 0, screen_size.x)
+	global_position.y = clamp(global_position.y, 0, screen_size.y)

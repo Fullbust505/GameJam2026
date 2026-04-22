@@ -11,14 +11,8 @@
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ifs1u"]
 load_path = "res://.godot/imported/plate.png-b3180027a86b1f7bdf77b130b632465e.ctex"
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ifs1u"]
-size = Vector2(71, 24)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_5d185"]
-size = Vector2(69, 22)
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_vwqqj"]
-radius = 82.02438
+radius = 114.0
 
 [sub_resource type="Animation" id="Animation_vwqqj"]
 length = 0.001
@@ -57,6 +51,12 @@ _data = {
 &"mouth_loop": SubResource("Animation_5d185")
 }
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ifs1u"]
+size = Vector2(71, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5d185"]
+size = Vector2(69, 22)
+
 [node name="MangerGameplay" type="Node2D" unique_id=33711822]
 script = ExtResource("1_vwqqj")
 
@@ -77,6 +77,23 @@ texture = SubResource("CompressedTexture2D_ifs1u")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Plate" unique_id=562023644]
 polygon = PackedVector2Array(65, 80, 128, 105, 154, 126, 210, 141, 288, 141, 375, 137, 454, 126, 475, 101, 515, 78, 559, 89, 597, 108, 616, 124, 313, 215, -4, 134, 9, 103, 39, 91)
+
+[node name="Mouth" type="Area2D" parent="." unique_id=1837744114 groups=["mouth"]]
+script = ExtResource("5_vx3yk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Mouth" unique_id=1799238471 groups=["mouth"]]
+position = Vector2(554, 11)
+shape = SubResource("CircleShape2D_vwqqj")
+debug_color = Color(0.922227, 0.19060579, 0.5143862, 0.41960785)
+
+[node name="Sprite2D" type="Sprite2D" parent="Mouth" unique_id=738243722]
+position = Vector2(418, -1)
+texture = ExtResource("6_vwqqj")
+offset = Vector2(111, 75)
+hframes = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Mouth" unique_id=214744401]
+libraries/ = SubResource("AnimationLibrary_83226")
 
 [node name="Player" type="CharacterBody2D" parent="." unique_id=1507904587 groups=["spoon"]]
 collision_layer = 4
@@ -110,25 +127,8 @@ polygon = PackedVector2Array(-90, 31, -54, 35, -23, 37, 0, 41, 19, 42, 40, 45, 5
 position = Vector2(195, 59)
 shape = SubResource("RectangleShape2D_5d185")
 
-[node name="Mouth" type="Area2D" parent="." unique_id=1837744114 groups=["mouth"]]
-script = ExtResource("5_vx3yk")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Mouth" unique_id=1799238471 groups=["mouth"]]
-position = Vector2(600, 40)
-shape = SubResource("CircleShape2D_vwqqj")
-debug_color = Color(0.922227, 0.19060579, 0.5143862, 0.41960785)
-
-[node name="Sprite2D" type="Sprite2D" parent="Mouth" unique_id=738243722]
-position = Vector2(418, -1)
-texture = ExtResource("6_vwqqj")
-offset = Vector2(111, 75)
-hframes = 2
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Mouth" unique_id=214744401]
-libraries/ = SubResource("AnimationLibrary_83226")
-
+[connection signal="body_entered" from="Mouth" to="Mouth" method="_on_body_entered"]
 [connection signal="body_entered" from="Player/ArmSpoonDetectionArea" to="Player" method="_on_spoon_detection_area_body_entered"]
 [connection signal="body_exited" from="Player/ArmSpoonDetectionArea" to="Player" method="_on_spoon_detection_area_body_exited"]
 [connection signal="body_entered" from="Player/FootSpoonDetectionArea" to="Player" method="_on_spoon_detection_area_body_entered"]
 [connection signal="body_exited" from="Player/FootSpoonDetectionArea" to="Player" method="_on_spoon_detection_area_body_exited"]
-[connection signal="body_entered" from="Mouth" to="Mouth" method="_on_body_entered"]
