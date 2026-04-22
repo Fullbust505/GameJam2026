@@ -1,9 +1,9 @@
-[gd_scene format=3 uid="uid://di7sqh02uw1nk"]
+[gd_scene load_steps=2 format=3 uid="uid://di7sqh02uw1nk"]
 
 [ext_resource type="Texture2D" uid="uid://cjjvp1ssgcj2y" path="res://assets/sprites/cut.png" id="1_s5wpv"]
 
-[node name="Node2D" type="Node2D" unique_id=286234105]
+[node name="Node2D" type="Node2D"]
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=525024952]
+[node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, -40)
 texture = ExtResource("1_s5wpv")

@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://duj8xj1kbg5w8"]
+[gd_scene load_steps=7 format=3 uid="uid://duj8xj1kbg5w8"]
 
 [ext_resource type="Script" uid="uid://coc514l6jtinv" path="res://scripts/cut_logic.gd" id="1_4r5d3"]
 [ext_resource type="PackedScene" uid="uid://eua0qi6j81g1" path="res://scenes/cut_P1.tscn" id="1_evvn1"]
@@ -7,69 +7,69 @@
 [ext_resource type="Texture2D" uid="uid://1jhe8wlap5ym" path="res://assets/sprites/table_cutting.png" id="4_4r5d3"]
 [ext_resource type="Texture2D" uid="uid://pahqu20m5rer" path="res://assets/sprites/steak.png" id="5_lhscs"]
 
-[node name="Node" type="Node" unique_id=2062969420]
+[node name="Node" type="Node"]
 script = ExtResource("1_4r5d3")
 
-[node name="P1" parent="." unique_id=113941445 instance=ExtResource("1_evvn1")]
+[node name="P1" parent="." instance=ExtResource("1_evvn1")]
 position = Vector2(4, 45)
 
-[node name="SliceP1" type="AudioStreamPlayer" parent="P1" unique_id=1116994025]
+[node name="SliceP1" type="AudioStreamPlayer" parent="P1"]
 stream = ExtResource("3_lhscs")
 volume_db = -9.887
 
-[node name="P2" parent="." unique_id=1882942523 instance=ExtResource("2_4r5d3")]
+[node name="P2" parent="." instance=ExtResource("2_4r5d3")]
 position = Vector2(0, 574.8)
 
-[node name="SliceP2" type="AudioStreamPlayer" parent="P2" unique_id=1942594236]
+[node name="SliceP2" type="AudioStreamPlayer" parent="P2"]
 stream = ExtResource("3_lhscs")
 volume_db = -9.887
 
-[node name="background1" type="Sprite2D" parent="." unique_id=290239481]
+[node name="background1" type="Sprite2D" parent="."]
 z_index = -3
 position = Vector2(2, 14)
-scale = Vector2(0.67850006, 0.7666667)
+scale = Vector2(0.6785, 0.766667)
 texture = ExtResource("4_4r5d3")
 
-[node name="background2" type="Sprite2D" parent="." unique_id=1802017383]
+[node name="background2" type="Sprite2D" parent="."]
 z_index = -3
 position = Vector2(0, 529.8)
 scale = Vector2(0.67, 0.76)
 texture = ExtResource("4_4r5d3")
 
-[node name="mg_duration" type="Timer" parent="." unique_id=1821070063]
+[node name="mg_duration" type="Timer" parent="."]
 wait_time = 30.0
 one_shot = true
 
-[node name="blur_cam_p1" type="ColorRect" parent="." unique_id=156287026]
+[node name="blur_cam_p1" type="ColorRect" parent="."]
 visible = false
 offset_left = -704.0
 offset_top = -202.0
 offset_right = 81.0
 offset_bottom = 204.0
-scale = Vector2(1.8357575, 1.1963068)
+scale = Vector2(1.83576, 1.19631)
 color = Color(0, 0, 0, 1)
 
-[node name="blur_cam_p2" type="ColorRect" parent="." unique_id=778553783]
+[node name="blur_cam_p2" type="ColorRect" parent="."]
 visible = false
 offset_left = -688.0
 offset_top = 339.0
 offset_right = 97.0
 offset_bottom = 745.0
-scale = Vector2(1.77711, 1.658267)
+scale = Vector2(1.77711, 1.65827)
 color = Color(0, 0, 0, 1)
 
-[node name="steak_p1" type="Sprite2D" parent="." unique_id=1731047223]
+[node name="steak_p1" type="Sprite2D" parent="."]
 z_index = -2
 scale = Vector2(2.3, 2.3)
 texture = ExtResource("5_lhscs")
 
-[node name="steak_p2" type="Sprite2D" parent="." unique_id=1890856598]
+[node name="steak_p2" type="Sprite2D" parent="."]
 z_index = -2
-position = Vector2(0, 515.80005)
-scale = Vector2(2.3007815, 2.3007815)
+position = Vector2(0, 515.8)
+scale = Vector2(2.30078, 2.30078)
 texture = ExtResource("5_lhscs")
 
-[node name="end_timer" type="Timer" parent="." unique_id=999641020]
+[node name="end_timer" type="Timer" parent="."]
 
 [connection signal="finish_p1" from="P1" to="." method="_on_finish_p1"]
 [connection signal="ready_p1" from="P1" to="." method="_on_p1_ready"]

@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://anchor_target"]
+
+[ext_resource type="Texture2D" uid="uid://bbxo30ypwsfeu" path="res://sprites/anchor.png" id="1_anchor"]
+
+[node name="Anchor" type="Sprite2D"]
+texture = ExtResource("1_anchor")
+scale = Vector2(0.3, 0.3)

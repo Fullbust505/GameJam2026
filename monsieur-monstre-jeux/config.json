@@ -1,0 +1,102 @@
+{
+	"display": {
+		"fullscreen": false,
+		"height": 720.0,
+		"vsync": true,
+		"width": 1280.0
+	},
+	"input": {
+		"p1": {
+			"l1": {
+				"button_index": 9.0,
+				"device": 0.0,
+				"type": "joypad_button"
+			},
+			"main_button": {
+				"button_index": 0.0,
+				"device": 0.0,
+				"type": "joypad_button"
+			},
+			"move_down": {
+				"axis": 1.0,
+				"device": 0.0,
+				"type": "joypad_axis",
+				"value": 1.0
+			},
+			"move_left": {
+				"axis": 0.0,
+				"device": 0.0,
+				"type": "joypad_axis",
+				"value": -1.0
+			},
+			"move_right": {
+				"axis": 0.0,
+				"device": 0.0,
+				"type": "joypad_axis",
+				"value": 1.0
+			},
+			"move_up": {
+				"axis": 1.0,
+				"device": 0.0,
+				"type": "joypad_axis",
+				"value": -1.0
+			},
+			"r1": {
+				"button_index": 10.0,
+				"device": 0.0,
+				"type": "joypad_button"
+			},
+			"sub_button": {
+				"button_index": 1.0,
+				"device": 0.0,
+				"type": "joypad_button"
+			}
+		},
+		"p2": {
+			"l1": {
+				"button_index": 9.0,
+				"device": 1.0,
+				"type": "joypad_button"
+			},
+			"main_button": {
+				"button_index": 0.0,
+				"device": 1.0,
+				"type": "joypad_button"
+			},
+			"move_down": {
+				"axis": 1.0,
+				"device": 1.0,
+				"type": "joypad_axis",
+				"value": 1.0
+			},
+			"move_left": {
+				"axis": 0.0,
+				"device": 1.0,
+				"type": "joypad_axis",
+				"value": -1.0
+			},
+			"move_right": {
+				"axis": 0.0,
+				"device": 1.0,
+				"type": "joypad_axis",
+				"value": 1.0
+			},
+			"move_up": {
+				"axis": 1.0,
+				"device": 1.0,
+				"type": "joypad_axis",
+				"value": -1.0
+			},
+			"r1": {
+				"button_index": 10.0,
+				"device": 1.0,
+				"type": "joypad_button"
+			},
+			"sub_button": {
+				"button_index": 1.0,
+				"device": 1.0,
+				"type": "joypad_button"
+			}
+		}
+	}
+}

@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://bff3msatkfsof"]
+[gd_scene load_steps=13 format=3 uid="uid://bff3msatkfsof"]
 
 [ext_resource type="Texture2D" uid="uid://digwq15ak0dvh" path="res://assets/sprites/shop.png" id="1_lx5au"]
-[ext_resource type="Script" path="res://scripts/shop.gd" id="1_y6sft"]
+[ext_resource type="Script" uid="uid://cyt17tjg3iseq" path="res://scripts/shop.gd" id="1_y6sft"]
 [ext_resource type="Texture2D" uid="uid://dkusi86pbm2s3" path="res://assets/sprites/eye.png" id="2_8r1wq"]
 [ext_resource type="Texture2D" uid="uid://b1g0mxm3nlo10" path="res://assets/sprites/legs.png" id="3_ajxib"]
 [ext_resource type="Texture2D" uid="uid://35ilmj7qiybm" path="res://assets/sprites/pointer.png" id="3_heatd"]
@@ -13,246 +13,176 @@
 [ext_resource type="AudioStream" uid="uid://bejwsj6j3xvms" path="res://assets/sfx/caching.ogg" id="11_1v8qu"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1v8qu"]
-radius = 30.016663
+radius = 30.0167
 
-[sub_resource type="Animation" id="Animation_44xle"]
-length = 0.6
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.0009999999, 0.301, 0.601),
-"transitions": PackedFloat32Array(0.5, 2, 1),
-"update": 0,
-"values": [Vector2(0, 0), Vector2(0, -15), Vector2(0, 0)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Sprite2D:scale")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.0019999999, 0.101, 0.301, 0.501, 0.601),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector2(1.2, 0.8), Vector2(0.8, 1.2), Vector2(1, 1), Vector2(0.8, 1.2), Vector2(1.2, 0.8)]
-}
-
-[sub_resource type="Animation" id="Animation_24it5"]
-resource_name = "boioioioioing"
-length = 0.6
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3, 0.6),
-"transitions": PackedFloat32Array(0.5, 2, 1),
-"update": 0,
-"values": [Vector2(0, 0), Vector2(0, -15), Vector2(0, 0)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Sprite2D:scale")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.0009999999, 0.1, 0.3, 0.5, 0.6),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector2(1.2, 0.8), Vector2(0.8, 1.2), Vector2(1, 1), Vector2(0.8, 1.2), Vector2(1.2, 0.8)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_7mqwv"]
-_data = {
-&"RESET": SubResource("Animation_44xle"),
-&"boioioioioing": SubResource("Animation_24it5")
-}
-
-[node name="shop" type="Node2D" unique_id=234080259]
+[node name="shop" type="Node2D"]
 script = ExtResource("1_y6sft")
 
-[node name="ShopBackground" type="Sprite2D" parent="." unique_id=210022756]
+[node name="ShopBackground" type="Sprite2D" parent="."]
 position = Vector2(320, 180)
 texture = ExtResource("1_lx5au")
 
-[node name="p1_money" type="Label" parent="." unique_id=1679382756]
+[node name="p1_money" type="Label" parent="."]
 offset_right = 40.0
 offset_bottom = 23.0
 
-[node name="p2_money" type="Label" parent="." unique_id=403633564]
+[node name="p2_money" type="Label" parent="."]
 offset_right = 40.0
 offset_bottom = 23.0
 
-[node name="p1_hand" type="Sprite2D" parent="." unique_id=1705031048]
-modulate = Color(0.90526885, 3.3450872e-06, 1.1551381e-06, 1)
+[node name="p1_hand" type="Sprite2D" parent="."]
+modulate = Color(0.905269, 3.34509e-06, 1.15514e-06, 1)
 position = Vector2(250, 250)
-rotation = -0.7853982
+rotation = -0.785398
 texture = ExtResource("3_heatd")
 
-[node name="p2_hand" type="Sprite2D" parent="." unique_id=851162452]
+[node name="p2_hand" type="Sprite2D" parent="."]
 modulate = Color(0, 0, 1, 1)
 position = Vector2(400, 250)
-rotation = 0.7853982
+rotation = 0.785398
 texture = ExtResource("3_heatd")
 flip_h = true
 
-[node name="Articles" type="Node" parent="." unique_id=315831633]
+[node name="Articles" type="Node" parent="."]
 
-[node name="Arm" type="RigidBody2D" parent="Articles" unique_id=1625620732]
+[node name="Arm" type="RigidBody2D" parent="Articles"]
 position = Vector2(1140, 98)
 gravity_scale = 0.0
 
-[node name="Sprite2D" type="Sprite2D" parent="Articles/Arm" unique_id=700709881]
-position = Vector2(0, -0.09983158)
-scale = Vector2(1.1920793, 0.8079208)
+[node name="Sprite2D" type="Sprite2D" parent="Articles/Arm"]
+position = Vector2(0, -0.0998316)
+scale = Vector2(1.19208, 0.807921)
 texture = ExtResource("4_y6sft")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Arm" unique_id=1036198502]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Arm"]
 position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_1v8qu")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Arm" unique_id=546103560]
-libraries/ = SubResource("AnimationLibrary_7mqwv")
-autoplay = &"RESET"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Arm"]
+autoplay = "RESET"
 
-[node name="Eye" type="RigidBody2D" parent="Articles" unique_id=373467610]
+[node name="Eye" type="RigidBody2D" parent="Articles"]
 position = Vector2(752, 98)
 collision_layer = 2
 gravity_scale = 0.0
 
-[node name="Sprite2D" type="Sprite2D" parent="Articles/Eye" unique_id=1765721712]
-position = Vector2(0, -0.09983158)
-scale = Vector2(1.1920793, 0.8079208)
+[node name="Sprite2D" type="Sprite2D" parent="Articles/Eye"]
+position = Vector2(0, -0.0998316)
+scale = Vector2(1.19208, 0.807921)
 texture = ExtResource("2_8r1wq")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Eye" unique_id=1422230568]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Eye"]
 position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_1v8qu")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Eye" unique_id=775097658]
-libraries/ = SubResource("AnimationLibrary_7mqwv")
-autoplay = &"RESET"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Eye"]
+autoplay = "RESET"
 
-[node name="Heart" type="RigidBody2D" parent="Articles" unique_id=758378759]
+[node name="Heart" type="RigidBody2D" parent="Articles"]
 position = Vector2(747, 225)
 collision_layer = 4
 gravity_scale = 0.0
 
-[node name="Sprite2D" type="Sprite2D" parent="Articles/Heart" unique_id=783003826]
-position = Vector2(0, -0.09983158)
-scale = Vector2(1.1920793, 0.8079208)
+[node name="Sprite2D" type="Sprite2D" parent="Articles/Heart"]
+position = Vector2(0, -0.0998316)
+scale = Vector2(1.19208, 0.807921)
 texture = ExtResource("5_m4ofw")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Heart" unique_id=598683242]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Heart"]
 position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_1v8qu")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Heart" unique_id=605526112]
-libraries/ = SubResource("AnimationLibrary_7mqwv")
-autoplay = &"RESET"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Heart"]
+autoplay = "RESET"
 
-[node name="Legs" type="RigidBody2D" parent="Articles" unique_id=1277914353]
+[node name="Legs" type="RigidBody2D" parent="Articles"]
 position = Vector2(946, 98)
 collision_layer = 8
 gravity_scale = 0.0
 
-[node name="Sprite2D" type="Sprite2D" parent="Articles/Legs" unique_id=943973558]
-position = Vector2(0, -0.09983158)
-scale = Vector2(1.1920793, 0.8079208)
+[node name="Sprite2D" type="Sprite2D" parent="Articles/Legs"]
+position = Vector2(0, -0.0998316)
+scale = Vector2(1.19208, 0.807921)
 texture = ExtResource("3_ajxib")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Legs" unique_id=618018838]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Legs"]
 position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_1v8qu")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Legs" unique_id=377961792]
-libraries/ = SubResource("AnimationLibrary_7mqwv")
-autoplay = &"RESET"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Legs"]
+autoplay = "RESET"
 
-[node name="Lungs" type="RigidBody2D" parent="Articles" unique_id=756176609]
+[node name="Lungs" type="RigidBody2D" parent="Articles"]
 position = Vector2(1400, 90)
 collision_layer = 16
 gravity_scale = 0.0
 
-[node name="Sprite2D" type="Sprite2D" parent="Articles/Lungs" unique_id=30139861]
-position = Vector2(0, -0.09983158)
-scale = Vector2(1.1920793, 0.8079208)
+[node name="Sprite2D" type="Sprite2D" parent="Articles/Lungs"]
+position = Vector2(0, -0.0998316)
+scale = Vector2(1.19208, 0.807921)
 texture = ExtResource("8_heatd")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Lungs" unique_id=1481023598]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Lungs"]
 position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_1v8qu")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Lungs" unique_id=561223385]
-libraries/ = SubResource("AnimationLibrary_7mqwv")
-autoplay = &"RESET"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Lungs"]
+autoplay = "RESET"
 
-[node name="Pancreas" type="RigidBody2D" parent="Articles" unique_id=1419456948]
+[node name="Pancreas" type="RigidBody2D" parent="Articles"]
 position = Vector2(943, 225)
 collision_layer = 32
 gravity_scale = 0.0
 
-[node name="Sprite2D" type="Sprite2D" parent="Articles/Pancreas" unique_id=1742768797]
-position = Vector2(0, -0.09983158)
-scale = Vector2(1.1920793, 0.8079208)
+[node name="Sprite2D" type="Sprite2D" parent="Articles/Pancreas"]
+position = Vector2(0, -0.0998316)
+scale = Vector2(1.19208, 0.807921)
 texture = ExtResource("6_heatd")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Pancreas" unique_id=1439098025]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Pancreas"]
 position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_1v8qu")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Pancreas" unique_id=1257429193]
-libraries/ = SubResource("AnimationLibrary_7mqwv")
-autoplay = &"RESET"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Pancreas"]
+autoplay = "RESET"
 
-[node name="Teeth" type="RigidBody2D" parent="Articles" unique_id=999258288]
+[node name="Teeth" type="RigidBody2D" parent="Articles"]
 position = Vector2(1138, 225)
 collision_layer = 64
 gravity_scale = 0.0
 
-[node name="Sprite2D" type="Sprite2D" parent="Articles/Teeth" unique_id=1612496005]
-position = Vector2(0, -0.09983158)
-scale = Vector2(1.1920793, 0.8079208)
+[node name="Sprite2D" type="Sprite2D" parent="Articles/Teeth"]
+position = Vector2(0, -0.0998316)
+scale = Vector2(1.19208, 0.807921)
 texture = ExtResource("7_ajxib")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Teeth" unique_id=667918274]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Articles/Teeth"]
 position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_1v8qu")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Teeth" unique_id=955448946]
-libraries/ = SubResource("AnimationLibrary_7mqwv")
-autoplay = &"RESET"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Teeth"]
+autoplay = "RESET"
 
-[node name="p1_x_timer" type="Timer" parent="." unique_id=1351258354]
+[node name="p1_x_timer" type="Timer" parent="."]
 wait_time = 0.3
 one_shot = true
 
-[node name="p1_y_timer" type="Timer" parent="." unique_id=477795102]
+[node name="p1_y_timer" type="Timer" parent="."]
 wait_time = 0.3
 one_shot = true
 
-[node name="p2_x_timer" type="Timer" parent="." unique_id=33658583]
+[node name="p2_x_timer" type="Timer" parent="."]
 wait_time = 0.3
 one_shot = true
 
-[node name="p2_y_timer" type="Timer" parent="." unique_id=1023242070]
+[node name="p2_y_timer" type="Timer" parent="."]
 wait_time = 0.3
 one_shot = true
 
-[node name="end_timer" type="Timer" parent="." unique_id=1025399312]
+[node name="end_timer" type="Timer" parent="."]
 one_shot = true
 
-[node name="CaChingSound" type="AudioStreamPlayer" parent="." unique_id=247561245]
+[node name="CaChingSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("11_1v8qu")
 bus = &"Sfx"
 

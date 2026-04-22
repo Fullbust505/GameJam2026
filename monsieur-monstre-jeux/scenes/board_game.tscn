@@ -1,0 +1,92 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2yru6sudb28u"]
+
+[ext_resource type="Script" uid="uid://ddqvaqv6youq7" path="res://scripts/board_game.gd" id="1_board"]
+[ext_resource type="Script" uid="uid://e144ksf5t1y3" path="res://scripts/player_piece.gd" id="2_player"]
+
+[node name="BoardGame" type="Node2D"]
+script = ExtResource("1_board")
+
+[node name="Tiles" type="Node2D" parent="."]
+
+[node name="Players" type="Node2D" parent="."]
+
+[node name="P1Piece" type="Node2D" parent="Players"]
+position = Vector2(50, 300)
+script = ExtResource("2_player")
+
+[node name="ColorRect" type="ColorRect" parent="Players/P1Piece"]
+offset_left = -15.0
+offset_top = -15.0
+offset_right = 15.0
+offset_bottom = 15.0
+color = Color(1, 0.2, 0.2, 1)
+
+[node name="P2Piece" type="Node2D" parent="Players"]
+position = Vector2(50, 340)
+script = ExtResource("2_player")
+
+[node name="ColorRect" type="ColorRect" parent="Players/P2Piece"]
+offset_left = -15.0
+offset_top = -15.0
+offset_right = 15.0
+offset_bottom = 15.0
+color = Color(0.2, 0.4, 1, 1)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="TurnLabel" type="Label" parent="UI"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 150.0
+offset_bottom = 30.0
+theme_override_font_sizes/font_size = 20
+text = "Turns: 30"
+
+[node name="P1Money" type="Label" parent="UI"]
+offset_left = 10.0
+offset_top = 35.0
+offset_right = 150.0
+offset_bottom = 55.0
+theme_override_font_sizes/font_size = 18
+text = "P1: $500"
+
+[node name="P2Money" type="Label" parent="UI"]
+offset_left = 10.0
+offset_top = 58.0
+offset_right = 150.0
+offset_bottom = 78.0
+theme_override_font_sizes/font_size = 18
+text = "P2: $500"
+
+[node name="CurrentPlayer" type="Label" parent="UI"]
+offset_left = 10.0
+offset_top = 81.0
+offset_right = 200.0
+offset_bottom = 101.0
+theme_override_font_sizes/font_size = 18
+text = "P1's Turn to Roll"
+
+[node name="RollPrompt" type="Label" parent="UI"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -20.0
+offset_right = 80.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 24
+text = "P1: Press A to Roll"
+horizontal_alignment = 1
+
+[node name="DiceLabel" type="Label" parent="UI"]
+offset_left = 250.0
+offset_top = 10.0
+offset_right = 400.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 32

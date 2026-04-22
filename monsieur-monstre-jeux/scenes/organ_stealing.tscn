@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bbl07kp2px5a4"]
+[gd_scene load_steps=20 format=3 uid="uid://bbl07kp2px5a4"]
 
 [ext_resource type="Script" uid="uid://svug4ytu4ug2" path="res://scripts/organ_stealing.gd" id="1_3ygbr"]
 [ext_resource type="Texture2D" uid="uid://c1o45m3ivkfam" path="res://assets/sprites/missing_base.png" id="2_jpex6"]
@@ -69,60 +69,60 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Node" type="Node" unique_id=1823434167]
+[node name="Node" type="Node"]
 script = ExtResource("1_3ygbr")
 
-[node name="Body" type="Sprite2D" parent="." unique_id=1791944318]
+[node name="Body" type="Sprite2D" parent="."]
 position = Vector2(43, 0)
-scale = Vector2(2.3515625, 2.3515625)
+scale = Vector2(2.35156, 2.35156)
 texture = ExtResource("2_jpex6")
 
-[node name="arms" type="Sprite2D" parent="Body" unique_id=1385975494]
+[node name="arms" type="Sprite2D" parent="Body"]
 texture = ExtResource("3_er6bn")
 
-[node name="eyes" type="Sprite2D" parent="Body" unique_id=43858342]
+[node name="eyes" type="Sprite2D" parent="Body"]
 texture = ExtResource("5_76gdb")
 
-[node name="heart" type="Sprite2D" parent="Body" unique_id=547212659]
+[node name="heart" type="Sprite2D" parent="Body"]
 texture = ExtResource("6_1xol5")
 
-[node name="legs" type="Sprite2D" parent="Body" unique_id=1360450019]
+[node name="legs" type="Sprite2D" parent="Body"]
 texture = ExtResource("4_uxiti")
 
-[node name="lungs" type="Sprite2D" parent="Body" unique_id=736087505]
+[node name="lungs" type="Sprite2D" parent="Body"]
 position = Vector2(-10, 1)
 texture = ExtResource("7_er6bn")
 flip_h = true
 
-[node name="pancreas" type="Sprite2D" parent="Body" unique_id=1135624481]
+[node name="pancreas" type="Sprite2D" parent="Body"]
 texture = ExtResource("7_81pp3")
 
-[node name="teeth" type="Sprite2D" parent="Body" unique_id=1734531731]
+[node name="teeth" type="Sprite2D" parent="Body"]
 texture = ExtResource("9_er6bn")
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=982115540]
+[node name="Camera2D" type="Camera2D" parent="."]
 
-[node name="Visibility Timer" type="Timer" parent="." unique_id=514490531]
+[node name="Visibility Timer" type="Timer" parent="."]
 wait_time = 0.3
 autostart = true
 
-[node name="Select Timer" type="Timer" parent="." unique_id=1906332990]
+[node name="Select Timer" type="Timer" parent="."]
 wait_time = 0.3
 one_shot = true
 
-[node name="Ending Timer" type="Timer" parent="." unique_id=1022891823]
+[node name="Ending Timer" type="Timer" parent="."]
 one_shot = true
 
-[node name="background" type="Sprite2D" parent="." unique_id=646919578]
-modulate = Color(0.49747366, 0.49747366, 0.49747366, 1)
+[node name="background" type="Sprite2D" parent="."]
+modulate = Color(0.497474, 0.497474, 0.497474, 1)
 z_index = -3
 texture = ExtResource("10_uxiti")
 
-[node name="desc" type="AnimatedSprite2D" parent="." unique_id=1526726566]
+[node name="desc" type="AnimatedSprite2D" parent="."]
 position = Vector2(-180, 0)
 sprite_frames = SubResource("SpriteFrames_fqty6")
 
-[node name="Missing" type="Label" parent="desc" unique_id=1983665599]
+[node name="Missing" type="Label" parent="desc"]
 visible = false
 offset_left = -43.0
 offset_top = -58.0
@@ -130,7 +130,7 @@ offset_right = 16.0
 offset_bottom = -35.0
 text = "Missing"
 
-[node name="Functionning" type="Label" parent="desc" unique_id=409844970]
+[node name="Functionning" type="Label" parent="desc"]
 visible = false
 offset_left = -60.0
 offset_top = -59.0
@@ -138,19 +138,19 @@ offset_right = 42.0
 offset_bottom = -36.0
 text = "Functionning"
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=856944029]
-offset_left = -87.99999
-offset_top = -109.00001
-offset_right = -47.999992
-offset_bottom = -69.00001
-scale = Vector2(4.7533746, 1.307305)
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -88.0
+offset_top = -109.0
+offset_right = -48.0
+offset_bottom = -69.0
+scale = Vector2(4.75337, 1.3073)
 color = Color(0, 0, 0, 1)
 
-[node name="Label" type="Label" parent="ColorRect" unique_id=1802396237]
+[node name="Label" type="Label" parent="ColorRect"]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
-scale = Vector2(0.34362423, 1)
+scale = Vector2(0.343624, 1)
 vertical_alignment = 1
 
 [connection signal="timeout" from="Visibility Timer" to="." method="_on_visibility_timer_timeout"]

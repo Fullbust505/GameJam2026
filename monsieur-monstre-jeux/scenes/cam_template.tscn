@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bfbny43birx8b"]
+[gd_scene load_steps=16 format=3 uid="uid://bfbny43birx8b"]
 
 [ext_resource type="Script" uid="uid://c5fqa1ax7aw5v" path="res://scripts/world.gd" id="1_n5pg7"]
 [ext_resource type="PackedScene" uid="uid://duj8xj1kbg5w8" path="res://scenes/cuisine_level.tscn" id="2_aep5y"]
@@ -76,39 +76,39 @@ animations = [{
 "speed": 4.0
 }]
 
-[node name="Node" type="Node" unique_id=1193111562]
+[node name="Node" type="Node"]
 script = ExtResource("1_n5pg7")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=7050653]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 offset_right = 644.0
 offset_bottom = 360.0
 
-[node name="P1_view_container" type="SubViewportContainer" parent="HBoxContainer" unique_id=1413356432]
+[node name="P1_view_container" type="SubViewportContainer" parent="HBoxContainer"]
 layout_mode = 2
 
-[node name="P1_view" type="SubViewport" parent="HBoxContainer/P1_view_container" unique_id=1044291201]
+[node name="P1_view" type="SubViewport" parent="HBoxContainer/P1_view_container"]
 handle_input_locally = false
 size = Vector2i(320, 360)
 render_target_update_mode = 4
 
-[node name="P1Cam" type="Camera2D" parent="HBoxContainer/P1_view_container/P1_view" unique_id=1998250280]
+[node name="P1Cam" type="Camera2D" parent="HBoxContainer/P1_view_container/P1_view"]
 
-[node name="Level" parent="HBoxContainer/P1_view_container/P1_view" unique_id=2062969420 instance=ExtResource("2_aep5y")]
+[node name="Level" parent="HBoxContainer/P1_view_container/P1_view" instance=ExtResource("2_aep5y")]
 
-[node name="P2_view_container" type="SubViewportContainer" parent="HBoxContainer" unique_id=1012394501]
+[node name="P2_view_container" type="SubViewportContainer" parent="HBoxContainer"]
 layout_mode = 2
 
-[node name="P2_view" type="SubViewport" parent="HBoxContainer/P2_view_container" unique_id=1107658062]
+[node name="P2_view" type="SubViewport" parent="HBoxContainer/P2_view_container"]
 handle_input_locally = false
 size = Vector2i(320, 360)
 render_target_update_mode = 4
 
-[node name="P2Cam" type="Camera2D" parent="HBoxContainer/P2_view_container/P2_view" unique_id=38584722]
+[node name="P2Cam" type="Camera2D" parent="HBoxContainer/P2_view_container/P2_view"]
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=1430971758]
+[node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
 
-[node name="Label" type="Label" parent="." unique_id=773116792]
+[node name="Label" type="Label" parent="."]
 z_index = 2
 z_as_relative = false
 offset_left = 300.0
@@ -118,36 +118,36 @@ theme_override_font_sizes/font_size = 32
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ColorRect" type="ColorRect" parent="Label" unique_id=1753334927]
+[node name="ColorRect" type="ColorRect" parent="Label"]
 z_index = -1
 layout_mode = 0
 offset_left = -28.0
 offset_right = 68.0
-offset_bottom = 56.47059
+offset_bottom = 56.4706
 color = Color(0, 0, 0, 1)
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=307835672]
+[node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(321, 179)
-rotation = -3.1415925
+rotation = -3.14159
 scale = Vector2(0.01, -1)
 texture = ExtResource("3_rcbem")
 
-[node name="tuto" type="Sprite2D" parent="." unique_id=1217964979]
+[node name="tuto" type="Sprite2D" parent="."]
 z_index = 1
 position = Vector2(321, 185)
 texture = ExtResource("4_ju86i")
 
-[node name="vignette_gauche" type="Sprite2D" parent="tuto" unique_id=1569941191]
-position = Vector2(-157.12498, -43.749996)
-scale = Vector2(0.5238318, 0.51315796)
+[node name="vignette_gauche" type="Sprite2D" parent="tuto"]
+position = Vector2(-157.125, -43.75)
+scale = Vector2(0.523832, 0.513158)
 texture = ExtResource("5_6e2um")
 
-[node name="vignette_droite" type="Sprite2D" parent="tuto" unique_id=1344785065]
+[node name="vignette_droite" type="Sprite2D" parent="tuto"]
 position = Vector2(157.5, -43.75)
-scale = Vector2(0.9623288, 0.8301435)
+scale = Vector2(0.962329, 0.830144)
 texture = ExtResource("6_7kplc")
 
-[node name="tuto_desc" type="Label" parent="tuto" unique_id=40940124]
+[node name="tuto_desc" type="Label" parent="tuto"]
 offset_left = -192.0
 offset_top = 65.0
 offset_right = 203.0
@@ -157,26 +157,26 @@ mais tqt ça va aller,  tout roule ma poule"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="p1readiness" type="AnimatedSprite2D" parent="." unique_id=2005211767]
+[node name="p1readiness" type="AnimatedSprite2D" parent="."]
 z_index = 2
 position = Vector2(84, 280)
 sprite_frames = SubResource("SpriteFrames_qs1bp")
 animation = &"waiting"
 autoplay = "waiting"
 
-[node name="p2readiness" type="AnimatedSprite2D" parent="." unique_id=1642119897]
+[node name="p2readiness" type="AnimatedSprite2D" parent="."]
 z_index = 2
 position = Vector2(560, 280)
 sprite_frames = SubResource("SpriteFrames_8dd3u")
 animation = &"waiting"
 autoplay = "waiting"
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=1727316492]
+[node name="ColorRect" type="ColorRect" parent="."]
 visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Label" type="Label" parent="ColorRect" unique_id=437443508]
+[node name="Label" type="Label" parent="ColorRect"]
 visible = false
 layout_mode = 0
 offset_right = 40.0

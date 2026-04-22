@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://cdw5i25q00j2v"]
+
+[ext_resource type="Script" uid="uid://c6ekaern01w0c" path="res://scripts/organs/organ_manager.gd" id="1_manager"]
+[ext_resource type="Script" uid="uid://cc5h0oq81pr6j" path="res://scripts/organs/brain_retrieval.gd" id="2_brain"]
+[ext_resource type="Script" uid="uid://b6rb6tkdno17l" path="res://scripts/organs/organ_debug_panel.gd" id="3_debug"]
+
+[node name="OrganDebugTest" type="Node2D"]
+script = ExtResource("1_manager")
+
+[node name="BrainRetrieval" type="Node" parent="."]
+script = ExtResource("2_brain")
+
+[node name="DebugPanel" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 410.0
+offset_bottom = 710.0
+script = ExtResource("3_debug")

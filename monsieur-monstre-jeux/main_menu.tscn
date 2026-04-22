@@ -1,15 +1,16 @@
-[gd_scene format=3 uid="uid://cidju8rhy8dk3"]
+[gd_scene load_steps=9 format=3 uid="uid://cidju8rhy8dk3"]
 
-[ext_resource type="Texture2D" uid="uid://b4nw6vhuemvny" path="res://01073865290819.5d61d475f0072.jpg" id="1_7vrkn"]
 [ext_resource type="Script" uid="uid://clmix0xoc7be3" path="res://main_menu.gd" id="1_fu7sn"]
 [ext_resource type="FontFile" uid="uid://diday46ilbvun" path="res://GrapeSoda.ttf" id="2_fu7sn"]
+[ext_resource type="Texture2D" uid="uid://b56dtr4ouvrrh" path="res://assets/sprites/yes.png" id="2_jix8l"]
+[ext_resource type="Theme" uid="uid://iyev4ylcl6n0" path="res://kenneyUI-red.tres" id="3_jix8l"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jix8l"]
-texture = ExtResource("1_7vrkn")
-modulate_color = Color(0.18518093, 0.18518093, 0.18518093, 1)
+texture = ExtResource("2_jix8l")
+modulate_color = Color(0.29219, 0.29219, 0.29219, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rhts7"]
-bg_color = Color(0.13914096, 0.68227905, 0.68196416, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu7sn"]
+bg_color = Color(0.564706, 0.152941, 0.176471, 1)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
@@ -18,7 +19,7 @@ shadow_size = 5
 shadow_offset = Vector2(0, 1.59)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7vrkn"]
-bg_color = Color(0.056221616, 0.37156692, 0.37156692, 1)
+bg_color = Color(0.56648, 0.152448, 0.176179, 1)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
@@ -26,8 +27,8 @@ corner_radius_bottom_left = 20
 shadow_size = 5
 shadow_offset = Vector2(0, 1.59)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu7sn"]
-bg_color = Color(0.10666647, 0.5650374, 0.5650374, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rhts7"]
+bg_color = Color(0.486275, 0.152941, 0.176471, 1)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
@@ -35,7 +36,7 @@ corner_radius_bottom_left = 20
 shadow_size = 5
 shadow_offset = Vector2(0, 1.59)
 
-[node name="MainMenu" type="Control" unique_id=359547675]
+[node name="MainMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -44,77 +45,100 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_fu7sn")
 
-[node name="Panel" type="Panel" parent="." unique_id=818173261]
+[node name="Panel" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -1.0
+offset_right = -1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_jix8l")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1135135914]
+[node name="VBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -218.0
-offset_top = -69.5
-offset_right = 218.0
-offset_bottom = 251.0
+offset_left = -205.0
+offset_top = 141.0
+offset_right = 276.0
+offset_bottom = 172.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("3_jix8l")
 theme_override_constants/separation = 30
 
-[node name="StartButton" type="Button" parent="VBoxContainer" unique_id=850535473]
+[node name="StartButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme = ExtResource("3_jix8l")
+theme_type_variation = &"FlatButton"
 theme_override_font_sizes/font_size = 30
-theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
-text = "Start game"
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
+text = "Start Game"
+alignment = 0
 
-[node name="CreditsButton" type="Button" parent="VBoxContainer" unique_id=451103927]
+[node name="SettingsButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme = ExtResource("3_jix8l")
 theme_override_font_sizes/font_size = 30
-theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
+text = "Settings"
+alignment = 0
+
+[node name="CreditsButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("3_jix8l")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
 text = "Credits"
+alignment = 0
 
-[node name="ExitButton" type="Button" parent="VBoxContainer" unique_id=1062407358]
+[node name="ExitButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme = ExtResource("3_jix8l")
 theme_override_font_sizes/font_size = 30
-theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
 text = "Exit"
+alignment = 0
 
-[node name="Label" type="Label" parent="." unique_id=698420112]
+[node name="Label" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -31.0
-offset_top = -211.5
-offset_right = 31.0
-offset_bottom = -188.5
+offset_left = -165.0
+offset_top = -190.0
+offset_right = 166.0
+offset_bottom = -83.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("3_jix8l")
 theme_override_constants/shadow_offset_y = 20
 theme_override_constants/shadow_outline_size = 5
 theme_override_fonts/font = ExtResource("2_fu7sn")
-theme_override_font_sizes/font_size = 106
-text = "Organia"
+theme_override_font_sizes/font_size = 62
+text = "Les jeux de MR"
 horizontal_alignment = 1
 
 [connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="VBoxContainer/SettingsButton" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="VBoxContainer/CreditsButton" to="." method="_on_credits_pressed"]
 [connection signal="pressed" from="VBoxContainer/ExitButton" to="." method="_on_exit_pressed"]

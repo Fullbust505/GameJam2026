@@ -1,0 +1,281 @@
+[gd_scene load_steps=5 format=3 uid="uid://b8vhsbtvjth24"]
+
+[ext_resource type="Script" uid="uid://csetpmcojcg1t" path="res://scripts/settings_menu.gd" id="1_settings"]
+[ext_resource type="Script" uid="uid://c0xi8xlq512f5" path="res://scripts/rebind_button.gd" id="2_rebind"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.15, 0.6, 0.6, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn"]
+bg_color = Color(0.1, 0.5, 0.5, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="SettingsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_settings")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 20.0
+offset_right = 100.0
+offset_bottom = 60.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 36
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 80.0
+offset_right = 600.0
+offset_bottom = 320.0
+current_tab = 0
+
+[node name="InputTab" type="VBoxContainer" parent="TabContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+metadata/_tab_index = 0
+
+[node name="P1Header" type="Label" parent="TabContainer/InputTab"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Player 1 (Gamepad)"
+
+[node name="P1Grid" type="GridContainer" parent="TabContainer/InputTab"]
+layout_mode = 2
+columns = 4
+
+[node name="MoveUpBtn" type="Button" parent="TabContainer/InputTab/P1Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "LY-"
+script = ExtResource("2_rebind")
+
+[node name="MoveDownBtn" type="Button" parent="TabContainer/InputTab/P1Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "LY+"
+script = ExtResource("2_rebind")
+
+[node name="MoveLeftBtn" type="Button" parent="TabContainer/InputTab/P1Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "LX-"
+script = ExtResource("2_rebind")
+
+[node name="MoveRightBtn" type="Button" parent="TabContainer/InputTab/P1Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "LX+"
+script = ExtResource("2_rebind")
+
+[node name="MainBtn" type="Button" parent="TabContainer/InputTab/P1Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "A"
+script = ExtResource("2_rebind")
+
+[node name="SubBtn" type="Button" parent="TabContainer/InputTab/P1Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "B"
+script = ExtResource("2_rebind")
+
+[node name="L1Btn" type="Button" parent="TabContainer/InputTab/P1Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "L1"
+script = ExtResource("2_rebind")
+
+[node name="R1Btn" type="Button" parent="TabContainer/InputTab/P1Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "R1"
+script = ExtResource("2_rebind")
+
+[node name="P2Header" type="Label" parent="TabContainer/InputTab"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Player 2 (Gamepad)"
+
+[node name="P2Grid" type="GridContainer" parent="TabContainer/InputTab"]
+layout_mode = 2
+columns = 4
+
+[node name="MoveUpBtn" type="Button" parent="TabContainer/InputTab/P2Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "LY-"
+script = ExtResource("2_rebind")
+
+[node name="MoveDownBtn" type="Button" parent="TabContainer/InputTab/P2Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "LY+"
+script = ExtResource("2_rebind")
+
+[node name="MoveLeftBtn" type="Button" parent="TabContainer/InputTab/P2Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "LX-"
+script = ExtResource("2_rebind")
+
+[node name="MoveRightBtn" type="Button" parent="TabContainer/InputTab/P2Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "LX+"
+script = ExtResource("2_rebind")
+
+[node name="MainBtn" type="Button" parent="TabContainer/InputTab/P2Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "A"
+script = ExtResource("2_rebind")
+
+[node name="SubBtn" type="Button" parent="TabContainer/InputTab/P2Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "B"
+script = ExtResource("2_rebind")
+
+[node name="L1Btn" type="Button" parent="TabContainer/InputTab/P2Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "L1"
+script = ExtResource("2_rebind")
+
+[node name="R1Btn" type="Button" parent="TabContainer/InputTab/P2Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "R1"
+script = ExtResource("2_rebind")
+
+[node name="DisplayTab" type="VBoxContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 15
+metadata/_tab_index = 1
+
+[node name="VBox" type="VBoxContainer" parent="TabContainer/DisplayTab"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ResolutionLabel" type="Label" parent="TabContainer/DisplayTab/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Resolution"
+
+[node name="ResolutionDropdown" type="OptionButton" parent="TabContainer/DisplayTab/VBox"]
+layout_mode = 2
+selected = 2
+item_count = 4
+popup/item_0/id = 0
+popup/item_1/id = 1
+popup/item_2/id = 2
+popup/item_3/id = 3
+
+[node name="FullscreenLabel" type="Label" parent="TabContainer/DisplayTab/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Fullscreen"
+
+[node name="FullscreenToggle" type="CheckButton" parent="TabContainer/DisplayTab/VBox"]
+layout_mode = 2
+
+[node name="VSyncLabel" type="Label" parent="TabContainer/DisplayTab/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "V-Sync"
+
+[node name="VSyncToggle" type="CheckButton" parent="TabContainer/DisplayTab/VBox"]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 340.0
+offset_right = 150.0
+offset_bottom = 380.0
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "Back"
+
+[node name="ResetButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 340.0
+offset_right = 350.0
+offset_bottom = 380.0
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "Reset Defaults"
+
+[connection signal="item_selected" from="TabContainer/DisplayTab/VBox/ResolutionDropdown" to="." method="_on_resolution_item_selected"]
+[connection signal="toggled" from="TabContainer/DisplayTab/VBox/FullscreenToggle" to="." method="_on_fullscreen_toggled"]
+[connection signal="toggled" from="TabContainer/DisplayTab/VBox/VSyncToggle" to="." method="_on_vsync_toggled"]
+[connection signal="pressed" from="BackButton" to="." method="go_back"]
+[connection signal="pressed" from="ResetButton" to="." method="_on_reset_defaults_pressed"]
