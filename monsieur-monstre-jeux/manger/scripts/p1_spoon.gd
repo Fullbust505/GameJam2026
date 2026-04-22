@@ -18,6 +18,8 @@ var player_index = 0
 
 var rotation_direction = 0
 
+signal ready_p1
+
 ### DECIDE WHICH COLLISION TO USE
 func set_mode():
 	if handler == "arm":
@@ -91,3 +93,7 @@ func _physics_process(delta):
 	
 	global_position.x = clamp(global_position.x, 0, screen_size.x)
 	global_position.y = clamp(global_position.y, 0, screen_size.y)
+	
+	# Check for ready button press
+	if Input.is_joy_button_pressed(player_index, JOY_BUTTON_A):
+		ready_p1.emit()
