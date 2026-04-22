@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://coc514l6jtinv" path="res://scripts/cut_logic.gd" id="1_4r5d3"]
 [ext_resource type="PackedScene" uid="uid://eua0qi6j81g1" path="res://scenes/cut_P1.tscn" id="1_evvn1"]
 [ext_resource type="PackedScene" uid="uid://3f1odqe353cn" path="res://scenes/cut_P2.tscn" id="2_4r5d3"]
+[ext_resource type="AudioStream" uid="uid://g3qcu3y0jp8v" path="res://assets/sfx/slice.ogg" id="3_lhscs"]
 [ext_resource type="Texture2D" uid="uid://cp1xeoun8ih63" path="res://sprites/cutting board.jpg" id="3_ng1ri"]
 
 [node name="Node" type="Node" unique_id=2062969420]
@@ -11,8 +12,17 @@ script = ExtResource("1_4r5d3")
 [node name="P1" parent="." unique_id=113941445 instance=ExtResource("1_evvn1")]
 position = Vector2(4, 45)
 
+[node name="SliceP1" type="AudioStreamPlayer2D" parent="P1" unique_id=1934409934]
+stream = ExtResource("3_lhscs")
+volume_db = -6.209
+
 [node name="P2" parent="." unique_id=1882942523 instance=ExtResource("2_4r5d3")]
 position = Vector2(0, 575)
+
+[node name="SliceP2" type="AudioStreamPlayer2D" parent="P2" unique_id=1313175080]
+position = Vector2(4, -530)
+stream = ExtResource("3_lhscs")
+volume_db = -6.209
 
 [node name="background1" type="Sprite2D" parent="." unique_id=290239481]
 z_index = -3
