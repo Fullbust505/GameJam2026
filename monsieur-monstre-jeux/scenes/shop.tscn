@@ -1,16 +1,22 @@
 [gd_scene format=3 uid="uid://bff3msatkfsof"]
 
 [ext_resource type="Texture2D" uid="uid://digwq15ak0dvh" path="res://assets/sprites/shop.png" id="1_lx5au"]
-[ext_resource type="Script" path="res://scripts/shop.gd" id="1_y6sft"]
+[ext_resource type="Script" uid="uid://cyt17tjg3iseq" path="res://scripts/shop.gd" id="1_y6sft"]
 [ext_resource type="Texture2D" uid="uid://dkusi86pbm2s3" path="res://assets/sprites/eye.png" id="2_8r1wq"]
 [ext_resource type="Texture2D" uid="uid://b1g0mxm3nlo10" path="res://assets/sprites/legs.png" id="3_ajxib"]
 [ext_resource type="Texture2D" uid="uid://35ilmj7qiybm" path="res://assets/sprites/pointer.png" id="3_heatd"]
+[ext_resource type="Script" uid="uid://cqaf1ns4p55n8" path="res://scenes/p_1_hand.gd" id="4_j14q8"]
 [ext_resource type="Texture2D" uid="uid://cjsh53wy3xjna" path="res://assets/sprites/arm.png" id="4_y6sft"]
+[ext_resource type="Script" uid="uid://dfoejeeehh0hi" path="res://scenes/p_2_hand.gd" id="5_5u241"]
 [ext_resource type="Texture2D" uid="uid://1b28wb7byurs" path="res://assets/sprites/heart.png" id="5_m4ofw"]
 [ext_resource type="Texture2D" uid="uid://d26n00kr7q32" path="res://assets/sprites/pancreas.png" id="6_heatd"]
 [ext_resource type="Texture2D" uid="uid://c03no7vg6mwlo" path="res://assets/sprites/teeth.png" id="7_ajxib"]
 [ext_resource type="Texture2D" uid="uid://bqv8mt4qnh0bo" path="res://assets/sprites/lungs.png" id="8_heatd"]
 [ext_resource type="AudioStream" uid="uid://bejwsj6j3xvms" path="res://assets/sfx/caching.ogg" id="11_1v8qu"]
+[ext_resource type="Texture2D" uid="uid://bwgqpuucsifff" path="res://assets/sprites/howto.png" id="12_7mqwv"]
+[ext_resource type="Texture2D" uid="uid://bcbwwu7o14y3g" path="res://assets/sprites/tuto_cut_1.png" id="13_gobkm"]
+[ext_resource type="Texture2D" uid="uid://ch8wo5amkpq01" path="res://assets/sprites/tuto_cut_2.png" id="14_j14q8"]
+[ext_resource type="Texture2D" uid="uid://b2b1s0ung34ie" path="res://assets/sprites/ready.png" id="15_gobkm"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1v8qu"]
 radius = 30.016663
@@ -78,6 +84,74 @@ _data = {
 &"boioioioioing": SubResource("Animation_24it5")
 }
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ju86i"]
+atlas = ExtResource("15_gobkm")
+region = Rect2(336, 0, 168, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pcx2e"]
+atlas = ExtResource("15_gobkm")
+region = Rect2(0, 0, 168, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6e2um"]
+atlas = ExtResource("15_gobkm")
+region = Rect2(168, 0, 168, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_j14q8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ju86i")
+}],
+"loop": true,
+"name": &"ready",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pcx2e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6e2um")
+}],
+"loop": true,
+"name": &"waiting",
+"speed": 4.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7kplc"]
+atlas = ExtResource("15_gobkm")
+region = Rect2(336, 0, 168, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h8800"]
+atlas = ExtResource("15_gobkm")
+region = Rect2(0, 0, 168, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kp0td"]
+atlas = ExtResource("15_gobkm")
+region = Rect2(168, 0, 168, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5u241"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7kplc")
+}],
+"loop": true,
+"name": &"ready",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h8800")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kp0td")
+}],
+"loop": true,
+"name": &"waiting",
+"speed": 4.0
+}]
+
 [node name="shop" type="Node2D" unique_id=234080259]
 script = ExtResource("1_y6sft")
 
@@ -98,6 +172,7 @@ modulate = Color(0.90526885, 3.3450872e-06, 1.1551381e-06, 1)
 position = Vector2(250, 250)
 rotation = -0.7853982
 texture = ExtResource("3_heatd")
+script = ExtResource("4_j14q8")
 
 [node name="p2_hand" type="Sprite2D" parent="." unique_id=851162452]
 modulate = Color(0, 0, 1, 1)
@@ -105,6 +180,7 @@ position = Vector2(400, 250)
 rotation = 0.7853982
 texture = ExtResource("3_heatd")
 flip_h = true
+script = ExtResource("5_5u241")
 
 [node name="Articles" type="Node" parent="." unique_id=315831633]
 
@@ -256,4 +332,50 @@ one_shot = true
 stream = ExtResource("11_1v8qu")
 bus = &"Sfx"
 
+[node name="tuto_shop" type="Sprite2D" parent="." unique_id=705673117]
+z_index = 1
+position = Vector2(321, 185)
+texture = ExtResource("12_7mqwv")
+
+[node name="vignette_gauche" type="Sprite2D" parent="tuto_shop" unique_id=1150431942]
+position = Vector2(-157.12498, -43.749996)
+scale = Vector2(0.5238318, 0.51315796)
+texture = ExtResource("13_gobkm")
+
+[node name="vignette_droite" type="Sprite2D" parent="tuto_shop" unique_id=72592816]
+position = Vector2(157.5, -43.75)
+scale = Vector2(0.9623288, 0.8301435)
+texture = ExtResource("14_j14q8")
+
+[node name="tuto_desc" type="Label" parent="tuto_shop" unique_id=831002069]
+offset_left = -192.0
+offset_top = 65.0
+offset_right = 203.0
+offset_bottom = 114.0
+text = "lorem ipsum dolor sit amet le truc qui
+mais tqt ça va aller,  tout roule ma poule"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="p1readiness" type="AnimatedSprite2D" parent="." unique_id=1213343318]
+z_index = 2
+position = Vector2(84, 280)
+sprite_frames = SubResource("SpriteFrames_j14q8")
+animation = &"waiting"
+autoplay = "waiting"
+
+[node name="p2readiness" type="AnimatedSprite2D" parent="." unique_id=2015405498]
+z_index = 2
+position = Vector2(560, 280)
+sprite_frames = SubResource("SpriteFrames_5u241")
+animation = &"waiting"
+autoplay = "waiting"
+
+[node name="mg_duration" type="Timer" parent="." unique_id=923132129]
+wait_time = 30.0
+one_shot = true
+
+[connection signal="ready_p1" from="p1_hand" to="." method="_on_p_1_hand_ready_p_1"]
+[connection signal="ready_p2" from="p2_hand" to="." method="_on_p_2_hand_ready_p_2"]
 [connection signal="timeout" from="end_timer" to="." method="_on_end_timer_timeout"]
+[connection signal="timeout" from="mg_duration" to="." method="_on_mg_duration_timeout"]

@@ -132,31 +132,6 @@ rotation = -3.1415925
 scale = Vector2(0.01, -1)
 texture = ExtResource("3_rcbem")
 
-[node name="tuto" type="Sprite2D" parent="." unique_id=1217964979]
-z_index = 1
-position = Vector2(321, 185)
-texture = ExtResource("4_ju86i")
-
-[node name="vignette_gauche" type="Sprite2D" parent="tuto" unique_id=1569941191]
-position = Vector2(-157.12498, -43.749996)
-scale = Vector2(0.5238318, 0.51315796)
-texture = ExtResource("5_6e2um")
-
-[node name="vignette_droite" type="Sprite2D" parent="tuto" unique_id=1344785065]
-position = Vector2(157.5, -43.75)
-scale = Vector2(0.9623288, 0.8301435)
-texture = ExtResource("6_7kplc")
-
-[node name="tuto_desc" type="Label" parent="tuto" unique_id=40940124]
-offset_left = -192.0
-offset_top = 65.0
-offset_right = 203.0
-offset_bottom = 114.0
-text = "lorem ipsum dolor sit amet le truc qui
-mais tqt ça va aller,  tout roule ma poule"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="p1readiness" type="AnimatedSprite2D" parent="." unique_id=2005211767]
 z_index = 2
 position = Vector2(84, 280)
@@ -181,3 +156,28 @@ visible = false
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
+
+[node name="tuto" type="Sprite2D" parent="." unique_id=1639210498]
+z_index = 1
+position = Vector2(321, 185)
+texture = ExtResource("4_ju86i")
+
+[node name="vignette_gauche" type="Sprite2D" parent="tuto" unique_id=1355888777]
+position = Vector2(-157.12498, -43.749996)
+scale = Vector2(0.5238318, 0.51315796)
+texture = ExtResource("5_6e2um")
+
+[node name="vignette_droite" type="Sprite2D" parent="tuto" unique_id=1309190368]
+position = Vector2(157.5, -43.75)
+scale = Vector2(0.9623288, 0.8301435)
+texture = ExtResource("6_7kplc")
+
+[node name="tuto_desc" type="Label" parent="tuto" unique_id=476948204]
+offset_left = -192.0
+offset_top = 65.0
+offset_right = 203.0
+offset_bottom = 114.0
+text = "lorem ipsum dolor sit amet le truc qui
+mais tqt ça va aller,  tout roule ma poule"
+horizontal_alignment = 1
+vertical_alignment = 1

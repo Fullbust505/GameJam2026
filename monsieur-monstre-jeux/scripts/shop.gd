@@ -11,10 +11,18 @@ var beatles: int = 0
 @onready var p1_y_timer = $p1_y_timer
 @onready var p2_x_timer = $p2_x_timer
 @onready var p2_y_timer = $p2_y_timer
+@onready var p1_readiness = $"p1readiness"
+@onready var p2_readiness = $"p2readiness"
+@onready var tuto_label = $tuto_shop/tuto_desc
+@onready var timer = $mg_duration
 
 var p1_hand_index : int = 0
 var p2_hand_index : int = 0
 
+var timeouts = 0
+var p1_ready = false
+var p2_ready = false
+var allready = false
 var p1_done = false
 var p2_done = false
 
@@ -22,29 +30,37 @@ var p2_done = false
 
 func _ready() -> void:
 	open_json(json_path)
+	p1_readiness.animation = "waiting"
+	p2_readiness.animation = "waiting"
+	tuto_label.text = "Welcome to the shop!\nHere, buy body parts with A\nand quit with B."
+	timer.wait_time = 1.5
 	choose_random_articles()
 
 func _physics_process(delta: float) -> void:
-	if not p1_done:
-		p1_hand_index = p1_movement(p1_hand_index)
-		if Input.is_joy_button_pressed(0, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button"):
-			buy_item(0, p1_hand_index)
-	
-	if not p2_done:
-		p2_hand_index = p2_movement(p2_hand_index)
-		if Input.is_joy_button_pressed(1, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button"):
-			buy_item(1, p2_hand_index)
+	if allready :
+		if not p1_done:
+			p1_hand_index = p1_movement(p1_hand_index)
+			if Input.is_joy_button_pressed(0, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button"):
+				buy_item(0, p1_hand_index)
+		
+		if not p2_done:
+			p2_hand_index = p2_movement(p2_hand_index)
+			if Input.is_joy_button_pressed(1, JOY_BUTTON_A) and Input.is_action_just_pressed("game_main_button"):
+				buy_item(1, p2_hand_index)
 
-	if Input.is_joy_button_pressed(0, JOY_BUTTON_B) and Input.is_action_just_pressed("game_sub_button"):
-		p1_done = true
-		p1_hand.modulate = Color(0.2,0,0)
-	
-	if Input.is_joy_button_pressed(1, JOY_BUTTON_B) and Input.is_action_just_pressed("game_sub_button"):
-		p2_done = true
-		p2_hand.modulate = Color(0,0,0.2)
-	
-	if p1_done and p2_done and end_times.is_stopped():
-		end_shop()
+		if Input.is_joy_button_pressed(0, JOY_BUTTON_B) and Input.is_action_just_pressed("game_sub_button"):
+			p1_done = true
+			p1_hand.modulate = Color(0.2,0,0)
+		
+		if Input.is_joy_button_pressed(1, JOY_BUTTON_B) and Input.is_action_just_pressed("game_sub_button"):
+			p2_done = true
+			p2_hand.modulate = Color(0,0,0.2)
+		
+		if p1_done and p2_done and end_times.is_stopped():
+			end_shop()
+	elif p1_ready and p2_ready and timer.is_stopped() :
+		timer.start()
+		print("OK")
 	
 func buy_item(player_index, hand_index):
 	for i in range(articles.size()):
@@ -198,3 +214,20 @@ func end_shop():
 
 func _on_end_timer_timeout() -> void:
 	get_tree().change_scene_to_file("res://scenes/cam_template.tscn")
+
+
+
+func _on_mg_duration_timeout() -> void:
+	$tuto_shop.visible=false
+	p1_readiness.visible = false
+	p2_readiness.visible = false
+	allready = true
+
+
+func _on_p_2_hand_ready_p_2() -> void:
+	p2_ready = true
+	p2_readiness.animation = "ready"
+
+func _on_p_1_hand_ready_p_1() -> void:
+	p1_ready = true
+	p1_readiness.animation = "ready"
