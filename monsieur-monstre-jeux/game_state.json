@@ -1,0 +1,33 @@
+{
+	"last_winner": "1",
+	"players": {
+		"p1": {
+			"money": 900.0,
+			"organs": {
+				"arms": true,
+				"eyes": true,
+				"heart": true,
+				"legs": true,
+				"liver": true,
+				"lungs": true,
+				"mouth": true,
+				"pancreas": true
+			},
+			"score": 3.0
+		},
+		"p2": {
+			"money": 0.0,
+			"organs": {
+				"arms": true,
+				"eyes": true,
+				"heart": true,
+				"legs": true,
+				"liver": true,
+				"lungs": true,
+				"mouth": true,
+				"pancreas": true
+			},
+			"score": 0.0
+		}
+	}
+}

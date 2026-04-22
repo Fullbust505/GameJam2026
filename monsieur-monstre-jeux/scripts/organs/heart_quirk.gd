@@ -57,15 +57,62 @@ func _process(delta: float) -> void:
 			lose_consciousness()
 		last_pump_time = Time.get_ticks_msec() / 1000.0  # Reset to prevent repeated misses
 
+var last_a_pressed = false
+
+# Right joystick pump tracking
+enum JoystickPumpState { IDLE, WAITING_DOWN, WAITING_UP }
+var joystick_pump_state = JoystickPumpState.IDLE
+var last_joystick_y: float = 0.0
+var pumps_this_sequence: int = 0
+
 func handle_input(player_idx: int, delta: float) -> void:
 	super.handle_input(player_idx, delta)
 	if not is_missing or not is_active or not is_conscious:
 		return
 
-	# A button = 0
-	if Input.is_joy_button_pressed(player_idx, 0):
-		if Input.is_action_just_pressed("game_main_button") or Input.is_joy_button_pressed(player_idx, 0):
+	# Check if player is in blackout state - only allow heart restart via A button
+	var global_effects = get_node_or_null("/root/OrganGlobalEffects")
+	if global_effects and global_effects.is_player_blackout(player_idx):
+		# During blackout, only A button (heart pump) is allowed
+		var a_pressed_blackout = Input.is_joy_button_pressed(player_idx, 0)
+		if a_pressed_blackout and not last_a_pressed:
 			attempt_pump()
+		last_a_pressed = a_pressed_blackout
+		return
+
+	# Right joystick up/down for pumping
+	var rs_y = Input.get_joy_axis(player_idx, JOY_AXIS_RIGHT_Y)
+
+	# Detect direction changes on right joystick
+	var joystick_threshold = 0.5
+
+	if joystick_pump_state == JoystickPumpState.IDLE:
+		if rs_y < -joystick_threshold and last_joystick_y >= -joystick_threshold:
+			# Moved up - wait for down
+			joystick_pump_state = JoystickPumpState.WAITING_DOWN
+		elif rs_y > joystick_threshold and last_joystick_y <= joystick_threshold:
+			# Moved down first - wait for up
+			joystick_pump_state = JoystickPumpState.WAITING_UP
+
+	elif joystick_pump_state == JoystickPumpState.WAITING_DOWN:
+		if rs_y > joystick_threshold and last_joystick_y <= joystick_threshold:
+			# Completed up->down, that's one pump
+			pumps_this_sequence += 1
+			if pumps_this_sequence >= 3:
+				attempt_pump()
+				pumps_this_sequence = 0
+			joystick_pump_state = JoystickPumpState.IDLE
+
+	elif joystick_pump_state == JoystickPumpState.WAITING_UP:
+		if rs_y < -joystick_threshold and last_joystick_y >= -joystick_threshold:
+			# Completed down->up, that's one pump
+			pumps_this_sequence += 1
+			if pumps_this_sequence >= 3:
+				attempt_pump()
+				pumps_this_sequence = 0
+			joystick_pump_state = JoystickPumpState.IDLE
+
+	last_joystick_y = rs_y
 
 func attempt_pump() -> void:
 	var time_since_last = Time.get_ticks_msec() / 1000.0 - last_pump_time
@@ -106,6 +153,12 @@ func lose_consciousness() -> void:
 		return
 	is_conscious = false
 	consciousness_lost.emit()
+
+	# Notify global effects system if available
+	var global_effects = get_node_or_null("/root/OrganGlobalEffects")
+	if global_effects:
+		global_effects.on_player_consciousness_lost(player_index)
+
 	# Reset after a delay
 	await get_tree().create_timer(3.0).timeout
 	restore_consciousness()
@@ -116,6 +169,11 @@ func restore_consciousness() -> void:
 	perfect_pumps = 0
 	current_rhythm = 1.0
 	consciousness_restored.emit()
+
+	# Notify global effects system if available
+	var global_effects = get_node_or_null("/root/OrganGlobalEffects")
+	if global_effects:
+		global_effects.on_player_consciousness_restored(player_index)
 
 func get_status() -> Dictionary:
 	return {

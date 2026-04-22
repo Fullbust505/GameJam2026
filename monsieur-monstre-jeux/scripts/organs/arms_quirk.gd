@@ -25,6 +25,11 @@ var is_throwing: bool = false
 var throw_power: float = 0.0
 var throw_charge_time: float = 1.0
 var can_overarm_throw: bool = false
+var last_lt_pressed: bool = false
+var last_lb_pressed: bool = false
+var last_rb_pressed: bool = false
+var last_a_pressed: bool = false
+var last_x_pressed: bool = false
 
 func _init() -> void:
 	super._init()
@@ -68,29 +73,37 @@ func handle_input(player_idx: int, delta: float) -> void:
 	var lb_pressed = Input.is_joy_button_pressed(player_idx, 9)
 	var rb_pressed = Input.is_joy_button_pressed(player_idx, 10)
 
-	# Steadying hands
-	if lt_pressed:
-		is_steadying = true
-		activate_tremor()  # Tremor when steadying is manual
-	else:
-		is_steadying = false
-
-	# Switch hands
-	if lb_pressed and not rb_pressed:
-		switch_hand(0)  # Left hand
-	elif rb_pressed and not lb_pressed:
-		switch_hand(1)  # Right hand
-
 	# A = 0, X = 2
 	var a_pressed = Input.is_joy_button_pressed(player_idx, 0)
 	var x_pressed = Input.is_joy_button_pressed(player_idx, 2)
-	if a_pressed and x_pressed:
+
+	# Steadying hands - edge trigger on LT
+	if lt_pressed and not last_lt_pressed:
+		is_steadying = true
+		activate_tremor()
+	elif not lt_pressed:
+		is_steadying = false
+
+	# Switch hands - edge trigger
+	if lb_pressed and not last_lb_pressed:
+		switch_hand(0)  # Left hand
+	elif rb_pressed and not last_rb_pressed:
+		switch_hand(1)  # Right hand
+
+	# A = 0, X = 2 - both pressed for overarm throw
+	if a_pressed and x_pressed and not last_a_pressed:
 		attempt_overarm_throw()
 
-	# A button tap for grip
-	if Input.is_joy_button_pressed(player_idx, 0):
-		if Input.is_action_just_pressed("game_main_button"):
-			attempt_grip()
+	# A button tap for grip - edge trigger
+	if a_pressed and not last_a_pressed:
+		attempt_grip()
+
+	# Update last states
+	last_lt_pressed = lt_pressed
+	last_lb_pressed = lb_pressed
+	last_rb_pressed = rb_pressed
+	last_a_pressed = a_pressed
+	last_x_pressed = x_pressed
 
 func attempt_grip() -> void:
 	if is_holding_item:
@@ -130,11 +143,13 @@ func activate_tremor() -> void:
 	if not is_tremoring:
 		is_tremoring = true
 		tremor_activated.emit()
+		_notify_global_effects("tremor_activated")
 
 func deactivate_tremor() -> void:
 	if is_tremoring and not is_steadying:
 		is_tremoring = false
 		tremor_deactivated.emit()
+		_notify_global_effects("tremor_deactivated")
 
 func get_movement_slowdown() -> float:
 	if is_steadying:
@@ -157,3 +172,13 @@ func get_status() -> Dictionary:
 		"grip_quality": grip_quality,
 		"can_overarm_throw": can_overarm_throw
 	}
+
+func _notify_global_effects(action: String) -> void:
+	var global_effects = get_node_or_null("/root/OrganGlobalEffects")
+	if not global_effects:
+		return
+	match action:
+		"tremor_activated":
+			global_effects.on_arms_tremor_activated(player_index)
+		"tremor_deactivated":
+			global_effects.on_arms_tremor_deactivated(player_index)

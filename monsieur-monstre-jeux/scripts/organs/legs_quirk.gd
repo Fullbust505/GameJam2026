@@ -119,17 +119,20 @@ func start_crawl() -> void:
 	if not is_crawling:
 		is_crawling = true
 		crawl_started.emit()
+		_notify_global_effects("crawl_started")
 
 func end_crawl() -> void:
 	if is_crawling:
 		is_crawling = false
 		crawl_ended.emit()
+		_notify_global_effects("crawl_ended")
 
 func start_leg_drag() -> void:
 	is_leg_dragging = true
 	leg_drag_timer = 3.0
 	current_leg_drag_taps = 0
 	leg_drag_started.emit()
+	_notify_global_effects("leg_drag_started")
 
 func start_sprint() -> void:
 	is_sprinting = true
@@ -142,6 +145,7 @@ func end_sprint() -> void:
 	exhaustion_timer = exhaustion_duration
 	sprint_burst_ended.emit()
 	exhaustion_started.emit()
+	_notify_global_effects("exhaustion_started")
 
 func enter_uneven_surface() -> void:
 	is_on_uneven_surface = true
@@ -183,3 +187,19 @@ func get_status() -> Dictionary:
 		"is_exhausted": is_exhausted,
 		"movement_speed": get_movement_speed()
 	}
+
+func _notify_global_effects(action: String) -> void:
+	var global_effects = get_node_or_null("/root/OrganGlobalEffects")
+	if not global_effects:
+		return
+	match action:
+		"crawl_started":
+			global_effects.on_legs_crawl_started(player_index)
+		"crawl_ended":
+			global_effects.on_legs_crawl_ended(player_index)
+		"leg_drag_started":
+			global_effects.on_legs_leg_drag_started(player_index)
+		"leg_drag_ended":
+			global_effects.on_legs_leg_drag_ended(player_index)
+		"exhaustion_started":
+			global_effects.on_legs_exhaustion_started(player_index)

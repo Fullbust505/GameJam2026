@@ -45,6 +45,7 @@ func _process(delta: float) -> void:
 	blur_level += blur_build_rate * delta
 	blur_level = clamp(blur_level, 0.0, max_blur)
 	blur_level_changed.emit(blur_level)
+	_notify_global_effects("blur_changed")
 
 	# Echo ping timer
 	if is_echo_active:
@@ -65,6 +66,7 @@ func _process(delta: float) -> void:
 		if twitch_timer <= 0:
 			is_twitching = false
 			twitch_ended.emit()
+			_notify_global_effects("twitch_ended")
 
 	# Bloodshot when hurt - increases blur
 	if is_bloodshot:
@@ -84,15 +86,18 @@ func _process(delta: float) -> void:
 
 	blur_level = clamp(blur_level, 0.0, max_blur)
 
+var last_rs_pressed = false
+
 func handle_input(player_idx: int, delta: float) -> void:
 	super.handle_input(player_idx, delta)
 	if not is_missing or not is_active:
 		return
 
-	# Right stick click = 11
-	if Input.is_joy_button_pressed(player_idx, 11):
-		if Input.is_action_just_pressed("game_main_button"):
-			attempt_echo_ping()
+	# Right stick click = 11 - edge trigger on press
+	var rs_pressed = Input.is_joy_button_pressed(player_idx, 11)
+	if rs_pressed and not last_rs_pressed:
+		attempt_echo_ping()
+	last_rs_pressed = rs_pressed
 
 	# Right stick for peripheral look
 	var rs_x = Input.get_joy_axis(player_idx, JOY_AXIS_RIGHT_X)
@@ -134,6 +139,7 @@ func trigger_twitch() -> void:
 	is_twitching = true
 	twitch_timer = twitch_duration
 	twitch_started.emit()
+	_notify_global_effects("twitch_started")
 
 func look_at_peripheral(direction: Vector2) -> void:
 	# Confirm or ignore peripheral ghost
@@ -165,3 +171,15 @@ func get_status() -> Dictionary:
 		"vision_modifier": get_vision_modifier(),
 		"echo_pings_used": echo_pings_used
 	}
+
+func _notify_global_effects(action: String) -> void:
+	var global_effects = get_node_or_null("/root/OrganGlobalEffects")
+	if not global_effects:
+		return
+	match action:
+		"blur_changed":
+			global_effects.on_eyes_blur_changed(player_index, blur_level)
+		"twitch_started":
+			global_effects.on_eyes_twitch_started(player_index)
+		"twitch_ended":
+			global_effects.on_eyes_twitch_ended(player_index)

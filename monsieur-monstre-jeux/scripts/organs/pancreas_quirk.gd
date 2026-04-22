@@ -29,6 +29,7 @@ var is_hungry: bool = false
 var pumps_during_crash: int = 0
 var last_pump_time: float = 0.0
 var pump_in_progress: bool = false
+var last_y_pressed: bool = false
 
 func _init() -> void:
 	super._init()
@@ -63,15 +64,19 @@ func handle_input(player_idx: int, delta: float) -> void:
 	if not is_missing or not is_active:
 		return
 
-	# Y button = 3
-	if Input.is_joy_button_pressed(player_idx, 3):
-		if Input.is_action_just_pressed("game_main_button"):
-			use_glucose_or_sugar()
+	# Y button = 3 - edge trigger for glucose/sugar
+	var y_pressed = Input.is_joy_button_pressed(player_idx, 3)
+	if y_pressed and not last_y_pressed:
+		use_glucose_or_sugar()
+	last_y_pressed = y_pressed
 
-	# A button for sugar crash QTE
-	if is_crashing and Input.is_joy_button_pressed(player_idx, 0):
-		if Input.is_action_just_pressed("game_main_button") or (Time.get_ticks_msec() / 1000.0 - last_pump_time > pump_interval):
-			attempt_crash_recovery_pump()
+	# A button for sugar crash QTE - pump on A press (not action-based)
+	var a_pressed = Input.is_joy_button_pressed(player_idx, 0)
+	if is_crashing and a_pressed and not pump_in_progress:
+		attempt_crash_recovery_pump()
+		pump_in_progress = true
+	if not a_pressed:
+		pump_in_progress = false
 
 func attempt_crash_recovery_pump() -> void:
 	var time_since = Time.get_ticks_msec() / 1000.0 - last_pump_time
@@ -82,6 +87,7 @@ func attempt_crash_recovery_pump() -> void:
 		pumps_during_crash += 1  # Normal pump
 
 	last_pump_time = Time.get_ticks_msec() / 1000.0
+	_notify_global_effects("crash_pump")
 
 	if pumps_during_crash >= pumps_required:
 		end_crash()
@@ -102,6 +108,7 @@ func start_crash() -> void:
 	crash_timer = crash_duration
 	pumps_during_crash = 0
 	crash_started.emit()
+	_notify_global_effects("crash_started")
 
 func end_crash() -> void:
 	is_crashing = false
@@ -109,6 +116,7 @@ func end_crash() -> void:
 	pumps_during_crash = 0
 	crash_ended.emit()
 	crash_recovered.emit()
+	_notify_global_effects("crash_recovered")
 
 func start_spike() -> void:
 	is_spiking = true
@@ -157,3 +165,15 @@ func get_status() -> Dictionary:
 		"spike_timer": spike_timer,
 		"glucose_uses": glucose_uses
 	}
+
+func _notify_global_effects(action: String) -> void:
+	var global_effects = get_node_or_null("/root/OrganGlobalEffects")
+	if not global_effects:
+		return
+	match action:
+		"crash_started":
+			global_effects.on_pancreas_crash_started(player_index)
+		"crash_recovered":
+			global_effects.on_pancreas_crash_recovered(player_index)
+		"crash_pump":
+			global_effects.on_pancreas_crash_pump(player_index, pumps_during_crash, pumps_required)

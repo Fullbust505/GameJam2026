@@ -47,6 +47,7 @@ func _process(delta: float) -> void:
 
 	toxin_level = clamp(toxin_level, 0.0, 100.0)
 	toxin_level_changed.emit(toxin_level)
+	_notify_global_effects("toxin_changed")
 
 	# Check for drunk logic threshold
 	if toxin_level >= drunk_threshold and not controls_mirrored:
@@ -98,11 +99,25 @@ func activate_drunk_logic() -> void:
 	controls_mirrored = true
 	is_intoxicated = true
 	drunk_logic_activated.emit()
+	_notify_global_effects("drunk_activated")
 
 func deactivate_drunk_logic() -> void:
 	controls_mirrored = false
 	is_intoxicated = false
 	drunk_logic_deactivated.emit()
+	_notify_global_effects("drunk_deactivated")
+
+func _notify_global_effects(action: String) -> void:
+	var global_effects = get_node_or_null("/root/OrganGlobalEffects")
+	if not global_effects:
+		return
+	match action:
+		"toxin_changed":
+			global_effects.on_liver_toxicity_changed(player_index, toxin_level, is_intoxicated)
+		"drunk_activated":
+			global_effects.on_liver_drunk_activated(player_index)
+		"drunk_deactivated":
+			global_effects.on_liver_drunk_deactivated(player_index)
 
 func get_mirrored_input(input_vector: Vector2) -> Vector2:
 	if controls_mirrored:

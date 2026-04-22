@@ -7,7 +7,7 @@
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jix8l"]
 texture = ExtResource("2_jix8l")
-modulate_color = Color(0.29219, 0.29219, 0.29219, 1)
+modulate_color = Color(0.489622, 0.489622, 0.489622, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu7sn"]
 bg_color = Color(0.564706, 0.152941, 0.176471, 1)

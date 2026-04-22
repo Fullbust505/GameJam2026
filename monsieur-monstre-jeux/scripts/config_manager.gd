@@ -9,10 +9,14 @@ func _ready():
 func load_config() -> Dictionary:
 	if FileAccess.file_exists(CONFIG_PATH):
 		var file = FileAccess.open(CONFIG_PATH, FileAccess.READ)
-		if file:
+		if file != null:
 			var json = JSON.new()
-			json.parse(file.get_as_text())
-			config = json.data if json.data else get_default_config()
+			var json_text = file.get_as_text()
+			if json_text.is_empty():
+				config = get_default_config()
+			else:
+				json.parse(json_text)
+				config = json.data if json.data else get_default_config()
 			file.close()
 		else:
 			config = get_default_config()
@@ -71,8 +75,7 @@ func apply_input_mappings():
 	for action in ["p1_move_left", "p1_move_right", "p1_move_up", "p1_move_down",
 				   "p2_move_left", "p2_move_right", "p2_move_up", "p2_move_down",
 				   "p1_l1", "p1_r1", "p1_main_button", "p1_sub_button",
-				   "p2_l1", "p2_r1", "p2_main_button", "p2_sub_button",
-				   "game_main_button", "game_sub_button"]:
+				   "p2_l1", "p2_r1", "p2_main_button", "p2_sub_button"]:
 		if InputMap.has_action(action):
 			InputMap.action_erase_events(action)
 

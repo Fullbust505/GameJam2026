@@ -1,17 +1,16 @@
 extends Node2D
 
 const TILE_SCENE = preload("res://scenes/tile.tscn")
-const TILE_WIDTH = 150
+const TILE_WIDTH = 100
 const STARTING_TURNS = 30
 const STARTING_MONEY = 500
 
 const MINIGAME_SCENES = [
 	"res://scenes/apnee_level.tscn",
-	"res://scenes/cuisine_level.tscn",
-	"res://scenes/cut_P1.tscn",
-	"res://scenes/fish.tscn",
-	"res://scenes/nage_P1.tscn",
-	"res://scenes/organ_stealing.tscn"
+	"res://scenes/cam_template.tscn",
+	"res://manger/scene/manger_minigame.tscn"
+	
+
 ]
 
 @onready var turn_label: Label = $UI/TurnLabel
@@ -28,7 +27,6 @@ var current_roller: int = 0
 var turns_remaining: int = STARTING_TURNS
 var rng: RandomNumberGenerator
 var state: String = "WAITING_ROLL"
-var camera_target_x: float = 0
 
 func _ready():
 	rng = RandomNumberGenerator.new()
@@ -56,7 +54,7 @@ func generate_initial_tiles():
 func spawn_tile(index: int):
 	var tile = TILE_SCENE.instantiate()
 	var x_pos = index * TILE_WIDTH + TILE_WIDTH / 2
-	tile.position = Vector2(x_pos, 300)
+	tile.position = Vector2(x_pos, get_viewport_rect().size.y / 2)
 
 	# Random tile type: 0=Challenge(red), 1=Shop(green), 2=Event(blue)
 	var tile_type = randi() % 3
@@ -81,9 +79,14 @@ func spawn_tile(index: int):
 	tiles.append(tile)
 
 func setup_players():
+	var center_y = get_viewport_rect().size.y / 2
 	var p1 = $Players/P1Piece
 	var p2 = $Players/P2Piece
+	p1.position = Vector2(50, center_y - 20)
+	p2.position = Vector2(50, center_y + 20)
 	players = [p1, p2]
+	if camera:
+		camera.position = p1.position
 
 func _physics_process(delta: float):
 	if state == "WAITING_ROLL":
@@ -92,10 +95,11 @@ func _physics_process(delta: float):
 		elif current_roller == 1 and Input.is_action_just_pressed("p2_main_button"):
 			roll_dice()
 
-	# Smooth camera follow
-	var target = players[current_roller].position if players.size() > current_roller else Vector2.ZERO
-	camera_target_x = target.x
-	camera.position.x = lerp(camera.position.x, camera_target_x, 5.0 * delta)
+	# Smooth camera follow current player
+	if players.size() > current_roller and players[current_roller]:
+		var target = players[current_roller].global_position
+		camera.position.x = lerp(camera.position.x, target.x, 5.0 * delta)
+		camera.position.y = lerp(camera.position.y, target.y, 5.0 * delta)
 
 func roll_dice():
 	var roll = rng.randi_range(1, 6)
@@ -114,18 +118,17 @@ func roll_dice():
 	while tiles.size() < (game_state["players"]["p1"]["position"] / TILE_WIDTH) + 30:
 		spawn_tile(tiles.size())
 
+	# Wait 5 seconds before triggering tile effect
+	state = "MOVING"
+	await get_tree().create_timer(5.0).timeout
+
 	# Trigger tile effect for the roller
 	var roller_pos = game_state["players"]["p%d" % (current_roller + 1)]["position"]
 	var tile_idx = roller_pos % tiles.size()
 	trigger_tile_effect(current_roller, tile_idx)
 
-	state = "TRANSITIONING"
-	await get_tree().create_timer(1.5).timeout
-	end_turn()
-
 func trigger_tile_effect(player_idx: int, tile_idx: int):
 	var tile_type = get_tile_type(tile_idx)
-	var player_key = "p%d" % (player_idx + 1)
 
 	match tile_type:
 		0:  # Challenge - launch random minigame
@@ -137,6 +140,9 @@ func trigger_tile_effect(player_idx: int, tile_idx: int):
 			get_tree().change_scene_to_file("res://scenes/shop.tscn")
 		2:  # Event
 			trigger_random_event(player_idx)
+			state = "TRANSITIONING"
+			await get_tree().create_timer(1.5).timeout
+			end_turn()
 
 func get_tile_type(tile_idx: int) -> int:
 	var tile = tiles[tile_idx % tiles.size()]

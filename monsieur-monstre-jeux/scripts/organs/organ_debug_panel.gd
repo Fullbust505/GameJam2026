@@ -7,39 +7,44 @@ var brain_retrieval: BrainRetrieval
 
 var player_index: int = 0
 var organ_buttons = {}
+var organ_button_order = ["Heart", "Liver", "Pancreas", "Mouth", "Eyes", "Arms", "Legs"]
 var event_log = []
 var last_log_size = 0
 var tutorial_shown = {}
 
+# Gamepad navigation
+var selected_button_index = 0
+var last_dpad_y = 0.0
+var last_a_pressed = false
+var last_b_pressed = false
+
 # Visual effect nodes
-var crash_overlay: Control
+var crash_overlay: ColorRect
 var crash_progress: ProgressBar
 var crash_label: Label
 var blur_overlay: ColorRect
 var blur_label: Label
 
 func _ready() -> void:
-	# Set panel to fill screen area
 	set_anchors_preset(Control.PRESET_TOP_LEFT)
 	size = Vector2(400, 700)
 	position = Vector2(10, 10)
 
-	# OrganManager is the script on our parent Node2D
-	organ_manager = get_parent() as OrganManager
-	brain_retrieval = get_node_or_null("../BrainRetrieval")
-
-	if not organ_manager:
-		organ_manager = OrganManager.new()
-		add_child(organ_manager)
+	organ_manager = OrganManager.new()
+	brain_retrieval = BrainRetrieval.new()
+	add_child(organ_manager)
+	add_child(brain_retrieval)
 
 	organ_manager.set_player_index(player_index)
 	_connect_organ_signals()
 	_build_debug_ui()
 	_create_visual_effects()
+	_update_button_highlight()
 
+	
 func _create_visual_effects() -> void:
-	# Crash overlay
-	crash_overlay = Control.new()
+	# Crash overlay (needs to be ColorRect to have color)
+	crash_overlay = ColorRect.new()
 	crash_overlay.name = "CrashOverlay"
 	crash_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	crash_overlay.color = Color(0.5, 0, 0, 0)
@@ -211,9 +216,17 @@ func _build_debug_ui() -> void:
 	# Title
 	var title = Label.new()
 	title.name = "Title"
-	title.text = "ORGAN DEBUG (F1 to hide)"
+	title.text = "ORGAN DEBUG"
 	title.add_theme_font_size_override("font_size", 16)
 	vbox.add_child(title)
+
+	# Close button
+	var close_btn = Button.new()
+	close_btn.name = "CloseBtn"
+	close_btn.text = "X (close)"
+	close_btn.custom_minimum_size = Vector2(60, 25)
+	close_btn.pressed.connect(func(): visible = false)
+	vbox.add_child(close_btn)
 
 	# Organ buttons
 	var organ_names = ["Heart", "Liver", "Pancreas", "Mouth", "Eyes", "Arms", "Legs"]
@@ -426,6 +439,12 @@ func _on_revive() -> void:
 func _process(delta: float) -> void:
 	if organ_manager:
 		organ_manager._process(delta)
+	else:
+		# Try to reconnect
+		organ_manager = get_parent() as OrganManager
+		if organ_manager:
+			organ_manager.set_player_index(player_index)
+			_connect_organ_signals()
 	_update_status_display()
 	_update_event_log()
 	_update_crash_display()
@@ -525,7 +544,55 @@ func _update_status_display() -> void:
 
 	if status_scroll:
 		status_scroll.set_v_scroll(status_scroll.get_v_scroll_bar().max_value)
-
+		
 func _input(event: InputEvent) -> void:
+	# F1 to toggle visibility
 	if event is InputEventKey and event.pressed and event.keycode == KEY_F1:
 		visible = not visible
+
+	# Gamepad navigation with D-pad (player 0)
+	var dpad_y = Input.get_joy_axis(0, JOY_AXIS_LEFT_Y)
+
+	# D-pad up/down to navigate buttons
+	if dpad_y < -0.5 and last_dpad_y > -0.5:
+		selected_button_index = wrapi(selected_button_index - 1, 0, organ_button_order.size())
+		_update_button_highlight()
+	elif dpad_y > 0.5 and last_dpad_y < 0.5:
+		selected_button_index = wrapi(selected_button_index + 1, 0, organ_button_order.size())
+		_update_button_highlight()
+
+	last_dpad_y = dpad_y
+
+	# A button (0) to press selected button - edge trigger on press
+	var a_pressed = Input.is_joy_button_pressed(0, JOY_BUTTON_A)
+	if a_pressed and not last_a_pressed:
+		var organ_name = organ_button_order[selected_button_index]
+		var btn = organ_buttons.get(organ_name)
+		if btn:
+			btn.emit_signal("pressed")
+	last_a_pressed = a_pressed
+
+	# B button (1) to close panel - edge trigger on press
+	var b_pressed = Input.is_joy_button_pressed(0, JOY_BUTTON_B)
+	if b_pressed and not last_b_pressed:
+		visible = false
+	last_b_pressed = b_pressed
+
+func _update_button_highlight() -> void:
+	for i in range(organ_button_order.size()):
+		var organ_name = organ_button_order[i]
+		var btn = organ_buttons.get(organ_name)
+		if btn:
+			if i == selected_button_index:
+				btn.add_theme_color_override("normal", Color.YELLOW)
+			else:
+				var is_missing = false
+				match organ_name.to_lower():
+					"heart": is_missing = organ_manager.heart.is_missing
+					"liver": is_missing = organ_manager.liver.is_missing
+					"pancreas": is_missing = organ_manager.pancreas.is_missing
+					"mouth": is_missing = organ_manager.mouth.is_missing
+					"eyes": is_missing = organ_manager.eyes.is_missing
+					"arms": is_missing = organ_manager.arms.is_missing
+					"legs": is_missing = organ_manager.legs.is_missing
+				btn.add_theme_color_override("normal", Color.RED if is_missing else Color.GREEN)

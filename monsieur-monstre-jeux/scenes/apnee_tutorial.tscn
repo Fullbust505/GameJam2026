@@ -1,0 +1,135 @@
+[gd_scene load_steps=4 format=3 uid="uid://apnee_tutorial"]
+
+[ext_resource type="Texture2D" uid="uid://bwgqpuucsifff" path="res://assets/sprites/howto.png" id="1_4p2ec"]
+[ext_resource type="FontFile" uid="uid://clbgw243v1vm3" path="res://assets/krazy-nights.regular.ttf" id="3_rpex4"]
+
+[node name="ApneeTutorial" type="CanvasLayer"]
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.1, 0.2, 0.95)
+
+[node name="Title" type="Label" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 80.0
+offset_bottom = 160.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.3, 0.9, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0.2, 0.4, 1)
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_rpex4")
+theme_override_font_sizes/font_size = 64
+text = "APNEA MINIGAME"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ControlsContainer" type="VBoxContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Instructions" type="Label" parent="ControlsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.5, 1)
+theme_override_colors/font_outline_color = Color(0.3, 0.1, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("3_rpex4")
+theme_override_font_sizes/font_size = 26
+text = "MASH LZ + RZ to swim DOWN
+(RZ + LZ if no legs)
+Release to float UP
+
+Reach the anchor first!
+Watch out for fish!"
+
+[node name="Spacer1" type="Control" parent="ControlsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
+
+[node name="FishWarning" type="Label" parent="ControlsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0.4, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("3_rpex4")
+theme_override_font_sizes/font_size = 24
+text = "Fish will damage you!
+Missing organs affect gameplay!"
+
+[node name="Spacer2" type="Control" parent="ControlsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 60)
+
+[node name="ReadyPrompts" type="Label" parent="ControlsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0.3, 0.3, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("3_rpex4")
+theme_override_font_sizes/font_size = 32
+text = "P1: Press A when ready
+P2: Press A when ready"
+
+[node name="P1Prompt" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -150.0
+offset_right = 200.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.3, 1, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0, 0.3, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_rpex4")
+theme_override_font_sizes/font_size = 36
+text = "P1: Press A"
+horizontal_alignment = 1
+
+[node name="P2Prompt" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -80.0
+offset_right = 200.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.3, 0.3, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0.4, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_rpex4")
+theme_override_font_sizes/font_size = 36
+text = "P2: Press A"
+horizontal_alignment = 1
+
+[node name="DecorativeFish" type="Sprite2D" parent="."]
+position = Vector2(100, 300)
+scale = Vector2(2, 2)
+texture = ExtResource("1_4p2ec")
+
+[node name="DecorativeFish2" type="Sprite2D" parent="."]
+position = Vector2(700, 400)
+scale = Vector2(2, 2)
+texture = ExtResource("1_4p2ec")
+flip_h = true

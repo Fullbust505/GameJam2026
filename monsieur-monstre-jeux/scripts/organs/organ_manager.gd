@@ -52,11 +52,14 @@ func _process(delta: float) -> void:
 	if not is_controllable:
 		return
 
-	# Update all active organ quirks
+	# NOTE: We don't call organ._process() here because nodes already
+	# have their own _process called automatically when in the tree.
+	# handle_input is called once per frame to check for held buttons.
+
+	# Update all active organ quirks - only handle input, timers run in their own _process
 	var all_organs = [heart, liver, pancreas, mouth, eyes, arms, legs]
 	for organ in all_organs:
 		if organ.is_missing and organ.is_active:
-			organ._process(delta)
 			organ.handle_input(player_index, delta)
 
 func set_player_index(idx: int) -> void:
@@ -196,6 +199,10 @@ func is_conscious() -> bool:
 
 func _on_consciousness_lost() -> void:
 	player_death.emit("heart_failure")
+	# Notify global effects system if available
+	var global_effects = get_node_or_null("/root/OrganGlobalEffects")
+	if global_effects:
+		global_effects.on_player_consciousness_lost(player_index)
 
 func _on_organ_failed(organ_name: String) -> void:
 	player_death.emit(organ_name + "_failure")
