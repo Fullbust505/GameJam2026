@@ -53,6 +53,7 @@ func buy_item(player_index, hand_index):
 			gamestate["players"]["p"+str(player_index+1)]["money"]-=articles[i][3]
 			gamestate["players"]["p"+str(player_index+1)]["bag"].append([bag.get_child(articles[i][0]).name,articles[i][3]])
 			articles.pop_at(i)
+			$CaChingSound.play()
 			break
 
 func open_json(json_path):

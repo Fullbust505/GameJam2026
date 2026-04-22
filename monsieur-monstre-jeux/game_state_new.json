@@ -2,36 +2,13 @@
 	"last_winner": "0",
 	"players": {
 		"p1": {
-			"bag": [],
-			"money": 600.0,
-			"organ_number": 6.0,
-			"organs": {
-				"arms": true,
-				"eyes": true,
-				"heart": true,
-				"legs": true,
-				"lungs": true,
-				"pancreas": true,
-				"teeth": true
-			},
-			"score": 2.0
-		},
-		"p2": {
 			"bag": [
 				[
-					"Pancreas",
-					481
-				],
-				[
-					"Heart",
-					123
-				],
-				[
-					"Legs",
-					366
+					"arms",
+					300
 				]
 			],
-			"money": 530.0,
+			"money": 2100.0,
 			"organ_number": 6.0,
 			"organs": {
 				"arms": true,
@@ -42,7 +19,22 @@
 				"pancreas": true,
 				"teeth": true
 			},
-			"score": 5.0
+			"score": 7.0
+		},
+		"p2": {
+			"bag": [],
+			"money": 2400.0,
+			"organ_number": 6.0,
+			"organs": {
+				"arms": false,
+				"eyes": true,
+				"heart": true,
+				"legs": true,
+				"lungs": true,
+				"pancreas": true,
+				"teeth": true
+			},
+			"score": 8.0
 		}
 	}
 }
