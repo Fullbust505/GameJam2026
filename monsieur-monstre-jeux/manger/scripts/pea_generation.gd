@@ -13,8 +13,8 @@ func _ready():
 
 		# spawns up above
 		pea.position = Vector2(
-			rng.randf_range(200, 500),
-			rng.randf_range(50, 100)
+			rng.randf_range(200, 400),
+			rng.randf_range(100, 200)
 			)
 
 		# random rotation at spawn

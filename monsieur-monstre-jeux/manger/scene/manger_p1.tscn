@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://0fe15bjh7pi4"]
+
+[ext_resource type="Script" uid="uid://b816vut22roj" path="res://manger/scripts/p1_spoon.gd" id="1_u4bul"]
+[ext_resource type="Texture2D" uid="uid://cf7e62opwjtcf" path="res://sprites/arm_with_spoon.png" id="3_ek3bm"]
+[ext_resource type="Texture2D" uid="uid://xuwk6eii25mf" path="res://sprites/leg_with_spoon.png" id="4_iy3b4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ifs1u"]
+size = Vector2(71, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5d185"]
+size = Vector2(69, 22)
+
+[node name="P1" type="CharacterBody2D" unique_id=1643094856 groups=["spoon"]]
+collision_layer = 4
+script = ExtResource("1_u4bul")
+handler = "foot"
+
+[node name="ArmSprite" type="Sprite2D" parent="." unique_id=350254023]
+position = Vector2(-33, 99)
+texture = ExtResource("3_ek3bm")
+
+[node name="ArmSpoonCollision" type="CollisionPolygon2D" parent="." unique_id=154689399]
+polygon = PackedVector2Array(-41, 48, 4, 48, 22, 47, 35, 48, 41, 48, 46, 52, 47, 59, 53, 62, 59, 69, 67, 80, 69, 86, 75, 90, 86, 95, 103, 101, 118, 106, 135, 113, 153, 117, 180, 118, 196, 114, 202, 111, 200, 117, 189, 121, 173, 123, 157, 123, 138, 119, 115, 113, 103, 107, 81, 99, 68, 107, 51, 112, 33, 118, 13, 121, -6, 117, -24, 113, -38, 104)
+
+[node name="ArmSpoonDetectionArea" type="Area2D" parent="." unique_id=879300355]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ArmSpoonDetectionArea" unique_id=1495760091]
+position = Vector2(167.5, 110)
+shape = SubResource("RectangleShape2D_ifs1u")
+
+[node name="FeetSprite" type="Sprite2D" parent="." unique_id=1130026146]
+position = Vector2(-7, 74)
+texture = ExtResource("4_iy3b4")
+
+[node name="FeetSpoonCollision" type="CollisionPolygon2D" parent="." unique_id=711682337]
+polygon = PackedVector2Array(-90, 31, -54, 35, -23, 37, 0, 41, 19, 42, 40, 45, 52, 46, 66, 42, 83, 40, 93, 39, 105, 35, 116, 35, 124, 38, 126, 43, 116, 48, 102, 50, 99, 52, 114, 57, 133, 61, 160, 65, 179, 67, 197, 69, 215, 67, 229, 66, 231, 70, 216, 73, 196, 72, 168, 71, 141, 66, 114, 62, 100, 57, 91, 63, 78, 68, 63, 73, 49, 80, 34, 86, 31, 91, 35, 102, 32, 109, 15, 115, -8, 116, -46, 116, -71, 115, -71, 75, -41, 69, -15, 64, 11, 59, 35, 53, 45, 50, -12, 43, -71, 37, -93, 35)
+
+[node name="FootSpoonDetectionArea" type="Area2D" parent="." unique_id=1894643831]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FootSpoonDetectionArea" unique_id=1918114517]
+position = Vector2(195, 59)
+shape = SubResource("RectangleShape2D_5d185")
+
+[connection signal="body_entered" from="ArmSpoonDetectionArea" to="." method="_on_spoon_detection_area_body_entered"]
+[connection signal="body_exited" from="ArmSpoonDetectionArea" to="." method="_on_spoon_detection_area_body_exited"]
+[connection signal="body_entered" from="FootSpoonDetectionArea" to="." method="_on_spoon_detection_area_body_entered"]
+[connection signal="body_exited" from="FootSpoonDetectionArea" to="." method="_on_spoon_detection_area_body_exited"]

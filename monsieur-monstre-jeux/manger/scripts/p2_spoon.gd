@@ -15,6 +15,8 @@ extends CharacterBody2D
 @onready var col_arm = $ArmSpoonCollision
 @onready var col_foot = $FeetSpoonCollision
 
+var player_index = 1
+
 var rotation_direction = 0
 
 ### DECIDE WHICH COLLISION TO USE
@@ -38,15 +40,19 @@ func set_mode():
 
 ### MOVEMENT FUNCTIONS
 func get_input():
-	rotation_direction = Input.get_axis(controls.move_up, controls.move_down)
+	rotation_direction = Input.get_joy_axis(player_index, JOY_AXIS_LEFT_Y)
 	
-	var horizontal = Input.get_axis(controls.move_left, controls.move_right)
-	var vertical = Input.get_axis(controls.r1, controls.l1)
+	var horizontal = Input.get_joy_axis(player_index, JOY_AXIS_LEFT_X)
+	var vertical = 0
+	if Input.is_joy_button_pressed(player_index, JOY_BUTTON_LEFT_SHOULDER):
+		vertical = -1
+	elif Input.is_joy_button_pressed(player_index, JOY_BUTTON_RIGHT_SHOULDER):
+		vertical = 1
 	# ici on peut inverser les inputs gauche droite par haut bas pour le cas des sans bras
 	if handler == "arm":
 		pass # default case
 	if handler == "foot":
-		rotation_direction = Input.get_axis(controls.move_down, controls.move_up)
+		rotation_direction = -1 * Input.get_joy_axis(player_index, JOY_AXIS_LEFT_Y)
 
 	velocity = (transform.x * horizontal + transform.y * vertical *3)* speed
 

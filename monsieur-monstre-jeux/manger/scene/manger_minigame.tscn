@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dqqbu16kalk0l"]
 
-[ext_resource type="PackedScene" uid="uid://b5efdpoinpvv3" path="res://manger/scene/manger_gameplay.tscn" id="2_5jgie"]
+[ext_resource type="PackedScene" uid="uid://b3nvdmgeqidga" path="res://manger/scene/manger_gameplay_p2.tscn" id="2_0ofvd"]
+[ext_resource type="PackedScene" uid="uid://b5efdpoinpvv3" path="res://manger/scene/manger_gameplay_p1.tscn" id="2_5jgie"]
 
 [node name="MangerMinigame" type="Control" unique_id=1291441387]
 layout_mode = 3
@@ -15,9 +16,13 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -1.0000305
+offset_top = 3.9999924
+offset_right = 387.0
+offset_bottom = 156.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.7, 0.7)
+scale = Vector2(0.6267991, 0.7)
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -41,4 +46,4 @@ size_flags_vertical = 4
 handle_input_locally = false
 render_target_update_mode = 4
 
-[node name="MangerGameplay" parent="HBoxContainer/SubViewportContainer2/SubViewport" unique_id=1998216602 instance=ExtResource("2_5jgie")]
+[node name="MangerGameplay" parent="HBoxContainer/SubViewportContainer2/SubViewport" unique_id=855583888 instance=ExtResource("2_0ofvd")]
