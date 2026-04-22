@@ -7,7 +7,7 @@ extends Node
 @export var number_of_cuts = randi_range(8,12)
 @onready var tuto_label = $"../../../../tuto/tuto_desc"
 var json_path = "res://game_state.json"
-var json_path_backup = "res://game_state_backup.json"
+var json_path_backup = "res://game_state.json"
 var gamestate : Dictionary = {}
 
 @onready var finish_rect = $"../../../../ColorRect2"

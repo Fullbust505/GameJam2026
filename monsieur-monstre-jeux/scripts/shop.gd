@@ -1,6 +1,6 @@
 extends Node2D
 var articles = []
-var json_path = "res://game_state_backup.json"
+var json_path = "res://game_state.json"
 var gamestate : Dictionary = {}
 var atlas : int = 0
 var beatles: int = 0
@@ -259,3 +259,4 @@ func win_game(p_index):
 	blackscreen.visible = true
 	winner_lab.visible = true
 	winner_lab.text = str(p_index)+"won!"
+	
