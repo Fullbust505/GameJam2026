@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://dqqbu16kalk0l"]
+
+[ext_resource type="Script" uid="uid://dcweaxm0ufmxf" path="res://manger/scripts/manger_minigame.gd" id="1_3ydf1"]
+[ext_resource type="Script" uid="uid://b816vut22roj" path="res://manger/scripts/player_mvt.gd" id="2_5jgie"]
+[ext_resource type="Texture2D" uid="uid://bbxo30ypwsfeu" path="res://sprites/icon.svg" id="3_0ofvd"]
+
+[node name="MangerMinigame" type="Node2D" unique_id=1211804741]
+script = ExtResource("1_3ydf1")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=146811515]
+offset_right = 1028.0
+offset_bottom = 512.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="HBoxContainer" unique_id=752786160]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SubViewport" type="SubViewport" parent="HBoxContainer/SubViewportContainer" unique_id=448279122]
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="P1" type="CharacterBody2D" parent="HBoxContainer/SubViewportContainer/SubViewport" unique_id=556174087]
+script = ExtResource("2_5jgie")
+
+[node name="Sprite2D" type="Sprite2D" parent="HBoxContainer/SubViewportContainer/SubViewport/P1" unique_id=1790126444]
+position = Vector2(45, 42)
+scale = Vector2(0.59375, 0.546875)
+texture = ExtResource("3_0ofvd")
+
+[node name="SubViewportContainer2" type="SubViewportContainer" parent="HBoxContainer" unique_id=146830637]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SubViewport" type="SubViewport" parent="HBoxContainer/SubViewportContainer2" unique_id=1288218940]
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="P2" type="CharacterBody2D" parent="HBoxContainer/SubViewportContainer2/SubViewport" unique_id=1162215822]
+script = ExtResource("2_5jgie")
+
+[node name="Sprite2D" type="Sprite2D" parent="HBoxContainer/SubViewportContainer2/SubViewport/P2" unique_id=2001547565]
+position = Vector2(42.00001, 38)
+scale = Vector2(0.54687476, 0.51562494)
+texture = ExtResource("3_0ofvd")
