@@ -5,18 +5,18 @@
 [ext_resource type="Texture2D" uid="uid://dkusi86pbm2s3" path="res://assets/sprites/eye.png" id="2_8r1wq"]
 [ext_resource type="Texture2D" uid="uid://b1g0mxm3nlo10" path="res://assets/sprites/legs.png" id="3_ajxib"]
 [ext_resource type="Texture2D" uid="uid://35ilmj7qiybm" path="res://assets/sprites/pointer.png" id="3_heatd"]
-[ext_resource type="Script" uid="uid://cqaf1ns4p55n8" path="res://scenes/p_1_hand.gd" id="4_j14q8"]
+[ext_resource type="Script" path="res://scenes/p_1_hand.gd" id="4_j14q8"]
 [ext_resource type="Texture2D" uid="uid://cjsh53wy3xjna" path="res://assets/sprites/arm.png" id="4_y6sft"]
-[ext_resource type="Script" uid="uid://dfoejeeehh0hi" path="res://scenes/p_2_hand.gd" id="5_5u241"]
+[ext_resource type="Script" path="res://scenes/p_2_hand.gd" id="5_5u241"]
 [ext_resource type="Texture2D" uid="uid://1b28wb7byurs" path="res://assets/sprites/heart.png" id="5_m4ofw"]
 [ext_resource type="Texture2D" uid="uid://d26n00kr7q32" path="res://assets/sprites/pancreas.png" id="6_heatd"]
 [ext_resource type="Texture2D" uid="uid://c03no7vg6mwlo" path="res://assets/sprites/teeth.png" id="7_ajxib"]
 [ext_resource type="Texture2D" uid="uid://bqv8mt4qnh0bo" path="res://assets/sprites/lungs.png" id="8_heatd"]
 [ext_resource type="AudioStream" uid="uid://bejwsj6j3xvms" path="res://assets/sfx/caching.ogg" id="11_1v8qu"]
 [ext_resource type="Texture2D" uid="uid://bwgqpuucsifff" path="res://assets/sprites/howto.png" id="12_7mqwv"]
-[ext_resource type="Texture2D" uid="uid://bcbwwu7o14y3g" path="res://assets/sprites/tuto_cut_1.png" id="13_gobkm"]
-[ext_resource type="Texture2D" uid="uid://ch8wo5amkpq01" path="res://assets/sprites/tuto_cut_2.png" id="14_j14q8"]
+[ext_resource type="Texture2D" uid="uid://53c1fs481ryl" path="res://sprites/shop_left.png" id="15_5u241"]
 [ext_resource type="Texture2D" uid="uid://b2b1s0ung34ie" path="res://assets/sprites/ready.png" id="15_gobkm"]
+[ext_resource type="Texture2D" uid="uid://dbbevssmfjfxw" path="res://sprites/shop_right.png" id="16_pqync"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1v8qu"]
 radius = 30.016663
@@ -391,14 +391,14 @@ position = Vector2(321, 185)
 texture = ExtResource("12_7mqwv")
 
 [node name="vignette_gauche" type="Sprite2D" parent="tuto_shop" unique_id=1150431942]
-position = Vector2(-157.12498, -43.749996)
-scale = Vector2(0.5238318, 0.51315796)
-texture = ExtResource("13_gobkm")
+position = Vector2(-157, -43.999996)
+scale = Vector2(1.2838318, 1.073158)
+texture = ExtResource("15_5u241")
 
 [node name="vignette_droite" type="Sprite2D" parent="tuto_shop" unique_id=72592816]
 position = Vector2(157.5, -43.75)
-scale = Vector2(0.9623288, 0.8301435)
-texture = ExtResource("14_j14q8")
+scale = Vector2(1.4906647, 1.416147)
+texture = ExtResource("16_pqync")
 
 [node name="tuto_desc" type="Label" parent="tuto_shop" unique_id=831002069]
 offset_left = -192.0
