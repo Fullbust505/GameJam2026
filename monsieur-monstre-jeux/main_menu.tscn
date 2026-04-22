@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://b4nw6vhuemvny" path="res://01073865290819.5d61d475f0072.jpg" id="1_7vrkn"]
 [ext_resource type="Script" uid="uid://clmix0xoc7be3" path="res://main_menu.gd" id="1_fu7sn"]
 [ext_resource type="FontFile" uid="uid://diday46ilbvun" path="res://GrapeSoda.ttf" id="2_fu7sn"]
+[ext_resource type="Texture2D" uid="uid://cnedv46xrv2pl" path="res://assets/sprites/title.png" id="2_jix8l"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jix8l"]
 texture = ExtResource("1_7vrkn")
@@ -44,6 +45,12 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_fu7sn")
 
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=445852821]
+modulate = Color(0.30980393, 0.32156864, 0.32941177, 1)
+z_index = 1
+position = Vector2(318, 177)
+texture = ExtResource("2_jix8l")
+
 [node name="Panel" type="Panel" parent="." unique_id=818173261]
 layout_mode = 1
 anchors_preset = 15
@@ -54,18 +61,20 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_jix8l")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1135135914]
+z_index = 1
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -218.0
-offset_top = -69.5
-offset_right = 218.0
-offset_bottom = 251.0
+offset_left = -113.0
+offset_top = 15.0
+offset_right = 323.0
+offset_bottom = 335.5
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.47398672, 0.21207295)
 theme_override_constants/separation = 30
 
 [node name="StartButton" type="Button" parent="VBoxContainer" unique_id=850535473]
@@ -75,46 +84,37 @@ theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
-text = "Start game"
-
-[node name="CreditsButton" type="Button" parent="VBoxContainer" unique_id=451103927]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 30
-theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
-theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
-text = "Credits"
-
-[node name="ExitButton" type="Button" parent="VBoxContainer" unique_id=1062407358]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 30
-theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_7vrkn")
-theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
-text = "Exit"
 
 [node name="Label" type="Label" parent="." unique_id=698420112]
+z_index = 1
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -31.0
-offset_top = -211.5
-offset_right = 31.0
-offset_bottom = -188.5
+offset_left = -183.00002
+offset_top = -166.0
+offset_right = 592.0
+offset_bottom = 51.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.4655458, 0.61256105)
 theme_override_constants/shadow_offset_y = 20
 theme_override_constants/shadow_outline_size = 5
 theme_override_fonts/font = ExtResource("2_fu7sn")
 theme_override_font_sizes/font_size = 106
-text = "Organia"
+text = "Monsieur Monstre
+Jeux"
 horizontal_alignment = 1
 
+[node name="Label2" type="Label" parent="." unique_id=1336973513]
+z_index = 2
+layout_mode = 0
+offset_left = 265.0
+offset_top = 217.0
+offset_right = 353.0
+offset_bottom = 240.0
+text = "Start Game"
+
 [connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_start_pressed"]
-[connection signal="pressed" from="VBoxContainer/CreditsButton" to="." method="_on_credits_pressed"]
-[connection signal="pressed" from="VBoxContainer/ExitButton" to="." method="_on_exit_pressed"]

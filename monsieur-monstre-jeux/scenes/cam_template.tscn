@@ -181,3 +181,22 @@ text = "lorem ipsum dolor sit amet le truc qui
 mais tqt ça va aller,  tout roule ma poule"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="ColorRect2" type="ColorRect" parent="." unique_id=1292681379]
+z_index = 10
+offset_left = 196.0
+offset_top = 78.0
+offset_right = 236.0
+offset_bottom = 118.0
+scale = Vector2(6.3285646, 4.654158)
+color = Color(0, 0, 0, 1)
+
+[node name="Label" type="Label" parent="ColorRect2" unique_id=408860749]
+layout_mode = 0
+offset_left = -7.7426724
+offset_top = 0.42972326
+offset_right = 49.257328
+offset_bottom = 23.429724
+text = "p1 won"
+horizontal_alignment = 1
+vertical_alignment = 1

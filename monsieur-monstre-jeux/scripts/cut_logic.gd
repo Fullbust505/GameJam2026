@@ -10,6 +10,9 @@ var json_path = "res://game_state.json"
 var json_path_backup = "res://game_state_backup.json"
 var gamestate : Dictionary = {}
 
+@onready var finish_rect = $"../../../../ColorRect2"
+@onready var finish_label = $"../../../../ColorRect2/Label"
+
 @onready var end_times = $end_timer
 
 @onready var organ_steal = "res://scenes/organ_stealing.tscn"
@@ -26,6 +29,7 @@ func _ready() -> void:
 	p2_readiness.animation = "waiting"
 	tuto_label.text = "In this minigame, you will have to cut\n this piece of meat\n in %d pieces of the same size !" % [number_of_cuts]
 	timer.wait_time = 4
+	finish_rect.visible=false
 
 func _process(_delta: float) -> void:
 	if end_times.is_stopped():
@@ -104,6 +108,8 @@ func end_game():
 	
 	gamestate["last_winner"]=winner
 	write_json(gamestate)
+	
+	finish_label.text = "%s won !" % [winner]
 	
 	end_times.start()
 

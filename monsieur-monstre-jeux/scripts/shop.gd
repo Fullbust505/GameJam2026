@@ -29,7 +29,12 @@ var allready = false
 var p1_done = false
 var p2_done = false
 
+var rand_game =0
+
 @onready var end_times = $end_timer
+
+@onready var blackscreen = $bkc_screen_on_win
+@onready var winner_lab = $winner
 
 func _ready() -> void:
 	open_json(json_path)
@@ -40,6 +45,8 @@ func _ready() -> void:
 	choose_random_articles()
 	p1_label.text = "Player 1 Money : %.00d B" % [gamestate["players"]["p1"]["money"]]
 	p2_label.text = "Player 2 Money : %.00d B" %  [gamestate["players"]["p2"]["money"]]
+	blackscreen.visible = false
+	winner_lab.visible = false
 	
 
 func _physics_process(delta: float) -> void:
@@ -67,6 +74,11 @@ func _physics_process(delta: float) -> void:
 	elif p1_ready and p2_ready and timer.is_stopped() :
 		timer.start()
 		print("OK")
+	
+	if gamestate["players"]["p1"]["bag"].size()>=5:
+		win_game("p1")
+	elif gamestate["players"]["p1"]["bag"].size()>=5:
+		win_game("p2")
 	
 func buy_item(player_index, hand_index):
 	for i in range(articles.size()):
@@ -217,13 +229,16 @@ func choose_random_articles():
 	print(articles)
 
 func end_shop():
+	print(gamestate)
 	write_json(gamestate)
 	end_times.start()
 
 func _on_end_timer_timeout() -> void:
-	get_tree().change_scene_to_file("res://scenes/cam_template.tscn")
-
-
+	rand_game = randi_range(0,10)
+	if rand_game > 5:
+		get_tree().change_scene_to_file("res://scenes/cam_template.tscn")
+	else:
+		get_tree().change_scene_to_file("res://manger/scene/manger_minigame.tscn")
 
 func _on_mg_duration_timeout() -> void:
 	$tuto_shop.visible=false
@@ -239,3 +254,8 @@ func _on_p_2_hand_ready_p_2() -> void:
 func _on_p_1_hand_ready_p_1() -> void:
 	p1_ready = true
 	p1_readiness.animation = "ready"
+
+func win_game(p_index):
+	blackscreen.visible = true
+	winner_lab.visible = true
+	winner_lab.text = str(p_index)+"won!"

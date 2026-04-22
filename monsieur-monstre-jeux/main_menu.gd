@@ -1,23 +1,10 @@
 extends Control
+var rand_game = 0
 
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
-
-func _on_start_pressed() -> void:
-	print("Start pressed")
-
-
-func _on_credits_pressed() -> void:
-	print("Credits pressed")
-
-
-func _on_exit_pressed() -> void:
-	print("Exit pressed")
-	get_tree().quit()
+	if Input.is_joy_button_pressed(0, JOY_BUTTON_A) or Input.is_joy_button_pressed(1, JOY_BUTTON_A):
+		rand_game = randi_range(0,10)
+		if rand_game > 5:
+			get_tree().change_scene_to_file("res://scenes/cam_template.tscn")
+		else:
+			get_tree().change_scene_to_file("res://manger/scene/manger_minigame.tscn")

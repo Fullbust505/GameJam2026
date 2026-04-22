@@ -153,5 +153,12 @@ offset_bottom = 23.0
 scale = Vector2(0.34362423, 1)
 vertical_alignment = 1
 
+[node name="Label" type="Label" parent="." unique_id=5734290]
+offset_left = -297.0
+offset_top = -169.0
+offset_right = -68.0
+offset_bottom = -146.0
+text = "Steal one of the loser's organ!"
+
 [connection signal="timeout" from="Visibility Timer" to="." method="_on_visibility_timer_timeout"]
 [connection signal="timeout" from="Ending Timer" to="." method="_on_ending_timer_timeout"]
