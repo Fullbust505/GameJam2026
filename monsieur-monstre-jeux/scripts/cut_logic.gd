@@ -4,9 +4,16 @@ extends Node
 @onready var tuto = $"../../../../tuto"
 @onready var p1_readiness = $"../../../../p1readiness"
 @onready var p2_readiness = $"../../../../p2readiness"
-@export var number_of_cuts = randi_range(3, 9)
+@export var number_of_cuts = randi_range(8,12)
+@onready var tuto_label = $"../../../../tuto/tuto_desc"
 var json_path = "res://game_state.json"
 var gamestate : Dictionary = {}
+
+@onready var end_times = $end_timer
+
+@onready var organ_steal = "res://scenes/organ_stealing.tscn"
+
+
 
 var timeouts = 0
 var p1_ready = false
@@ -18,30 +25,32 @@ func _ready() -> void:
 	open_json(json_path)
 	p1_readiness.animation = "waiting"
 	p2_readiness.animation = "waiting"
+	tuto_label.text = "In this minigame, you will have to cut\n this piece of meat\n in %d pieces of the same size !" % [number_of_cuts]
 	timer.wait_time = 4
 	print(number_of_cuts)
 
 func _process(_delta: float) -> void:
-	if finish_p1 and finish_p2 and not timer.is_stopped() :
-		timer.stop()
-		end_game()
-	else:
-		if p1_ready and p2_ready and timeouts==0 and timer.is_stopped():
-			timer.start()
-			tuto.visible=false
-			p1_readiness.visible = false
-			p2_readiness.visible=false
-		var s_dur = timer.time_left
-		if timeouts==0:
-			label.text = '%02d' % [s_dur]
-		elif timeouts ==1:
-			label.text = '%02d' % [s_dur]
-		if s_dur<1:
-			label.text = ''
+	if end_times.is_stopped():
+		if finish_p1 and finish_p2 and not timer.is_stopped() :
+			timer.stop()
+			end_game()
+		else:
+			if p1_ready and p2_ready and timeouts==0 and timer.is_stopped():
+				timer.start()
+			var s_dur = timer.time_left
+			if timeouts==0:
+				label.text = '%02d' % [s_dur]
+			elif timeouts ==1:
+				label.text = '%02d' % [s_dur]
+			if s_dur<1:
+				label.text = ''
 
 func _on_mg_duration_timeout() -> void:
 	timeouts+=1
 	if timeouts ==1:
+		tuto.visible=false
+		p1_readiness.visible = false
+		p2_readiness.visible=false
 		timer.wait_time = 10
 		timer.start()
 	if timeouts == 2:
@@ -57,33 +66,44 @@ func end_game():
 	var p2_cuts = $P2.cut_positions
 	var p2_diff = 0.0
 	
-	p1_cuts.insert(0, 165)
-	p1_cuts.insert(-1, -165)
-	p1_cuts.sort()
-
-	p2_cuts.insert(0, 165)
-	p2_cuts.insert(-1, -165)
-	p2_cuts.sort()
-	
-	for i in range(p1_cuts.size()-1):
-		print(p1_diff)
-		p1_diff+=abs(p1_cuts[i+1]-p1_cuts[i]-perfect_length)
-		
-	for j in range(p2_cuts.size()-1):
-		print(p2_diff)
-		p2_diff+=abs(p2_cuts[j+1]-p2_cuts[j]-perfect_length)
-	
-	if p2_diff < p1_diff:
-		winner = "1"
-		gamestate["players"]["p2"]["score"]+=1
-		gamestate["players"]["p2"]["money"]+=300
-	else :
+	if p1_cuts.size()!=number_of_cuts-1 and p2_cuts.size()==number_of_cuts-1:
 		winner = "0"
 		gamestate["players"]["p1"]["score"]+=1
 		gamestate["players"]["p1"]["money"]+=300
+	elif p1_cuts.size()==number_of_cuts-1 and p2_cuts.size()!=number_of_cuts-1:
+		winner = "1"
+		gamestate["players"]["p2"]["score"]+=1
+		gamestate["players"]["p2"]["money"]+=300
+	else:
+		p1_cuts.insert(0, 165)
+		p1_cuts.insert(-1, -165)
+		p1_cuts.sort()
+
+		p2_cuts.insert(0, 165)
+		p2_cuts.insert(-1, -165)
+		p2_cuts.sort()
+		
+		for i in range(p1_cuts.size()-1):
+			print(p1_diff)
+			p1_diff+=abs(p1_cuts[i+1]-p1_cuts[i]-perfect_length)
+			
+		for j in range(p2_cuts.size()-1):
+			print(p2_diff)
+			p2_diff+=abs(p2_cuts[j+1]-p2_cuts[j]-perfect_length)
+		
+		if p2_diff < p1_diff:
+			winner = "1"
+			gamestate["players"]["p2"]["score"]+=1
+			gamestate["players"]["p2"]["money"]+=300
+		else :
+			winner = "0"
+			gamestate["players"]["p1"]["score"]+=1
+			gamestate["players"]["p1"]["money"]+=300
 	
 	gamestate["last_winner"]=winner
 	write_json(gamestate)
+	
+	end_times.start()
 
 func _on_p1_ready() -> void:
 	p1_ready = true
@@ -108,8 +128,11 @@ func open_json(json_path):
 	file.close()
 	print(gamestate)
 func write_json(gamestate):
-	var file = FileAccess.open("res://game_state_new.json", FileAccess.WRITE)
+	var file = FileAccess.open("res://game_state.json", FileAccess.WRITE)
 	var json_text = JSON.stringify(gamestate, '\t')
 	
 	file.store_string(json_text)
 	file.close()
+
+func _on_end_timer_timeout() -> void:
+	get_tree().change_scene_to_file("res://scenes/organ_stealing.tscn")

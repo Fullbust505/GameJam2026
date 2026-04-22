@@ -3,8 +3,10 @@
 [ext_resource type="Script" uid="uid://c5fqa1ax7aw5v" path="res://scripts/world.gd" id="1_n5pg7"]
 [ext_resource type="PackedScene" uid="uid://duj8xj1kbg5w8" path="res://scenes/cuisine_level.tscn" id="2_aep5y"]
 [ext_resource type="Texture2D" uid="uid://cp1xeoun8ih63" path="res://sprites/cutting board.jpg" id="3_rcbem"]
-[ext_resource type="Texture2D" uid="uid://66s4ikqhwo6s" path="res://sprites/500px-Seriola_on_cutting_board.png" id="4_rcbem"]
+[ext_resource type="Texture2D" uid="uid://bwgqpuucsifff" path="res://assets/sprites/howto.png" id="4_ju86i"]
+[ext_resource type="Texture2D" uid="uid://bcbwwu7o14y3g" path="res://assets/sprites/tuto_cut_1.png" id="5_6e2um"]
 [ext_resource type="Texture2D" uid="uid://b2b1s0ung34ie" path="res://assets/sprites/ready.png" id="5_ju86i"]
+[ext_resource type="Texture2D" uid="uid://ch8wo5amkpq01" path="res://assets/sprites/tuto_cut_2.png" id="6_7kplc"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ju86i"]
 atlas = ExtResource("5_ju86i")
@@ -133,7 +135,27 @@ texture = ExtResource("3_rcbem")
 [node name="tuto" type="Sprite2D" parent="." unique_id=1217964979]
 z_index = 1
 position = Vector2(321, 185)
-texture = ExtResource("4_rcbem")
+texture = ExtResource("4_ju86i")
+
+[node name="vignette_gauche" type="Sprite2D" parent="tuto" unique_id=1569941191]
+position = Vector2(-157.12498, -43.749996)
+scale = Vector2(0.5238318, 0.51315796)
+texture = ExtResource("5_6e2um")
+
+[node name="vignette_droite" type="Sprite2D" parent="tuto" unique_id=1344785065]
+position = Vector2(157.5, -43.75)
+scale = Vector2(0.9623288, 0.8301435)
+texture = ExtResource("6_7kplc")
+
+[node name="tuto_desc" type="Label" parent="tuto" unique_id=40940124]
+offset_left = -192.0
+offset_top = 65.0
+offset_right = 203.0
+offset_bottom = 114.0
+text = "lorem ipsum dolor sit amet le truc qui
+mais tqt ça va aller,  tout roule ma poule"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="p1readiness" type="AnimatedSprite2D" parent="." unique_id=2005211767]
 z_index = 2
@@ -148,3 +170,14 @@ position = Vector2(560, 280)
 sprite_frames = SubResource("SpriteFrames_8dd3u")
 animation = &"waiting"
 autoplay = "waiting"
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1727316492]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="ColorRect" unique_id=437443508]
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0

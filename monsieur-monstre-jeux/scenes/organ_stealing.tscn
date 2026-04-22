@@ -7,14 +7,73 @@
 [ext_resource type="Texture2D" uid="uid://d3fxb0ijs277v" path="res://assets/sprites/missing_eyes.png" id="5_76gdb"]
 [ext_resource type="Texture2D" uid="uid://dbdb3ibjdl54w" path="res://assets/sprites/missing_heart.png" id="6_1xol5"]
 [ext_resource type="Texture2D" uid="uid://dsvs7tl5d0k26" path="res://assets/sprites/missing_pancreas.png" id="7_81pp3"]
-[ext_resource type="Texture2D" uid="uid://bqv8mt4qnh0bo" path="res://assets/sprites/lungs.png" id="8_jpex6"]
+[ext_resource type="Texture2D" uid="uid://2rqwmhk5n31u" path="res://assets/sprites/missing_lung.png" id="7_er6bn"]
 [ext_resource type="Texture2D" uid="uid://c6sukfpruj55u" path="res://assets/sprites/missing_jaw.png" id="9_er6bn"]
+[ext_resource type="Texture2D" uid="uid://r401r4jqrn0v" path="res://assets/sprites/background.png" id="10_uxiti"]
+[ext_resource type="Texture2D" uid="uid://bb256mcgji7qo" path="res://assets/sprites/organ_info.png" id="11_76gdb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_76gdb"]
+atlas = ExtResource("11_76gdb")
+region = Rect2(900, 0, 150, 300)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1xol5"]
+atlas = ExtResource("11_76gdb")
+region = Rect2(600, 0, 150, 300)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_81pp3"]
+atlas = ExtResource("11_76gdb")
+region = Rect2(1050, 0, 150, 300)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nev8t"]
+atlas = ExtResource("11_76gdb")
+region = Rect2(450, 0, 150, 300)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e28ld"]
+atlas = ExtResource("11_76gdb")
+region = Rect2(150, 0, 150, 300)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3bdb6"]
+atlas = ExtResource("11_76gdb")
+region = Rect2(750, 0, 150, 300)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j18ag"]
+atlas = ExtResource("11_76gdb")
+region = Rect2(300, 0, 150, 300)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fqty6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_76gdb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1xol5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_81pp3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nev8t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e28ld")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3bdb6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j18ag")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="Node" type="Node" unique_id=1823434167]
 script = ExtResource("1_3ygbr")
 
 [node name="Body" type="Sprite2D" parent="." unique_id=1791944318]
-position = Vector2(-7.6293945e-06, 0)
+position = Vector2(43, 0)
 scale = Vector2(2.3515625, 2.3515625)
 texture = ExtResource("2_jpex6")
 
@@ -31,16 +90,14 @@ texture = ExtResource("6_1xol5")
 texture = ExtResource("4_uxiti")
 
 [node name="lungs" type="Sprite2D" parent="Body" unique_id=736087505]
-position = Vector2(-0.42524585, -26.365448)
-scale = Vector2(0.3662791, 0.47259134)
-texture = ExtResource("8_jpex6")
+position = Vector2(-10, 1)
+texture = ExtResource("7_er6bn")
+flip_h = true
 
 [node name="pancreas" type="Sprite2D" parent="Body" unique_id=1135624481]
 texture = ExtResource("7_81pp3")
 
 [node name="teeth" type="Sprite2D" parent="Body" unique_id=1734531731]
-position = Vector2(-0.42524588, -26.365448)
-scale = Vector2(0.3662791, 0.47259134)
 texture = ExtResource("9_er6bn")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=982115540]
@@ -54,12 +111,47 @@ wait_time = 0.3
 one_shot = true
 
 [node name="Ending Timer" type="Timer" parent="." unique_id=1022891823]
-wait_time = 3.0
 one_shot = true
 
-[node name="Label" type="Label" parent="." unique_id=1152142360]
+[node name="background" type="Sprite2D" parent="." unique_id=646919578]
+modulate = Color(0.49747366, 0.49747366, 0.49747366, 1)
+z_index = -3
+texture = ExtResource("10_uxiti")
+
+[node name="desc" type="AnimatedSprite2D" parent="." unique_id=1526726566]
+position = Vector2(-180, 0)
+sprite_frames = SubResource("SpriteFrames_fqty6")
+
+[node name="Missing" type="Label" parent="desc" unique_id=1983665599]
+visible = false
+offset_left = -43.0
+offset_top = -58.0
+offset_right = 16.0
+offset_bottom = -35.0
+text = "Missing"
+
+[node name="Functionning" type="Label" parent="desc" unique_id=409844970]
+visible = false
+offset_left = -60.0
+offset_top = -59.0
+offset_right = 42.0
+offset_bottom = -36.0
+text = "Functionning"
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=856944029]
+offset_left = -87.99999
+offset_top = -109.00001
+offset_right = -47.999992
+offset_bottom = -69.00001
+scale = Vector2(4.7533746, 1.307305)
+color = Color(0, 0, 0, 1)
+
+[node name="Label" type="Label" parent="ColorRect" unique_id=1802396237]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
+scale = Vector2(0.34362423, 1)
+vertical_alignment = 1
 
 [connection signal="timeout" from="Visibility Timer" to="." method="_on_visibility_timer_timeout"]
 [connection signal="timeout" from="Ending Timer" to="." method="_on_ending_timer_timeout"]
