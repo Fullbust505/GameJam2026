@@ -1,6 +1,6 @@
 extends Node2D
 var articles = []
-var json_path = "res://game_state.json"
+var json_path = "res://game_state_backup.json"
 var gamestate : Dictionary = {}
 var atlas : int = 0
 var beatles: int = 0
@@ -11,6 +11,9 @@ var beatles: int = 0
 @onready var p1_y_timer = $p1_y_timer
 @onready var p2_x_timer = $p2_x_timer
 @onready var p2_y_timer = $p2_y_timer
+
+@onready var p1_label = $p1_money
+@onready var p2_label = $p2_money
 
 var p1_hand_index : int = 0
 var p2_hand_index : int = 0
@@ -23,6 +26,9 @@ var p2_done = false
 func _ready() -> void:
 	open_json(json_path)
 	choose_random_articles()
+	p1_label.text = "Player 1 Money : %.00d B" % [gamestate["players"]["p1"]["money"]]
+	p2_label.text = "Player 2 Money : %.00d B" %  [gamestate["players"]["p2"]["money"]]
+	
 
 func _physics_process(delta: float) -> void:
 	if not p1_done:
@@ -53,6 +59,8 @@ func buy_item(player_index, hand_index):
 			gamestate["players"]["p"+str(player_index+1)]["money"]-=articles[i][3]
 			gamestate["players"]["p"+str(player_index+1)]["bag"].append([bag.get_child(articles[i][0]).name,articles[i][3]])
 			articles.pop_at(i)
+			p1_label.text = "Player 1 Money : %.00d B" % [gamestate["players"]["p1"]["money"]]
+			p2_label.text = "Player 2 Money : %.00d B" % [gamestate["players"]["p2"]["money"]]
 			break
 
 func open_json(json_path):
@@ -188,7 +196,7 @@ func choose_random_articles():
 	for article in articles:
 		article.append(prices[indexalacon])
 		indexalacon+=1
-	
+		article[2].get_child(-1).text = str(prices[indexalacon-1]) + " B"
 	print(articles)
 
 func end_shop():

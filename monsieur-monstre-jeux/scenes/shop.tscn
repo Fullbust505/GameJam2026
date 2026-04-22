@@ -85,12 +85,16 @@ position = Vector2(320, 180)
 texture = ExtResource("1_lx5au")
 
 [node name="p1_money" type="Label" parent="." unique_id=1679382756]
-offset_right = 40.0
-offset_bottom = 23.0
+offset_left = 60.0
+offset_top = 300.0
+offset_right = 100.0
+offset_bottom = 323.0
 
 [node name="p2_money" type="Label" parent="." unique_id=403633564]
-offset_right = 40.0
-offset_bottom = 23.0
+offset_left = 450.0
+offset_top = 300.0
+offset_right = 490.0
+offset_bottom = 323.0
 
 [node name="p1_hand" type="Sprite2D" parent="." unique_id=1705031048]
 modulate = Color(0.90526885, 3.3450872e-06, 1.1551381e-06, 1)
@@ -126,6 +130,13 @@ shape = SubResource("CircleShape2D_1v8qu")
 libraries/ = SubResource("AnimationLibrary_7mqwv")
 autoplay = &"RESET"
 
+[node name="Label" type="Label" parent="Articles/Arm" unique_id=1784601170]
+offset_left = -20.0
+offset_top = 30.0
+offset_right = 20.0
+offset_bottom = 53.0
+horizontal_alignment = 1
+
 [node name="Eye" type="RigidBody2D" parent="Articles" unique_id=373467610]
 position = Vector2(752, 98)
 collision_layer = 2
@@ -143,6 +154,13 @@ shape = SubResource("CircleShape2D_1v8qu")
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Eye" unique_id=775097658]
 libraries/ = SubResource("AnimationLibrary_7mqwv")
 autoplay = &"RESET"
+
+[node name="Label" type="Label" parent="Articles/Eye" unique_id=1375501535]
+offset_left = -20.0
+offset_top = 30.0
+offset_right = 20.0
+offset_bottom = 53.0
+horizontal_alignment = 1
 
 [node name="Heart" type="RigidBody2D" parent="Articles" unique_id=758378759]
 position = Vector2(747, 225)
@@ -162,6 +180,13 @@ shape = SubResource("CircleShape2D_1v8qu")
 libraries/ = SubResource("AnimationLibrary_7mqwv")
 autoplay = &"RESET"
 
+[node name="Label" type="Label" parent="Articles/Heart" unique_id=1145508857]
+offset_left = -20.0
+offset_top = 30.0
+offset_right = 20.0
+offset_bottom = 53.0
+horizontal_alignment = 1
+
 [node name="Legs" type="RigidBody2D" parent="Articles" unique_id=1277914353]
 position = Vector2(946, 98)
 collision_layer = 8
@@ -179,6 +204,13 @@ shape = SubResource("CircleShape2D_1v8qu")
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Legs" unique_id=377961792]
 libraries/ = SubResource("AnimationLibrary_7mqwv")
 autoplay = &"RESET"
+
+[node name="Label" type="Label" parent="Articles/Legs" unique_id=651556850]
+offset_left = -20.0
+offset_top = 30.0
+offset_right = 20.0
+offset_bottom = 53.0
+horizontal_alignment = 1
 
 [node name="Lungs" type="RigidBody2D" parent="Articles" unique_id=756176609]
 position = Vector2(1400, 90)
@@ -198,6 +230,13 @@ shape = SubResource("CircleShape2D_1v8qu")
 libraries/ = SubResource("AnimationLibrary_7mqwv")
 autoplay = &"RESET"
 
+[node name="Label" type="Label" parent="Articles/Lungs" unique_id=934912482]
+offset_left = -20.0
+offset_top = 30.0
+offset_right = 20.0
+offset_bottom = 53.0
+horizontal_alignment = 1
+
 [node name="Pancreas" type="RigidBody2D" parent="Articles" unique_id=1419456948]
 position = Vector2(943, 225)
 collision_layer = 32
@@ -216,6 +255,13 @@ shape = SubResource("CircleShape2D_1v8qu")
 libraries/ = SubResource("AnimationLibrary_7mqwv")
 autoplay = &"RESET"
 
+[node name="Label" type="Label" parent="Articles/Pancreas" unique_id=81059896]
+offset_left = -20.0
+offset_top = 30.0
+offset_right = 20.0
+offset_bottom = 53.0
+horizontal_alignment = 1
+
 [node name="Teeth" type="RigidBody2D" parent="Articles" unique_id=999258288]
 position = Vector2(1138, 225)
 collision_layer = 64
@@ -233,6 +279,13 @@ shape = SubResource("CircleShape2D_1v8qu")
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Articles/Teeth" unique_id=955448946]
 libraries/ = SubResource("AnimationLibrary_7mqwv")
 autoplay = &"RESET"
+
+[node name="Label" type="Label" parent="Articles/Teeth" unique_id=1741372775]
+offset_left = -20.0
+offset_top = 30.0
+offset_right = 20.0
+offset_bottom = 53.0
+horizontal_alignment = 1
 
 [node name="p1_x_timer" type="Timer" parent="." unique_id=1351258354]
 wait_time = 0.3
